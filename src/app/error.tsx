@@ -1,6 +1,15 @@
 "use client"; // Error boundaries must be Client Components
 
 import Container from "@/components/Container";
+import { Button } from "@/components/ui/button";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { CircleAlert } from "lucide-react";
 import { useEffect } from "react";
 
 export default function ErrorBoundary({
@@ -15,30 +24,26 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <Container className="mt-20 flex flex-col items-center justify-start text-center p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-10 max-w-md w-full">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-16 w-16 flex items-center justify-center rounded-full bg-primary">
-            <i className="bi bi-exclamation-circle text-2xl text-white"></i>
-          </div>
-
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Something went wrong
-          </h1>
-
-          <p className="text-gray-500 text-sm">
-            {error.message ||
-              "An unexpected error has occurred. Please try again later."}
-          </p>
-
-          <button
-            onClick={() => reset()}
-            className="mt-6 px-6 py-2 rounded-lg bg-primary text-white font-medium shadow hover:opacity-90 transition"
-          >
-            Try again
-          </button>
-        </div>
-      </div>
+    <Container className="text-center">
+      <Item
+        variant="muted"
+        className="max-w-md flex flex-col gap-6 p-6 border-2 border-red-500"
+      >
+        <ItemMedia>
+          <CircleAlert className="size-12 text-red-500" />
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle className="flex flex-col gap-2">
+            <p className="text-4xl font-bold">Something went wrong!</p>
+            <p className="text-base text-muted-foreground">
+              {error.message || "Unknown error occurred!"}
+            </p>
+          </ItemTitle>
+        </ItemContent>
+        <ItemActions>
+          <Button onClick={() => reset()}>Try Again.</Button>
+        </ItemActions>
+      </Item>
     </Container>
   );
 }

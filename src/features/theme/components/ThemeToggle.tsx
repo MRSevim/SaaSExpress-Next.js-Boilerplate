@@ -9,7 +9,6 @@ export default function ThemeToggle() {
 
   return (
     <Button
-      suppressHydrationWarning
       onClick={toggleTheme}
       aria-pressed={isDark}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}

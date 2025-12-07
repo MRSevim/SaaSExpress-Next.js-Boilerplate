@@ -1,28 +1,41 @@
 import Link from "next/link";
 import { CircleIcon } from "lucide-react";
 import Container from "@/components/Container";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { routes } from "@/utils/routes";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <Container className="mt-20 flex justify-center">
-      <div className="max-w-md space-y-8 p-4 text-center">
-        <div className="flex justify-center">
+    <Container className="text-center">
+      <Item
+        variant="muted"
+        className="max-w-md flex flex-col gap-6 p-4 text-center border-2 border-orange-500"
+      >
+        <ItemMedia>
           <CircleIcon className="size-12 text-orange-500" />
-        </div>
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
-          Page Not Found
-        </h1>
-        <p className="text-base text-gray-500">
-          The page you are looking for might have been removed, had its name
-          changed, or is temporarily unavailable.
-        </p>
-        <Link
-          href="/"
-          className="max-w-48 mx-auto flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-        >
-          Back to Home
-        </Link>
-      </div>
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle className="flex flex-col gap-2">
+            <h1 className="text-4xl font-bold">Page Not Found</h1>
+            <p className="text-base text-muted-foreground">
+              The page you are looking for might have been removed, had its name
+              changed, or is temporarily unavailable.
+            </p>
+          </ItemTitle>
+        </ItemContent>
+        <ItemActions>
+          <Button asChild className="rounded-full">
+            <Link href={routes.home}>Back to Home</Link>
+          </Button>
+        </ItemActions>
+      </Item>
     </Container>
   );
 }
