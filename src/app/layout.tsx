@@ -4,6 +4,7 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import ThemeToggle from "@/features/theme/components/ThemeToggle";
 import { Provider as ThemeProvider } from "@/features/theme/contexts/ThemeContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,9 +16,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const title = "Nextjs SaaS Starter Kit";
+const description = "Start your Next.js project with this SaaS starter kit.";
+
 export const metadata: Metadata = {
-  title: "Nextjs SaaS Starter Kit",
-  description: "Start your Next.js project with this SaaS starter kit.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
+  title: {
+    template: "%s | WordBattles",
+    default: title,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  description,
+  keywords: "wow, such , nice , kit",
+  openGraph: {
+    title,
+    description,
+    url: "/",
+    siteName: title,
+    type: "website",
+  },
 };
 
 export default async function RootLayout({
@@ -25,20 +44,43 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value;
-
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between ${theme === "dark" ? "dark" : ""}`}
-      >
-        <ThemeProvider initialTheme={theme}>
-          <ThemeToggle />
-          {children}
-        </ThemeProvider>
-      </body>
+      <Suspense fallback={<></>}>
+        <BodyWrapper>{children}</BodyWrapper>
+      </Suspense>
     </html>
   );
 }
+
+const BodyWrapper = async ({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) => {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value;
+  return <Body theme={theme}>{children}</Body>;
+};
+
+const Body = async ({
+  theme,
+  children,
+}: {
+  theme: string | undefined;
+  children: React.ReactNode;
+}) => {
+  "use cache";
+
+  return (
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
+        justify-between ${theme === "dark" ? "dark" : ""}`}
+    >
+      <ThemeProvider initialTheme={theme}>
+        <ThemeToggle />
+        {children}
+      </ThemeProvider>
+    </body>
+  );
+};

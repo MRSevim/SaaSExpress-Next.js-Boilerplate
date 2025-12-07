@@ -38,17 +38,17 @@ export const Provider = ({
 
   // Auto-detect system preference on first load
   useEffect(() => {
-    if (
-      !initialTheme &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
+    if (!initialTheme && typeof window !== "undefined") {
+      const newTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+
       /* This eslint error is disabled because setting it as initial state 
       causes hydration errors on nextjs (because of -typeof window !== "undefined"- line)
        */
       //eslint-disable-next-line
-      setTheme("dark");
-      setCookie("theme", "dark", 365);
+      setTheme(newTheme);
+      setCookie("theme", newTheme, 365);
     }
   }, [initialTheme]);
 

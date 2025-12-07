@@ -6,6 +6,7 @@ import { Sun, Moon } from "lucide-react";
 export default function ThemeToggle() {
   const [theme, toggleTheme] = useThemeContext();
   const isDark = theme === "dark";
+
   return (
     <Button
       suppressHydrationWarning
