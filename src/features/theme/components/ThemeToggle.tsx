@@ -13,7 +13,6 @@ export default function ThemeToggle() {
       aria-pressed={isDark}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
-      <span className="sr-only">Toggle theme</span>
       {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       <span className="hidden md:inline">{isDark ? "Light" : "Dark"}</span>
     </Button>
