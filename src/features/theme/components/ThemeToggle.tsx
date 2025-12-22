@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useThemeContext } from "@/features/theme/contexts/ThemeContext";
+import { useThemeContext } from "@/features/theme/utils/contexts/ThemeContext";
 import { Sun, Moon } from "lucide-react";
 
 export default function ThemeToggle() {
@@ -9,6 +9,7 @@ export default function ThemeToggle() {
 
   return (
     <Button
+      variant="outline"
       onClick={toggleTheme}
       aria-pressed={isDark}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}

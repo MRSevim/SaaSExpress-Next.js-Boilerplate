@@ -11,3 +11,8 @@ export const setCookie = (name: string, value: string, days: number = 7) => {
     value,
   )};path=/;max-age=${maxAge}`;
 };
+
+export const returnErrorFromUnknown = async (error: unknown) => {
+  if (error instanceof Error) return { error: error.message };
+  return { error: "Unknown error occurred!" };
+};

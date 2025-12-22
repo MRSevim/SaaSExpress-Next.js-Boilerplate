@@ -44,7 +44,7 @@ export const Provider = ({
         : "light";
 
       /* This eslint error is disabled because setting it as initial state 
-      causes hydration errors on nextjs (because of -typeof window !== "undefined"- line)
+      causes hydration errors on nextjs (because of -typeof window !== "undefined")
        */
       //eslint-disable-next-line
       setTheme(newTheme);

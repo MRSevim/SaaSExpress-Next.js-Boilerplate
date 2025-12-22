@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
-import ThemeToggle from "@/features/theme/components/ThemeToggle";
-import { Provider as ThemeProvider } from "@/features/theme/contexts/ThemeContext";
+import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
 import { Suspense } from "react";
+import Header from "@/components/header/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,7 +84,7 @@ const Body = async ({
         justify-between ${theme === "dark" ? "dark" : ""}`}
     >
       <ThemeProvider initialTheme={theme}>
-        <ThemeToggle />
+        <Header />
         {children}
       </ThemeProvider>
     </body>
