@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { createAuthClient } from "better-auth/react";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
@@ -20,4 +19,4 @@ export const auth = betterAuth({
   plugins: [nextCookies()],
 });
 
-export const authClient = createAuthClient();
+export type User = typeof auth.$Infer.Session.user;

@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
-import { Suspense } from "react";
 import Header from "@/components/header/Header";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,49 +44,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value;
   return (
     <html lang="en">
-      <Suspense
-        fallback={
-          <body>
-            <></>
-          </body>
-        }
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
+        justify-between ${theme === "dark" ? "dark" : ""}`}
       >
-        <BodyWrapper>{children}</BodyWrapper>
-      </Suspense>
+        <ThemeProvider initialTheme={theme}>
+          <Header />
+          {children}
+          <Toaster />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
-
-const BodyWrapper = async ({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) => {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value;
-  return <Body theme={theme}>{children}</Body>;
-};
-
-const Body = async ({
-  theme,
-  children,
-}: {
-  theme: string | undefined;
-  children: React.ReactNode;
-}) => {
-  "use cache";
-
-  return (
-    <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between ${theme === "dark" ? "dark" : ""}`}
-    >
-      <ThemeProvider initialTheme={theme}>
-        <Header />
-        {children}
-      </ThemeProvider>
-    </body>
-  );
-};

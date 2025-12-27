@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { signInWithGoogle } from "../utils/apiCalls";
+import { signInWithGoogle } from "../utils/apiCallsClient";
 import Error from "@/components/Error";
 
 const ContinueWithGoogleButton = () => {

@@ -9,12 +9,12 @@ import {
 } from "../ui/navigation-menu";
 import Link from "next/link";
 import { routes } from "@/utils/routes";
-import { Button } from "../ui/button";
+import UserMenu from "./UserMenu";
 
 const Header = () => {
   return (
     <header className="p-3 border-b border-b-slate-200 dark:border-b-slate-700">
-      <Container className="flex justify-between items-center" isMain={false}>
+      <Container className="flex justify-end gap-2 items-center" isMain={false}>
         {" "}
         <NavigationMenu>
           <NavigationMenuList>
@@ -27,26 +27,10 @@ const Header = () => {
                 <Link href={routes.home}>Home</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                asChild
-                className={navigationMenuTriggerStyle()}
-              >
-                <Link href={routes.signIn}>Sign In</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Button variant="outline">
-                  <Link href={routes.signUp}>Sign Up</Link>
-                </Button>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+            <ThemeToggle />
+            <UserMenu />
           </NavigationMenuList>
         </NavigationMenu>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-        </div>
       </Container>
     </header>
   );
