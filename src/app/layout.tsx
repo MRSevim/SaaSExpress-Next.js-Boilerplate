@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "Nextjs SaaSExpress Starter Kit";
-const description = "Start your Next.js project with this SaaS starter kit.";
+const title = "Next.js SaaSExpress Starter Kit";
+const description = "Start your Next.js project with this SaaS starter kit!";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
