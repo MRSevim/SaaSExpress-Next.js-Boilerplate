@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
+import { env } from "@/utils/serverEnv";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +21,7 @@ const title = "Next.js SaaSExpress Starter Kit";
 const description = "Start your Next.js project with this SaaS starter kit!";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
+  metadataBase: new URL(env.BASE_URL!),
   title: {
     template: "%s | WordBattles",
     default: title,

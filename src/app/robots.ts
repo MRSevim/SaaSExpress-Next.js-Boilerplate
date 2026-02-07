@@ -1,3 +1,4 @@
+import { env } from "@/utils/serverEnv";
 import type { MetadataRoute } from "next";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
@@ -6,6 +7,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       userAgent: "*",
       disallow: [],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
+    sitemap: `${env.BASE_URL}/sitemap.xml`,
   };
 }

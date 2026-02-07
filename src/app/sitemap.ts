@@ -1,6 +1,7 @@
+import { env } from "@/utils/serverEnv";
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
+const BASE_URL = env.BASE_URL!;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
