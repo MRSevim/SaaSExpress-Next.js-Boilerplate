@@ -1,4 +1,4 @@
-import { env } from "@/utils/serverEnv";
+import { env } from "@/utils/env";
 import type { MetadataRoute } from "next";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {

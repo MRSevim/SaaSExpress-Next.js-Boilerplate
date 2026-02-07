@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { env } from "@/utils/serverEnv";
+import { env } from "@/utils/env";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";

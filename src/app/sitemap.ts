@@ -1,4 +1,4 @@
-import { env } from "@/utils/serverEnv";
+import { env } from "@/utils/env";
 import type { MetadataRoute } from "next";
 
 const BASE_URL = env.BASE_URL!;
