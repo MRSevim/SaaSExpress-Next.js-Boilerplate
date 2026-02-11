@@ -119,3 +119,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  nav[data-slot="navigation-menu"] > div:first-child {
+    display: contents;
+  }
+}

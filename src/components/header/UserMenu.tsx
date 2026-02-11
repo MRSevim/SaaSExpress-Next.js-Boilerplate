@@ -21,21 +21,14 @@ import { toast } from "sonner";
 import { signOut } from "@/features/auth/utils/apiCallsClient";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "../ui/skeleton";
-import { authClient } from "@/features/auth/lib/authClient";
-import { User } from "@/features/auth/lib/auth";
+import { User } from "@/features/auth/utils/types";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { selectUser } from "@/features/auth/lib/redux/selectors";
+import { setUser } from "@/features/auth/lib/redux/slices/userSlice";
 
 const UserMenu = () => {
-  const { data: session, isPending } = authClient.useSession();
-  const user = session?.user;
+  const user = useAppSelector(selectUser);
 
-  if (isPending) {
-    return (
-      <Button variant="outline" asChild>
-        <Skeleton className="w-20" />
-      </Button>
-    );
-  }
   return (
     <>
       {user ? (
@@ -70,7 +63,6 @@ const Dropdown = ({ user }: { user: User }) => {
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
-          {" "}
           <Avatar>
             <AvatarImage
               src={user.image || undefined}
@@ -82,7 +74,7 @@ const Dropdown = ({ user }: { user: User }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>
+        <DropdownMenuLabel className="text-center">
           {" "}
           Account of <p>{user.name}</p>
         </DropdownMenuLabel>
@@ -97,6 +89,7 @@ const Dropdown = ({ user }: { user: User }) => {
 
 const LogoutButton = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   return (
     <DropdownMenuItem
       className="text-red-800 dark:text-red-400"
@@ -105,6 +98,7 @@ const LogoutButton = () => {
         if (error) {
           toast.error(error);
         } else {
+          dispatch(setUser(undefined));
           router.push(routes.signIn);
         }
       }}

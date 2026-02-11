@@ -7,6 +7,8 @@ import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import { Suspense } from "react";
+import { getSession } from "@/features/auth/utils/apiCalls";
+import ClientWrapper from "@/utils/ClientWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,20 +59,9 @@ export default async function RootLayout({
 }
 
 async function BodyWrapper({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
+  const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
   const theme = cookieStore.get("theme")?.value;
 
-  return <Body theme={theme}>{children}</Body>;
-}
-const Body = async ({
-  children,
-  theme,
-}: {
-  theme?: string;
-  children: React.ReactNode;
-}) => {
-  "use cache";
-  console.log("body rendered");
   return (
     <html lang="en">
       <body
@@ -78,11 +69,13 @@ const Body = async ({
         justify-between ${theme === "dark" ? "dark" : ""}`}
       >
         <ThemeProvider initialTheme={theme}>
-          <Header />
-          {children}
-          <Toaster />
+          <ClientWrapper user={user}>
+            <Header />
+            {children}
+            <Toaster />
+          </ClientWrapper>
         </ThemeProvider>
       </body>
     </html>
   );
-};
+}

@@ -14,12 +14,13 @@ import UserMenu from "./UserMenu";
 const Header = () => {
   return (
     <header className="p-3 border-b border-b-slate-200 dark:border-b-slate-700">
-      <Container className="flex justify-end gap-2 items-center" isMain={false}>
+      <Container className="flex gap-2" isMain={false}>
         {" "}
-        <NavigationMenu>
-          <NavigationMenuList>
+        <NavigationMenu className="max-w-full w-full">
+          <NavigationMenuList className="justify-between">
             {" "}
-            <NavigationMenuItem>
+            <NavigationMenuItem className="flex items-center gap-2">
+              <h1 className="p-2">SaaSExpress</h1>
               <NavigationMenuLink
                 asChild
                 className={navigationMenuTriggerStyle()}
@@ -27,8 +28,10 @@ const Header = () => {
                 <Link href={routes.home}>Home</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-            <ThemeToggle />
-            <UserMenu />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <UserMenu />
+            </div>
           </NavigationMenuList>
         </NavigationMenu>
       </Container>
