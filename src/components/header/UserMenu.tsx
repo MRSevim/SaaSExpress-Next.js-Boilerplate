@@ -18,7 +18,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { signOut } from "@/features/auth/utils/apiCallsClient";
+import { signOut } from "@/features/auth/utils/apiCalls";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/features/auth/utils/types";
@@ -68,7 +68,7 @@ const Dropdown = ({ user }: { user: User }) => {
               src={user.image || undefined}
               alt={`${user.name}'s avatar`}
             />
-            <AvatarFallback>Av</AvatarFallback>
+            <AvatarFallback>{user.name[0]}</AvatarFallback>
           </Avatar>
           {open ? <ChevronUp /> : <ChevronDown />}
         </Button>

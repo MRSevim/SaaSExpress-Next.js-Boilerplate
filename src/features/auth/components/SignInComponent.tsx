@@ -13,10 +13,18 @@ import { routes } from "@/utils/routes";
 import Link from "next/link";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { useActionState } from "react";
+import { signInWithEmailAndPassword } from "../utils/apiCalls";
+import { Spinner } from "@/components/ui/spinner";
+import Error from "@/components/Error";
 
 const SignInComponent = () => {
+  const [errorState, action, isPending] = useActionState(
+    signInWithEmailAndPassword,
+    { error: "" },
+  );
   return (
-    <form className="w-full max-w-sm">
+    <form className="w-full max-w-sm" action={action}>
       <Card>
         <CardHeader>
           <CardTitle>Sign in to your account</CardTitle>
@@ -32,14 +40,13 @@ const SignInComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
-                  id="email"
+                  name="email"
                   type="email"
                   placeholder="youremail@example.com"
                   required
                 />
               </Field>
-            </FieldGroup>
-            <FieldGroup>
+
               <Field>
                 <FieldLabel htmlFor="password">
                   Password
@@ -52,7 +59,7 @@ const SignInComponent = () => {
                 </FieldLabel>
               </Field>
               <Input
-                id="password"
+                name="password"
                 type="password"
                 required
                 placeholder="••••••••"
@@ -61,15 +68,17 @@ const SignInComponent = () => {
           </FieldSet>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button
-            type="submit"
-            className="w-full"
-            onClick={() => {
-              console.log("first");
-            }}
-          >
-            Sign in
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Spinner data-icon="inline-start" />
+                Signing in...
+              </>
+            ) : (
+              <>Sign in</>
+            )}
           </Button>
+          {errorState?.error && <Error text={errorState.error} />}
           or
           <ContinueWithGoogleButton />
         </CardFooter>

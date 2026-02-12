@@ -1,6 +1,7 @@
 import { authClient } from "../lib/authClient";
 import { returnErrorFromUnknown } from "@/utils/helpers";
 
+//this does not seem to work as a server action
 export const signInWithGoogle = async () => {
   try {
     const { error } = await authClient.signIn.social({
@@ -9,18 +10,7 @@ export const signInWithGoogle = async () => {
     if (error) throw Error(error.message);
     return { error: "" };
   } catch (error) {
-    console.error("Sign-in error:", error);
-    return await returnErrorFromUnknown(error);
-  }
-};
-
-export const signOut = async () => {
-  try {
-    const { error } = await authClient.signOut();
-    if (error) throw Error(error.message);
-    return { error: "" };
-  } catch (error) {
-    console.error("Logout error:", error);
-    return await returnErrorFromUnknown(error);
+    console.error("Sign-in with Google error:", error);
+    return returnErrorFromUnknown(error);
   }
 };

@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { routes } from "@/utils/routes";
 import UserMenu from "./UserMenu";
+import { env } from "@/utils/env";
 
 const Header = () => {
   return (
@@ -17,10 +18,10 @@ const Header = () => {
       <Container className="flex gap-2" isMain={false}>
         {" "}
         <NavigationMenu className="max-w-full w-full">
-          <NavigationMenuList className="justify-between">
+          <NavigationMenuList className="flex-col sm:flex-row justify-between gap-2">
             {" "}
-            <NavigationMenuItem className="flex items-center gap-2">
-              <h1 className="p-2">SaaSExpress</h1>
+            <NavigationMenuItem className="flex flex-col sm:flex-row items-center gap-2">
+              <h1 className="px-4 py-2">{env.APP_NAME}</h1>
               <NavigationMenuLink
                 asChild
                 className={navigationMenuTriggerStyle()}

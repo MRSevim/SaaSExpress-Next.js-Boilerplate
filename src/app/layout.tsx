@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
 import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import { Suspense } from "react";
+import { getSession } from "@/features/auth/utils/apiCalls";
 import ClientWrapper from "@/utils/ClientWrapper";
 
 const geistSans = Geist({
@@ -57,22 +59,21 @@ export default async function RootLayout({
 }
 
 async function BodyWrapper({ children }: { children: React.ReactNode }) {
-  "use cache";
-  /*   const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
-  const theme = cookieStore.get("theme")?.value; */
-  console.log("rendered");
+  const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
+  const theme = cookieStore.get("theme")?.value;
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between dark`}
+        justify-between ${theme === "dark" ? "dark" : ""}`}
       >
-        <ThemeProvider initialTheme={"dark"}>
-          {/*       <ClientWrapper user={user}> */}
-          {/*    <Header /> */}
-          {children}
-          <Toaster />
-          {/*   </ClientWrapper> */}
+        <ThemeProvider initialTheme={theme}>
+          <ClientWrapper user={user}>
+            <Header />
+            {children}
+            <Toaster />
+          </ClientWrapper>
         </ThemeProvider>
       </body>
     </html>

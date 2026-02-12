@@ -1,13 +1,11 @@
 import userSlice from "@/features/auth/lib/redux/slices/userSlice";
-import { User } from "@/features/auth/utils/types";
 import { configureStore } from "@reduxjs/toolkit";
 
-export const makeStore = (preloadedState?: Partial<{ user?: User }>) => {
+export const makeStore = () => {
   return configureStore({
     reducer: {
       user: userSlice,
     },
-    preloadedState: { user: { value: preloadedState?.user } },
   });
 };
 
