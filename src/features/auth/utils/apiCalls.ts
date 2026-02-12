@@ -54,12 +54,12 @@ const signUpSchema = z
       .string()
       .trim()
       .min(2, { message: "Name must be at least 2 characters" })
-      .max(100, { message: "Name is too long" }),
+      .max(100, { message: "Name is too long (max 100 characters)" }),
     email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      .max(128),
+      .max(128, { message: "Password is too long (max 128 characters)" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
