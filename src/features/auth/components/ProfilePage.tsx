@@ -38,6 +38,20 @@ const ProfilePage = () => {
         />
         <AvatarFallback>{user.name[0]}</AvatarFallback>
       </Avatar>
+      <Button
+        variant="destructive"
+        onClick={async () => {
+          const { error } = await deleteUser();
+          if (error) {
+            toast.error(error);
+          } else
+            toast.success(
+              "Account Deletion email has been sent to your email adress",
+            );
+        }}
+      >
+        Delete Account
+      </Button>
       {checkProviderLoading && <Spinner className="size-8" />}
       {checkError && <Error text={checkError} />}
       {isCredentialsProvider && !checkError && (
@@ -56,20 +70,6 @@ const ProfilePage = () => {
           Reset password
         </Button>
       )}
-      <Button
-        variant="destructive"
-        onClick={async () => {
-          const { error } = await deleteUser();
-          if (error) {
-            toast.error(error);
-          } else
-            toast.success(
-              "Account Deletion email has been sent to your email adress",
-            );
-        }}
-      >
-        Delete Account
-      </Button>
     </div>
   );
 };
