@@ -126,15 +126,31 @@ export const signOut = async () => {
   }
 };
 
-export const requestPasswordReset = async () => {
+const requestPasswordResetSchema = z.object({
+  email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+});
+
+export const requestPasswordReset = async (email: string) => {
+  const parsed = requestPasswordResetSchema.safeParse({
+    email,
+  });
+
+  if (!parsed.success) {
+    const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+    return {
+      error: errorMessages.email?.[0] || "Email parsing error",
+    };
+  }
   try {
-    const user = await protect();
     await auth.api.requestPasswordReset({
       body: {
-        email: user.email,
+        email,
         redirectTo: env.BASE_URL + routes.passwordReset,
       },
     });
+
+    return { error: "" };
   } catch (error) {
     console.error("Request Password Reset error:", error);
     return returnErrorFromUnknown(error);
@@ -200,4 +216,32 @@ export const protect = async () => {
   const user = await getSession();
   if (!user) throw Error("Please authenticate first!");
   return user;
+};
+
+export const checkCredentialsProvider = async () => {
+  try {
+    const accounts = await auth.api.listUserAccounts({
+      headers: await headers(),
+    });
+    const isTrue = !!accounts.find(
+      (account) => account.providerId === "credential",
+    );
+    return { isTrue, error: "" };
+  } catch (error) {
+    console.error("Check Credentials Provider error:", error);
+    return { isTrue: false, ...returnErrorFromUnknown(error) };
+  }
+};
+
+export const deleteUser = async () => {
+  try {
+    await auth.api.deleteUser({
+      headers: await headers(),
+      body: { callbackURL: routes.home },
+    });
+    return { error: "" };
+  } catch (error) {
+    console.error("Delete User error:", error);
+    return returnErrorFromUnknown(error);
+  }
 };

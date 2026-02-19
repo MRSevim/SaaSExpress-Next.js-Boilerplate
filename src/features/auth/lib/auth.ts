@@ -22,6 +22,18 @@ export const auth = betterAuth({
       });
     },
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        void sendEmail({
+          to: user.email,
+          subject: `Verify your account deletion on  ${APP_NAME}`,
+          text: `Click the link to delete your account: ${url}`,
+        });
+      },
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID as string,
