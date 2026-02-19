@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { auth } from "../lib/auth";
 import { returnErrorFromUnknown } from "@/utils/helpers";
 import { z } from "zod";
+import { env } from "@/utils/env";
+import { routes } from "@/utils/routes";
 
 export const getSession = async () => {
   const session = await auth.api.getSession({
@@ -12,24 +14,20 @@ export const getSession = async () => {
   return session?.user;
 };
 
-export const signInWithEmailAndPassword = async (
-  _prevState: { error: string },
-  formData: FormData,
-) => {
+export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   try {
-    await auth.api.signInEmail({
+    const body = await auth.api.signInEmail({
       body: {
         email,
         password,
       },
     });
-
-    return { error: "" };
+    return { user: body.user, error: "" };
   } catch (error) {
     console.error("Sign-in with Email and Password error:", error);
-    return returnErrorFromUnknown(error);
+    return { ...returnErrorFromUnknown(error), user: undefined };
   }
 };
 
@@ -126,4 +124,80 @@ export const signOut = async () => {
     console.error("Logout error:", error);
     return returnErrorFromUnknown(error);
   }
+};
+
+export const requestPasswordReset = async () => {
+  try {
+    const user = await protect();
+    await auth.api.requestPasswordReset({
+      body: {
+        email: user.email,
+        redirectTo: env.BASE_URL + routes.passwordReset,
+      },
+    });
+  } catch (error) {
+    console.error("Request Password Reset error:", error);
+    return returnErrorFromUnknown(error);
+  }
+};
+
+const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" })
+      .max(128, { message: "Password is too long (max 128 characters)" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordState = {
+  error?: string;
+  errors?: {
+    password?: string;
+    confirmPassword?: string;
+  };
+  successMessage?: string;
+} | null;
+
+export const resetPassword = async (formData: FormData, token: string) => {
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirm-password") as string;
+
+  const parsed = resetPasswordSchema.safeParse({
+    password,
+    confirmPassword,
+  });
+
+  if (!parsed.success) {
+    const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+    return {
+      error: "",
+      errors: {
+        password: errorMessages.password?.[0],
+        confirmPassword: errorMessages.confirmPassword?.[0],
+      },
+      successMessage: "",
+    };
+  }
+  try {
+    await auth.api.resetPassword({ body: { newPassword: password, token } });
+    return {
+      error: "",
+      successMessage: "Your password have been successfully reset",
+    };
+  } catch (error) {
+    console.error("Password Reset error:", error);
+    return { ...returnErrorFromUnknown(error), successMessage: "" };
+  }
+};
+
+export const protect = async () => {
+  const user = await getSession();
+  if (!user) throw Error("Please authenticate first!");
+  return user;
 };

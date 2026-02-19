@@ -79,7 +79,9 @@ const Dropdown = ({ user }: { user: User }) => {
           Account of <p>{user.name}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <Link href={routes.profile}>
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
         <LogoutButton />
       </DropdownMenuContent>

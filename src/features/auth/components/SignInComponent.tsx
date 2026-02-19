@@ -17,12 +17,34 @@ import { useActionState } from "react";
 import { signInWithEmailAndPassword } from "../utils/apiCalls";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { setUser } from "../lib/redux/slices/userSlice";
+import { useRouter } from "next/navigation";
 
 const SignInComponent = () => {
-  const [errorState, action, isPending] = useActionState(
-    signInWithEmailAndPassword,
-    { error: "" },
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [error, action, isPending] = useActionState(
+    async (_prevState: string, formData: FormData) => {
+      const { error, user } = await signInWithEmailAndPassword(formData);
+      if (!error && user)
+        dispatch(
+          setUser({
+            id: user.id,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            name: user.name,
+            image: user.image,
+          }),
+        );
+      router.push(routes.home);
+
+      return error;
+    },
+    "",
   );
+
   return (
     <form className="w-full max-w-sm" action={action}>
       <Card>
@@ -78,7 +100,7 @@ const SignInComponent = () => {
               <>Sign in</>
             )}
           </Button>
-          {errorState?.error && <Error text={errorState.error} />}
+          {error && <Error text={error} />}
           or
           <ContinueWithGoogleButton />
         </CardFooter>
