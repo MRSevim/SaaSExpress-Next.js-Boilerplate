@@ -49,7 +49,7 @@ const PasswordResetComponent = () => {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="password">New Password</FieldLabel>
-                <Input name="password" type="password" required />
+                <Input name="password" id="password" type="password" required />
                 <FieldDescription>
                   Must be at least 8 characters long
                 </FieldDescription>
@@ -59,7 +59,12 @@ const PasswordResetComponent = () => {
 
               <Field>
                 <FieldLabel htmlFor="password">Confirm New Password</FieldLabel>
-                <Input name="confirm-password" type="password" required />
+                <Input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="password"
+                  required
+                />
                 <FieldError>{state?.errors?.confirmPassword}</FieldError>
               </Field>
             </FieldGroup>

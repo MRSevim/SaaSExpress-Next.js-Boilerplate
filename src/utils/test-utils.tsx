@@ -1,0 +1,37 @@
+import React, { PropsWithChildren } from "react";
+import { render } from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { Provider } from "react-redux";
+import { makeStore, type AppStore } from "@/lib/redux/store";
+
+// This type interface extends the default options for render from RTL, as well
+// as allows the user to specify other things such as store.
+interface ExtendedRenderOptions extends Omit<
+  RenderOptions,
+  "queries" | "wrapper"
+> {
+  store?: AppStore;
+}
+
+export function renderWithProviders(
+  ui: React.ReactElement,
+  extendedRenderOptions: ExtendedRenderOptions = {},
+) {
+  const {
+    // Automatically create a store instance if no store was passed in
+    store = makeStore(),
+    ...renderOptions
+  } = extendedRenderOptions;
+
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <Provider store={store}>{children}</Provider>
+  );
+
+  // Return an object with the store, user, and all of RTL's query functions
+  return {
+    store,
+    user: userEvent.setup(),
+    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
+  };
+}

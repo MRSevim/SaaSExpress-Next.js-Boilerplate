@@ -50,6 +50,7 @@ const SignUpComponent = () => {
                 <FieldLabel htmlFor="name">Username</FieldLabel>
                 <Input
                   defaultValue={state?.defaultValues.name}
+                  id="name"
                   name="name"
                   type="text"
                   placeholder="Your username"
@@ -61,6 +62,7 @@ const SignUpComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  id="email"
                   name="email"
                   defaultValue={state?.defaultValues.email}
                   type="email"
@@ -73,6 +75,7 @@ const SignUpComponent = () => {
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
+                  id="password"
                   name="password"
                   type="password"
                   placeholder="••••••••"
@@ -90,6 +93,7 @@ const SignUpComponent = () => {
                   Confirm password
                 </FieldLabel>
                 <Input
+                  id="email"
                   name="confirm-password"
                   type="password"
                   placeholder="••••••••"

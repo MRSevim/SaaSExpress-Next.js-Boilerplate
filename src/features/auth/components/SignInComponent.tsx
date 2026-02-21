@@ -62,6 +62,7 @@ const SignInComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  id="email"
                   name="email"
                   type="email"
                   placeholder="youremail@example.com"
@@ -80,6 +81,7 @@ const SignInComponent = () => {
                   </Link>
                 </FieldLabel>
                 <Input
+                  id="password"
                   name="password"
                   type="password"
                   required

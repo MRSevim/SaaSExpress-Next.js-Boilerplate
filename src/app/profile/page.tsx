@@ -1,10 +1,10 @@
 import Container from "@/components/Container";
-import ProfilePage from "@/features/auth/components/ProfilePage";
+import ProfileComponent from "@/features/auth/components/ProfileComponent";
 
 const page = () => {
   return (
     <Container>
-      <ProfilePage />
+      <ProfileComponent />
     </Container>
   );
 };

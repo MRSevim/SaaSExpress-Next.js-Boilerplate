@@ -46,6 +46,7 @@ const ForgotPasswordComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  id="email"
                   name="email"
                   type="email"
                   placeholder="youremail@example.com"
