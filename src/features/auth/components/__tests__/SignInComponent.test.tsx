@@ -12,13 +12,17 @@ jest.mock("@/features/auth/lib/auth", () => ({
   auth: {
     api: {
       signInEmail: jest.fn(async ({ body: { email } }) => {
-        return {
-          id: "123",
-          email: email,
-          emailVerified: true,
-          name: "myname",
-          image: undefined,
-        };
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              id: "123",
+              email,
+              emailVerified: true,
+              name: "myname",
+              image: undefined,
+            });
+          }, 50);
+        });
       }),
     },
   },
@@ -41,5 +45,13 @@ describe("Sign In Component", () => {
 
     const passwordInput = screen.getByLabelText(/password/i);
     await user.type(passwordInput, "mypassword");
+
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
+
+    const signInButton = await screen.findByRole("button", {
+      name: /signing in.../i,
+    });
+
+    expect(signInButton).toBeDisabled();
   });
 });

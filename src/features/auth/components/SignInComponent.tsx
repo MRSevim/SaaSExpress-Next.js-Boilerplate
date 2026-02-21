@@ -28,7 +28,7 @@ const SignInComponent = () => {
   const [error, action, isPending] = useActionState(
     async (_prevState: string, formData: FormData) => {
       const { error, user } = await signInWithEmailAndPassword(formData);
-      if (!error && user)
+      if (!error && user) {
         dispatch(
           setUser({
             id: user.id,
@@ -38,7 +38,8 @@ const SignInComponent = () => {
             image: user.image,
           }),
         );
-      router.push(routes.home);
+        router.push(routes.home);
+      }
 
       return error;
     },
