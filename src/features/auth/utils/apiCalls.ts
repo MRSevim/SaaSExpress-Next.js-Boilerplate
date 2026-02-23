@@ -17,6 +17,7 @@ export const getSession = async () => {
 export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
   try {
     const body = await auth.api.signInEmail({
       body: {
@@ -24,6 +25,7 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
         password,
       },
     });
+
     return { user: body.user, error: "" };
   } catch (error) {
     console.error("Sign-in with Email and Password error:", error);
