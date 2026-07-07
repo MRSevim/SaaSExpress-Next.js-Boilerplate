@@ -13,7 +13,7 @@ const Container = ({
     return (
       <main
         className={cn(
-          "mx-auto px-4 max-w-7xl flex-1 w-full mt-20 flex justify-center items-start",
+          "mx-auto px-4 max-w-7xl flex-1 w-full my-20 flex justify-center items-start",
           className ? className : "",
         )}
       >
