@@ -18,6 +18,7 @@ const ProfilePage = () => {
   const [checkProviderLoading, setCheckProviderLoading] = useState(true);
   const [isCredentialsProvider, setIsCredentialsProvider] = useState(false);
   const [checkError, setCheckError] = useState("");
+
   useEffect(() => {
     const check = async () => {
       const { error, isTrue } = await checkCredentialsProvider();
@@ -28,6 +29,7 @@ const ProfilePage = () => {
     };
     check();
   }, []);
+
   if (!user) return;
   return (
     <div className="flex flex-col gap-3 items-center">

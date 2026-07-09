@@ -14,9 +14,25 @@ export const getSession = async () => {
   return session?.user;
 };
 
+const signInSchema = z.object({
+  email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+});
+
 export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  const parsed = signInSchema.safeParse({
+    email,
+  });
+
+  if (!parsed.success) {
+    const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+    return {
+      error: errorMessages.email?.[0] || "Email parsing error",
+    };
+  }
 
   try {
     const body = await auth.api.signInEmail({

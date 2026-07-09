@@ -21,12 +21,19 @@ import { useAppDispatch } from "@/lib/redux/hooks";
 import { setUser } from "../lib/redux/slices/userSlice";
 import { useRouter } from "next/navigation";
 
+export type SignInState = {
+  error?: string;
+  defaultValues: {
+    email: string;
+  };
+} | null;
+
 const SignInComponent = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [error, action, isPending] = useActionState(
-    async (_prevState: string, formData: FormData) => {
+  const [state, action, isPending] = useActionState(
+    async (_prevState: SignInState, formData: FormData) => {
       const { error, user } = await signInWithEmailAndPassword(formData);
       if (!error && user) {
         dispatch(
@@ -41,9 +48,12 @@ const SignInComponent = () => {
         router.push(routes.home);
       }
 
-      return error;
+      return {
+        error,
+        defaultValues: { email: formData.get("email") as string },
+      };
     },
-    "",
+    null,
   );
 
   return (
@@ -63,6 +73,7 @@ const SignInComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  defaultValue={state?.defaultValues.email}
                   id="email"
                   name="email"
                   type="email"
@@ -103,7 +114,7 @@ const SignInComponent = () => {
               <>Sign in</>
             )}
           </Button>
-          {error && <Error text={error} />}
+          {state?.error && <Error text={state?.error} />}
           or
           <ContinueWithGoogleButton />
         </CardFooter>

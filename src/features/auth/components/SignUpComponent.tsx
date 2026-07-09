@@ -93,7 +93,7 @@ const SignUpComponent = () => {
                   Confirm password
                 </FieldLabel>
                 <Input
-                  id="email"
+                  id="confirm-password"
                   name="confirm-password"
                   type="password"
                   placeholder="••••••••"

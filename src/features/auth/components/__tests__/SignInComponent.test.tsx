@@ -12,6 +12,7 @@ jest.mock("next/navigation", () => ({
   })),
 }));
 
+// signInEmail has to be mocked like so to avoid error
 jest.mock("@/features/auth/lib/auth", () => ({
   auth: {
     api: {
@@ -42,10 +43,11 @@ describe("Sign In Component", () => {
 
     const { store, user } = renderWithProviders(<SignInComponent />);
 
+    const invalidEmail = "myemail@g";
     const email = "myemail@gmail.com";
+
     const emailInput = screen.getByLabelText(/email/i);
     expect(emailInput).toBeRequired();
-    await user.type(emailInput, email);
 
     (auth.api.signInEmail as unknown as jest.Mock).mockImplementationOnce(
       async ({ body: { email } }) => {
@@ -59,10 +61,24 @@ describe("Sign In Component", () => {
     const password = "mypassword";
     const passwordInput = screen.getByLabelText(/password/i);
     expect(passwordInput).toBeRequired();
+
+    // First, sign in with wrong email
     await user.type(passwordInput, password);
+    await user.type(emailInput, invalidEmail);
 
     const name = /sign in/i;
 
+    await user.click(screen.getByRole("button", { name }));
+    await waitFor(() => {
+      expect(screen.getByText(/invalid email address/i)).toBeInTheDocument();
+    });
+
+    await user.clear(emailInput);
+    await user.clear(passwordInput);
+
+    // Then, sign in with correct email
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
     await user.click(screen.getByRole("button", { name }));
 
     const loadingSignInButton = await screen.findByRole("button", {

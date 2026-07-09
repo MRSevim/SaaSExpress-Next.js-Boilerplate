@@ -59,6 +59,8 @@ export default async function RootLayout({
 }
 
 async function BodyWrapper({ children }: { children: React.ReactNode }) {
+  // This Wrapper is here because not using suspense boundary raises error...
+
   const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
   const theme = cookieStore.get("theme")?.value;
 
