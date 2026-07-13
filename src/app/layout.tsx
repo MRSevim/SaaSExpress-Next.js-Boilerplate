@@ -1,24 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
-import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import React, { Suspense } from "react";
 import { getSession } from "@/features/auth/utils/apiCalls";
 import ClientWrapper from "@/utils/ClientWrapper";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Body } from "@/components/Body";
 
 const title = "Next.js SaaSExpress Starter Kit";
 const description = "Start your Next.js project with this SaaS starter kit!";
@@ -76,22 +65,3 @@ async function BodyWrapper({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-const Body = async ({
-  theme,
-  children,
-}: {
-  theme?: string;
-  children: React.ReactNode;
-}) => {
-  "use cache";
-  console.log("Body Rendered");
-  return (
-    <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between ${theme === "dark" ? "dark" : ""}`}
-    >
-      <ThemeProvider initialTheme={theme}>{children}</ThemeProvider>{" "}
-    </body>
-  );
-};
