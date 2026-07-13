@@ -6,7 +6,7 @@ import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/Theme
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { getSession } from "@/features/auth/utils/apiCalls";
 import ClientWrapper from "@/utils/ClientWrapper";
 
@@ -66,18 +66,32 @@ async function BodyWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between ${theme === "dark" ? "dark" : ""}`}
-      >
-        <ThemeProvider initialTheme={theme}>
-          <ClientWrapper user={user}>
-            <Header />
-            {children}
-            <Toaster />
-          </ClientWrapper>
-        </ThemeProvider>
-      </body>
+      <Body theme={theme}>
+        <ClientWrapper user={user}>
+          <Header />
+          {children}
+          <Toaster />
+        </ClientWrapper>
+      </Body>
     </html>
   );
 }
+
+const Body = async ({
+  theme,
+  children,
+}: {
+  theme?: string;
+  children: React.ReactNode;
+}) => {
+  "use cache";
+  console.log("Body Rendered");
+  return (
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
+        justify-between ${theme === "dark" ? "dark" : ""}`}
+    >
+      <ThemeProvider initialTheme={theme}>{children}</ThemeProvider>{" "}
+    </body>
+  );
+};
