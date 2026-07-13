@@ -60,24 +60,26 @@ export default async function RootLayout({
 
 async function BodyWrapper({ children }: { children: React.ReactNode }) {
   // This Wrapper is here because not using suspense boundary raises error...
-
   const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
   const theme = cookieStore.get("theme")?.value;
-
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col 
-        justify-between ${theme === "dark" ? "dark" : ""}`}
-      >
-        <ThemeProvider initialTheme={theme}>
-          <ClientWrapper user={user}>
-            <Header />
-            {children}
-            <Toaster />
-          </ClientWrapper>
-        </ThemeProvider>
-      </body>
+      <Body>
+        <ClientWrapper user={user}>
+          <Header /> {children} <Toaster />
+        </ClientWrapper>
+      </Body>
     </html>
   );
 }
+const Body = async ({ children }: { children: React.ReactNode }) => {
+  "use cache";
+  console.log("Body Rendered");
+  return (
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between `}
+    >
+      <ThemeProvider>{children}</ThemeProvider>
+    </body>
+  );
+};
