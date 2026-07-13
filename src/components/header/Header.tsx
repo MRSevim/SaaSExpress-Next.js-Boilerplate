@@ -13,8 +13,6 @@ import UserMenu from "./UserMenu";
 import { env } from "@/utils/env";
 
 const Header = async () => {
-  "use cache";
-  console.log("header renders");
   return (
     <header className="p-3 border-b border-b-slate-200 dark:border-b-slate-700">
       <Container className="flex gap-2" isMain={false}>
