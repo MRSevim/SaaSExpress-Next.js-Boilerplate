@@ -79,6 +79,7 @@ const Body = async ({ children }: { children: React.ReactNode }) => {
     <body
       className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between `}
     >
+      <div>{Math.random()}</div>
       <ThemeProvider>{children}</ThemeProvider>
     </body>
   );
