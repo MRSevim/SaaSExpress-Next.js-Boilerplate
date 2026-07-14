@@ -9,6 +9,7 @@ import { env } from "@/utils/env";
 import { Suspense } from "react";
 import { getSession } from "@/features/auth/utils/apiCalls";
 import ClientWrapper from "@/utils/ClientWrapper";
+import { getRandomNumber } from "@/utils/helpers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,7 +65,7 @@ async function BodyWrapper({ children }: { children: React.ReactNode }) {
   const theme = cookieStore.get("theme")?.value;
   return (
     <html lang="en">
-      <Body>
+      <Body theme={theme}>
         <ClientWrapper user={user}>
           <Header /> {children} <Toaster />
         </ClientWrapper>
@@ -72,15 +73,21 @@ async function BodyWrapper({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-const Body = async ({ children }: { children: React.ReactNode }) => {
+const Body = async ({
+  theme,
+  children,
+}: {
+  theme?: string;
+  children: React.ReactNode;
+}) => {
   "use cache";
   console.log("Body Rendered");
   return (
     <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between `}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between ${theme === "dark" ? "dark" : ""}`}
     >
-      <div>{Math.random()}</div>
-      <ThemeProvider>{children}</ThemeProvider>
+      <div>{getRandomNumber()}</div>
+      <ThemeProvider initialTheme={theme}>{children}</ThemeProvider>
     </body>
   );
 };

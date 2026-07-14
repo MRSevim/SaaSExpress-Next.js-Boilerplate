@@ -16,3 +16,7 @@ export const returnErrorFromUnknown = (error: unknown) => {
   if (error instanceof Error && error.message) return { error: error.message };
   return { error: "Unknown error occurred!" };
 };
+
+export const getRandomNumber = async () => {
+  return (Math.random() * 100).toFixed(2);
+};
