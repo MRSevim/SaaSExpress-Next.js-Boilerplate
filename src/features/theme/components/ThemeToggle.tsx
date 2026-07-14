@@ -1,11 +1,23 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useThemeContext } from "@/features/theme/utils/contexts/ThemeContext";
+import { setCookie } from "@/utils/helpers";
 import { Sun, Moon } from "lucide-react";
+import { useState } from "react";
 
-export default function ThemeToggle() {
-  const [theme, toggleTheme] = useThemeContext();
+export default function ThemeToggle({
+  initialTheme,
+}: {
+  initialTheme?: string;
+}) {
+  const [theme, setTheme] = useState(initialTheme);
   const isDark = theme === "dark";
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    setCookie("theme", newTheme, 365);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   return (
     <Button

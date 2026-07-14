@@ -11,6 +11,9 @@ import Link from "next/link";
 import { routes } from "@/utils/routes";
 import UserMenu from "./UserMenu";
 import { env } from "@/utils/env";
+import { Suspense } from "react";
+import { cookies } from "next/headers";
+import { Skeleton } from "../ui/skeleton";
 
 const Header = async () => {
   return (
@@ -30,7 +33,11 @@ const Header = async () => {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <div className="flex items-center gap-2">
-              <ThemeToggle />
+              <Suspense
+                fallback={<Skeleton className="h-9 w-9 rounded-md md:w-20" />}
+              >
+                <ThemeWrapper />
+              </Suspense>
               <UserMenu />
             </div>
           </NavigationMenuList>
@@ -38,6 +45,12 @@ const Header = async () => {
       </Container>
     </header>
   );
+};
+
+const ThemeWrapper = async () => {
+  const cookieStore = await cookies();
+  const initialTheme = cookieStore.get("theme")?.value;
+  return <ThemeToggle initialTheme={initialTheme} />;
 };
 
 export default Header;

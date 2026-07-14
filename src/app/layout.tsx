@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { cookies } from "next/headers";
-import { Provider as ThemeProvider } from "@/features/theme/utils/contexts/ThemeContext";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
-import { Suspense } from "react";
 import { getSession } from "@/features/auth/utils/apiCalls";
 import ClientWrapper from "@/utils/ClientWrapper";
-import { getRandomNumber } from "@/utils/helpers";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,45 +46,39 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const userPromise = getSession();
   return (
-    <Suspense fallback={"such static wow!"}>
-      <BodyWrapper>
-        {children}
-        <Toaster />
-      </BodyWrapper>
-    </Suspense>
-  );
-}
-
-async function BodyWrapper({ children }: { children: React.ReactNode }) {
-  // This Wrapper is here because not using suspense boundary raises error...
-  const [cookieStore, user] = await Promise.all([cookies(), getSession()]);
-  const theme = cookieStore.get("theme")?.value;
-  return (
-    <html lang="en">
-      <Body theme={theme}>
-        <ClientWrapper user={user}>
-          <Header /> {children} <Toaster />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+          try
+          { var m=document.cookie.match(/(?:^|; )theme=([^;]*)/);
+            if(m&&decodeURIComponent(m[1])==="dark"){
+            // Use cookie theme
+             document.documentElement.classList.add(decodeURIComponent(m[1]));
+            }
+            else if(!m){
+            // Auto-detect dark system preference on first load
+             const prefersDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+             document.documentElement.classList.add("dark")
+             document.cookie = "theme=${encodeURIComponent("dark")}; path=/; max-age=${365 * 24 * 60 * 60}"
+            }
+          }
+          catch(e){console.error(e)}})()`,
+          }}
+        />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between`}
+      >
+        <ClientWrapper userPromise={userPromise}>
+          <Header />
+          {children}
+          <Toaster />
         </ClientWrapper>
-      </Body>
+      </body>
     </html>
   );
 }
-const Body = async ({
-  theme,
-  children,
-}: {
-  theme?: string;
-  children: React.ReactNode;
-}) => {
-  "use cache";
-  console.log("Body Rendered");
-  return (
-    <body
-      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between ${theme === "dark" ? "dark" : ""}`}
-    >
-      <div>{getRandomNumber()}</div>
-      <ThemeProvider initialTheme={theme}>{children}</ThemeProvider>
-    </body>
-  );
-};

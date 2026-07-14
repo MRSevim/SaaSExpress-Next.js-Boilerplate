@@ -5,14 +5,15 @@ import { returnErrorFromUnknown } from "@/utils/helpers";
 import { z } from "zod";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
+import { cache } from "react";
 
-export const getSession = async () => {
+export const getSession = cache(async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   return session?.user;
-};
+});
 
 const signInSchema = z.object({
   email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
