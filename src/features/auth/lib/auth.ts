@@ -7,51 +7,61 @@ import { nextCookies } from "better-auth/next-js";
 
 const APP_NAME = env.APP_NAME;
 
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
-      void sendEmail({
-        to: user.email,
-        subject: `Reset your password on ${APP_NAME}`,
-        text: `Click the link to reset your password: ${url}`,
-      });
-    },
-  },
-  user: {
-    deleteUser: {
+const globalForAuth = global as unknown as {
+  auth?: ReturnType<typeof betterAuth>;
+};
+
+export const auth =
+  globalForAuth.auth ||
+  betterAuth({
+    database: prismaAdapter(prisma, {
+      provider: "postgresql",
+    }),
+    emailAndPassword: {
       enabled: true,
-      sendDeleteAccountVerification: async ({ user, url }) => {
+      requireEmailVerification: true,
+      sendResetPassword: async ({ user, url }) => {
         void sendEmail({
           to: user.email,
-          subject: `Verify your account deletion on  ${APP_NAME}`,
-          text: `Click the link to delete your account: ${url}`,
+          subject: `Reset your password on ${APP_NAME}`,
+          text: `Click the link to reset your password: ${url}`,
         });
       },
     },
-  },
-  socialProviders: {
-    google: {
-      clientId: env.GOOGLE_CLIENT_ID as string,
-      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+    user: {
+      deleteUser: {
+        enabled: true,
+        sendDeleteAccountVerification: async ({ user, url }) => {
+          void sendEmail({
+            to: user.email,
+            subject: `Verify your account deletion on  ${APP_NAME}`,
+            text: `Click the link to delete your account: ${url}`,
+          });
+        },
+      },
     },
-  },
-  emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      void sendEmail({
-        to: user.email,
-        subject: `Verify your email address on ${APP_NAME}`,
-        text: `Click the link to verify your email: ${url}`,
-      });
+    socialProviders: {
+      google: {
+        clientId: env.GOOGLE_CLIENT_ID as string,
+        clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+      },
     },
-  },
-  plugins: [nextCookies()],
-});
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: async ({ user, url }) => {
+        void sendEmail({
+          to: user.email,
+          subject: `Verify your email address on ${APP_NAME}`,
+          text: `Click the link to verify your email: ${url}`,
+        });
+      },
+    },
+    plugins: [nextCookies()],
+  });
+
+if (env.NODE_ENV !== "production") {
+  globalForAuth.auth = auth;
+}
 
 export type User = typeof auth.$Infer.Session.user;
