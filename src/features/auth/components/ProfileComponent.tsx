@@ -1,6 +1,4 @@
 "use client";
-import { useAppSelector } from "@/lib/redux/hooks";
-import { selectUser } from "../lib/redux/selectors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,12 +7,14 @@ import {
   requestPasswordReset,
 } from "../utils/apiCalls";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
+import { useUserPromiseContext } from "@/utils/contexts/UserPromiseContext";
 
 const ProfilePage = () => {
-  const user = useAppSelector(selectUser);
+  const userPromise = useUserPromiseContext();
+  const user = use(userPromise);
   const [checkProviderLoading, setCheckProviderLoading] = useState(true);
   const [isCredentialsProvider, setIsCredentialsProvider] = useState(false);
   const [checkError, setCheckError] = useState("");

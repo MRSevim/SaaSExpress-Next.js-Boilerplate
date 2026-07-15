@@ -6,6 +6,7 @@ import { z } from "zod";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import { cache } from "react";
+import { redirect } from "next/navigation";
 
 export const getSession = cache(async () => {
   const session = await auth.api.getSession({
@@ -42,12 +43,11 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
         password,
       },
     });
-
-    return { user: body.user, error: "" };
   } catch (error) {
     console.error("Sign-in with Email and Password error:", error);
-    return { ...returnErrorFromUnknown(error), user: undefined };
+    return { ...returnErrorFromUnknown(error) };
   }
+  redirect(routes.home);
 };
 
 export type SignUpState = {
@@ -137,12 +137,11 @@ export const signOut = async () => {
     await auth.api.signOut({
       headers: await headers(),
     });
-
-    return { error: "" };
   } catch (error) {
     console.error("Logout error:", error);
     return returnErrorFromUnknown(error);
   }
+  redirect(routes.signIn);
 };
 
 const requestPasswordResetSchema = z.object({

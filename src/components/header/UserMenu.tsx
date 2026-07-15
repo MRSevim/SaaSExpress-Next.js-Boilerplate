@@ -19,15 +19,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { signOut } from "@/features/auth/utils/apiCalls";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { selectUser } from "@/features/auth/lib/redux/selectors";
-import { setUser } from "@/features/auth/lib/redux/slices/userSlice";
+import { useUserPromiseContext } from "@/utils/contexts/UserPromiseContext";
 
 const UserMenu = () => {
-  const user = useAppSelector(selectUser);
+  const userPromise = useUserPromiseContext();
+  const user = use(userPromise);
 
   return (
     <>
@@ -90,8 +88,6 @@ const Dropdown = ({ user }: { user: User }) => {
 };
 
 const LogoutButton = () => {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   return (
     <DropdownMenuItem
       className="text-red-800 dark:text-red-400"
@@ -99,9 +95,6 @@ const LogoutButton = () => {
         const { error } = await signOut();
         if (error) {
           toast.error(error);
-        } else {
-          dispatch(setUser(undefined));
-          router.push(routes.signIn);
         }
       }}
     >

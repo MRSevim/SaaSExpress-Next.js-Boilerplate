@@ -17,8 +17,6 @@ import { useActionState } from "react";
 import { signInWithEmailAndPassword } from "../utils/apiCalls";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { setUser } from "../lib/redux/slices/userSlice";
 import { useRouter } from "next/navigation";
 
 export type SignInState = {
@@ -29,24 +27,9 @@ export type SignInState = {
 } | null;
 
 const SignInComponent = () => {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {
-      const { error, user } = await signInWithEmailAndPassword(formData);
-      if (!error && user) {
-        dispatch(
-          setUser({
-            id: user.id,
-            email: user.email,
-            emailVerified: user.emailVerified,
-            name: user.name,
-            image: user.image,
-          }),
-        );
-        router.push(routes.home);
-      }
+      const { error } = await signInWithEmailAndPassword(formData);
 
       return {
         error,

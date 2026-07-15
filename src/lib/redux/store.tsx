@@ -1,11 +1,8 @@
-import userSlice from "@/features/auth/lib/redux/slices/userSlice";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {
-      user: userSlice,
-    },
+    reducer: {},
   });
 };
 

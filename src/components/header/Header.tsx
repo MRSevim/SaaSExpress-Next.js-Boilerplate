@@ -33,12 +33,12 @@ const Header = async () => {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <div className="flex items-center gap-2">
-              <Suspense
-                fallback={<Skeleton className="h-9 w-9 rounded-md md:w-20" />}
-              >
+              <Suspense fallback={<SmallSkeleton />}>
                 <ThemeWrapper />
               </Suspense>
-              <UserMenu />
+              <Suspense fallback={<SmallSkeleton />}>
+                <UserMenu />
+              </Suspense>
             </div>
           </NavigationMenuList>
         </NavigationMenu>
@@ -52,5 +52,7 @@ const ThemeWrapper = async () => {
   const initialTheme = cookieStore.get("theme")?.value;
   return <ThemeToggle initialTheme={initialTheme} />;
 };
+
+const SmallSkeleton = () => <Skeleton className="h-9 w-9 rounded-md md:w-20" />;
 
 export default Header;

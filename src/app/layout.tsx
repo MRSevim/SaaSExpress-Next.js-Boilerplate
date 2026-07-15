@@ -5,8 +5,7 @@ import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import { getSession } from "@/features/auth/utils/apiCalls";
-import ClientWrapper from "@/utils/ClientWrapper";
-import { Suspense } from "react";
+import { UserPromiseProvider } from "@/utils/contexts/UserPromiseContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,11 +72,11 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between`}
       >
-        <ClientWrapper userPromise={userPromise}>
+        <UserPromiseProvider userPromise={userPromise}>
           <Header />
           {children}
           <Toaster />
-        </ClientWrapper>
+        </UserPromiseProvider>
       </body>
     </html>
   );
