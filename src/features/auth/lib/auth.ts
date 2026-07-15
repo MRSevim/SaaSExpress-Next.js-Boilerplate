@@ -34,7 +34,7 @@ export const auth =
         sendDeleteAccountVerification: async ({ user, url }) => {
           void sendEmail({
             to: user.email,
-            subject: `Verify your account deletion on  ${APP_NAME}`,
+            subject: `Verify your account deletion on ${APP_NAME}`,
             text: `Click the link to delete your account: ${url}`,
           });
         },
