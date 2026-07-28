@@ -9,7 +9,7 @@ import {
 } from "../ui/navigation-menu";
 import Link from "next/link";
 import { routes } from "@/utils/routes";
-import UserMenu from "./UserMenu";
+import UserMenu, { HeaderButtonError } from "./UserMenu";
 import { env } from "@/utils/env";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
@@ -33,12 +33,23 @@ const Header = async () => {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <div className="flex items-center gap-2">
-              <Suspense fallback={<SmallSkeleton />}>
-                <ThemeWrapper />
-              </Suspense>
-              <Suspense fallback={<SmallSkeleton />}>
-                <UserMenu />
-              </Suspense>
+              <HeaderButtonError>
+                <Suspense fallback={<SmallSkeleton />}>
+                  <ThemeWrapper />
+                </Suspense>
+              </HeaderButtonError>
+              <HeaderButtonError>
+                <Suspense
+                  fallback={
+                    <div className="flex gap-2">
+                      <SmallSkeleton />
+                      <SmallSkeleton />
+                    </div>
+                  }
+                >
+                  <UserMenu />
+                </Suspense>
+              </HeaderButtonError>
             </div>
           </NavigationMenuList>
         </NavigationMenu>
@@ -49,10 +60,11 @@ const Header = async () => {
 
 const ThemeWrapper = async () => {
   const cookieStore = await cookies();
+
   const initialTheme = cookieStore.get("theme")?.value;
   return <ThemeToggle initialTheme={initialTheme} />;
 };
 
-const SmallSkeleton = () => <Skeleton className="h-9 w-9 rounded-md md:w-20" />;
+const SmallSkeleton = () => <Skeleton className="h-9 rounded-md w-20" />;
 
 export default Header;

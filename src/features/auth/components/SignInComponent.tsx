@@ -17,7 +17,6 @@ import { useActionState } from "react";
 import { signInWithEmailAndPassword } from "../utils/apiCalls";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
-import { useRouter } from "next/navigation";
 
 export type SignInState = {
   error?: string;

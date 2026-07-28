@@ -1,5 +1,4 @@
 import { authClient } from "../lib/authClient";
-import { returnErrorFromUnknown } from "@/utils/helpers";
 
 //this does not seem to work as a server action
 export const signInWithGoogle = async () => {
@@ -11,6 +10,9 @@ export const signInWithGoogle = async () => {
     return { error: "" };
   } catch (error) {
     console.error("Sign-in with Google error:", error);
-    return returnErrorFromUnknown(error);
+    if (error instanceof Error && error.message) {
+      return { error: error.message };
+    }
+    return { error: "Unknown error occurred!" };
   }
 };

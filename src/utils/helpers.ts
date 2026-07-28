@@ -1,13 +1,18 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { isAPIError } from "better-auth/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const returnErrorFromUnknown = (error: unknown) => {
-  if (error instanceof Error && error.message) return { error: error.message };
-  return { error: "Unknown error occurred!" };
+export const returnErrorFromUnknown = (
+  error: unknown,
+  fallback: string = "Unknown error occurred!",
+) => {
+  if (isAPIError(error)) return { error: error.message };
+
+  return { error: fallback };
 };
 
 export const setCookie = (name: string, value: string, days: number = 365) => {
@@ -21,6 +26,6 @@ export const getRandomNumber = async () => {
   return (Math.random() * 100).toFixed(2);
 };
 
-export function delay(ms: number) {
+export async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -37,7 +37,7 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
   }
 
   try {
-    const body = await auth.api.signInEmail({
+    await auth.api.signInEmail({
       body: {
         email,
         password,
@@ -138,7 +138,7 @@ export const signOut = async () => {
       headers: await headers(),
     });
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error("signOut error:", error);
     return returnErrorFromUnknown(error);
   }
   redirect(routes.signIn);

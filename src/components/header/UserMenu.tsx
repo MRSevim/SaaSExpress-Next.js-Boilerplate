@@ -22,6 +22,8 @@ import { signOut } from "@/features/auth/utils/apiCalls";
 import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
 import { useUserPromiseContext } from "@/utils/contexts/UserPromiseContext";
+import { IterationCw } from "lucide-react";
+import { unstable_catchError as catchError, type ErrorInfo } from "next/error";
 
 const UserMenu = () => {
   const userPromise = useUserPromiseContext();
@@ -30,7 +32,10 @@ const UserMenu = () => {
   return (
     <>
       {user ? (
-        <Dropdown user={user} />
+        <div className="flex gap-2">
+          <div className="rounded-md w-20" />
+          <Dropdown user={user} />
+        </div>
       ) : (
         <>
           <NavigationMenuItem>
@@ -60,7 +65,7 @@ const Dropdown = ({ user }: { user: User }) => {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="rounded-md w-20">
           <Avatar>
             <AvatarImage
               src={user.image || undefined}
@@ -103,5 +108,16 @@ const LogoutButton = () => {
     </DropdownMenuItem>
   );
 };
+
+export const HeaderButtonError = catchError(
+  (_props, { unstable_retry }: ErrorInfo) => {
+    return (
+      <Button variant="destructive" onClick={() => unstable_retry()}>
+        <IterationCw />
+        Try again
+      </Button>
+    );
+  },
+);
 
 export default UserMenu;
