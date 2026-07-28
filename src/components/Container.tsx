@@ -14,7 +14,7 @@ const Container = ({
       <main
         className={cn(
           "mx-auto px-4 max-w-7xl flex-1 w-full my-20 flex justify-center items-start",
-          className ? className : "",
+          className,
         )}
       >
         {children}
@@ -22,7 +22,7 @@ const Container = ({
     );
   } else {
     return (
-      <div className={cn("mx-auto px-4 max-w-7xl", className ? className : "")}>
+      <div className={cn("mx-auto px-4 max-w-7xl", className)}>
         {children}
       </div>
     );

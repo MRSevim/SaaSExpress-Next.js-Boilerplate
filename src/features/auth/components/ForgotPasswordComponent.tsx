@@ -15,6 +15,9 @@ import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import Success from "@/components/Success";
 
+export const resetText =
+  "Password reset email has been sent to your email address";
+
 const ForgotPasswordComponent = () => {
   const [state, action, isPending] = useActionState(
     async (
@@ -26,9 +29,7 @@ const ForgotPasswordComponent = () => {
       );
       return {
         error,
-        successMessage: !error
-          ? "Password reset email has been sent to your email adress"
-          : "",
+        successMessage: !error ? resetText : "",
       };
     },
     { error: "", successMessage: "" },

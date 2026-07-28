@@ -18,6 +18,7 @@ export const getSession = cache(async () => {
 
 const signInSchema = z.object({
   email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 export const signInWithEmailAndPassword = async (formData: FormData) => {
@@ -26,13 +27,17 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
 
   const parsed = signInSchema.safeParse({
     email,
+    password,
   });
 
   if (!parsed.success) {
     const errorMessages = z.flattenError(parsed.error).fieldErrors;
 
     return {
-      error: errorMessages.email?.[0] || "Email parsing error",
+      error:
+        errorMessages.email?.[0] ||
+        errorMessages.password?.[0] ||
+        "Parsing error",
     };
   }
 
@@ -123,7 +128,7 @@ export const signUp = async (_prevState: SignUpState, formData: FormData) => {
     });
     return {
       error: "",
-      successMessage: "A verification email has been send to you account",
+      successMessage: "A verification email has been sent to your adress",
       defaultValues,
     };
   } catch (error) {

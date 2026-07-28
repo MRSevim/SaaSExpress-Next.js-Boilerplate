@@ -48,7 +48,7 @@ const ProfilePage = () => {
             toast.error(error);
           } else
             toast.success(
-              "Account Deletion email has been sent to your email adress",
+              "Account deletion email has been sent to your email address",
             );
         }}
       >
@@ -65,7 +65,7 @@ const ProfilePage = () => {
               toast.error(error);
             } else
               toast.success(
-                "Password reset email has been sent to your email adress",
+                "Password reset email has been sent to your email address",
               );
           }}
         >

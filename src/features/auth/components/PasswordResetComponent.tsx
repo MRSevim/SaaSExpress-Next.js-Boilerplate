@@ -58,7 +58,7 @@ const PasswordResetComponent = () => {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">Confirm New Password</FieldLabel>
+                <FieldLabel htmlFor="confirm-password">Confirm New Password</FieldLabel>
                 <Input
                   id="confirm-password"
                   name="confirm-password"

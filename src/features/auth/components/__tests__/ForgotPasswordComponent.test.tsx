@@ -2,7 +2,7 @@ import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";
-import ForgotPasswordComponent from "../ForgotPasswordComponent";
+import ForgotPasswordComponent, { resetText } from "../ForgotPasswordComponent";
 
 jest.mock("@/features/auth/lib/auth", () => ({
   auth: {
@@ -56,11 +56,7 @@ describe("ForgotPassword Component", () => {
     expect(resetSignInButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(
-        screen.getByText(
-          "Password reset email has been sent to your email adress",
-        ),
-      ).toBeInTheDocument();
+      expect(screen.getByText(resetText)).toBeInTheDocument();
     });
   });
 

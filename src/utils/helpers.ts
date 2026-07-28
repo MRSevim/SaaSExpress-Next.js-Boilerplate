@@ -22,7 +22,7 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
   )};path=/;max-age=${maxAge}`;
 };
 
-export const getRandomNumber = async () => {
+export const getRandomNumber = () => {
   return (Math.random() * 100).toFixed(2);
 };
 
