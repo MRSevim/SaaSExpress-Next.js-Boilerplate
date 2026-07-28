@@ -10,8 +10,6 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
 
-const redirectMock = redirect as unknown as jest.Mock;
-
 jest.mock("@/features/auth/lib/auth", () => ({
   auth: {
     api: {
@@ -93,7 +91,7 @@ describe("Sign In Component", () => {
     expect(resetSignInButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(redirectMock).toHaveBeenCalledWith(routes.home);
+      expect(redirect).toHaveBeenCalledWith(routes.home);
     });
   });
 
@@ -125,6 +123,6 @@ describe("Sign In Component", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    expect(redirectMock).not.toHaveBeenCalled();
+    expect(redirect).not.toHaveBeenCalled();
   });
 });
