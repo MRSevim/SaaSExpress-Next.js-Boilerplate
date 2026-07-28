@@ -28,10 +28,10 @@ export type SignInState = {
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {
-      const { error } = await signInWithEmailAndPassword(formData);
+      const result = await signInWithEmailAndPassword(formData);
 
       return {
-        error,
+        error: result?.error,
         defaultValues: { email: formData.get("email") as string },
       };
     },

@@ -1,3 +1,4 @@
+import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";

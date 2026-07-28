@@ -1,18 +1,17 @@
+import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import SignInComponent from "../SignInComponent";
 import { renderWithProviders } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";
 import { routes } from "@/utils/routes";
-
-const pushMock = jest.fn();
+import { redirect } from "next/navigation";
 
 jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(() => ({
-    push: pushMock,
-  })),
+  redirect: jest.fn(),
 }));
 
-// signInEmail has to be mocked like so to avoid error
+const redirectMock = redirect as unknown as jest.Mock;
+
 jest.mock("@/features/auth/lib/auth", () => ({
   auth: {
     api: {
@@ -41,7 +40,7 @@ describe("Sign In Component", () => {
       },
     });
 
-    const { store, user } = renderWithProviders(<SignInComponent />);
+    const { user } = renderWithProviders(<SignInComponent />);
 
     const invalidEmail = "myemail@g";
     const email = "myemail@gmail.com";
@@ -93,10 +92,8 @@ describe("Sign In Component", () => {
 
     expect(resetSignInButton).toBeEnabled();
 
-    expect(store.getState().user.value).toEqual(mockUserReturned(email).user);
-
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith(routes.home);
+      expect(redirectMock).toHaveBeenCalledWith(routes.home);
     });
   });
 
@@ -108,7 +105,7 @@ describe("Sign In Component", () => {
       },
     );
 
-    const { store, user } = renderWithProviders(<SignInComponent />);
+    const { user } = renderWithProviders(<SignInComponent />);
 
     const email = "wrongemail@gmail.com";
     const emailInput = screen.getByLabelText(/email/i);
@@ -128,7 +125,6 @@ describe("Sign In Component", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    expect(pushMock).not.toHaveBeenCalled();
-    expect(store.getState().user.value).toEqual(undefined);
+    expect(redirectMock).not.toHaveBeenCalled();
   });
 });
