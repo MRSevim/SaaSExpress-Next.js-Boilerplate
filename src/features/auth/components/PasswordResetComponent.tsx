@@ -23,6 +23,8 @@ import Error from "@/components/Error";
 import { useSearchParams } from "next/navigation";
 import Success from "@/components/Success";
 
+export const invalidText = "Please use a valid link to reset your password";
+
 const PasswordResetComponent = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -31,7 +33,7 @@ const PasswordResetComponent = () => {
     async (_prevState: ResetPasswordState, formData: FormData) => {
       if (!token)
         return {
-          error: "Please use a valid link to reset your password",
+          error: invalidText,
         } as ResetPasswordState;
       return await resetPassword(formData, token);
     },
@@ -58,7 +60,9 @@ const PasswordResetComponent = () => {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirm-password">Confirm New Password</FieldLabel>
+                <FieldLabel htmlFor="confirm-password">
+                  Confirm New Password
+                </FieldLabel>
                 <Input
                   id="confirm-password"
                   name="confirm-password"

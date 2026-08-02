@@ -25,7 +25,3 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
 export const getRandomNumber = () => {
   return (Math.random() * 100).toFixed(2);
 };
-
-export async function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
