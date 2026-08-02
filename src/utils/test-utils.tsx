@@ -18,7 +18,7 @@ export function renderWithProviders(
 
   const Wrapper = ({ children }: PropsWithChildren) => <>{children}</>;
 
-  // Return an object with the store, user, and all of RTL's query functions
+  // Return an object with the user, and all of RTL's query functions
   return {
     user: userEvent.setup(),
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
