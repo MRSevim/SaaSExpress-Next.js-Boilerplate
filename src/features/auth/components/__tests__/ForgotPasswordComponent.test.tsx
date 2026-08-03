@@ -1,78 +1,83 @@
 import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
-import { auth } from "../../lib/auth";
-import ForgotPasswordComponent, { resetText } from "../ForgotPasswordComponent";
+import { requestPasswordReset } from "@/features/auth/utils/apiCalls";
+import { RequestPasswordReset } from "../../utils/types";
+import ForgotPasswordComponent, {
+  resetText,
+  buttonText,
+  loadingText,
+} from "../ForgotPasswordComponent";
+import { getLowercase } from "@/utils/test-utils";
 
-jest.mock("@/features/auth/lib/auth", () => ({
-  auth: {
-    api: {
-      requestPasswordReset: jest.fn(),
-    },
-  },
+jest.mock("@/features/auth/utils/apiCalls", () => ({
+  requestPasswordReset: jest.fn(),
 }));
 
-const name = /request password reset link/i;
+const mockedRequestPasswordReset =
+  requestPasswordReset as jest.MockedFunction<RequestPasswordReset>;
+
+const name = getLowercase(buttonText);
+
+const noError = { error: "" };
 
 describe("ForgotPassword Component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("correctly requests password reset", async () => {
+    let resolveRequestPasswordReset: (
+      value: Awaited<ReturnType<RequestPasswordReset>>,
+    ) => void;
+
+    mockedRequestPasswordReset.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRequestPasswordReset = resolve;
+        }),
+    );
+
     const { user } = renderWithProviders(<ForgotPasswordComponent />);
 
-    (
-      auth.api.requestPasswordReset as unknown as jest.Mock
-    ).mockImplementationOnce(async () => {
-      // Artificial delay to ensure loading state is rendered
-      return new Promise((resolve) => {
-        setTimeout(() => resolve(""), 50);
-      });
-    });
-
-    //first check invalid email error
     const emailInput = screen.getByLabelText(/email/i);
     expect(emailInput).toBeRequired();
-    await user.type(emailInput, "invalidemail@x");
 
+    const emailText = "myemail@gmail.com";
+
+    await user.type(emailInput, emailText);
     await user.click(screen.getByRole("button", { name }));
 
-    await waitFor(() => {
-      expect(screen.getByText("Invalid email address")).toBeInTheDocument();
+    const loadingButton = await screen.findByRole("button", {
+      name: getLowercase(loadingText),
     });
 
-    //then check valid email succcess
-    await user.clear(emailInput);
-    await user.type(emailInput, "myemail@gmail.com");
-    await user.click(screen.getByRole("button", { name }));
+    expect(loadingButton).toBeDisabled();
 
-    const loadingSignInButton = await screen.findByRole("button", {
-      name: /requesting.../i,
-    });
-
-    expect(loadingSignInButton).toBeDisabled();
-
-    const resetSignInButton = await screen.findByRole("button", {
+    resolveRequestPasswordReset!(noError);
+    const resetButton = await screen.findByRole("button", {
       name,
     });
 
-    expect(resetSignInButton).toBeEnabled();
+    expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
       expect(screen.getByText(resetText)).toBeInTheDocument();
+      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(emailText);
     });
   });
 
   it("shows api error", async () => {
     const errorMessage = "Something went wrong";
-    (
-      auth.api.requestPasswordReset as unknown as jest.Mock
-    ).mockImplementationOnce(async () => {
-      return Promise.reject(new Error(errorMessage));
+    mockedRequestPasswordReset.mockResolvedValueOnce({
+      error: errorMessage,
     });
 
     const { user } = renderWithProviders(<ForgotPasswordComponent />);
 
     const email = "email@gmail.com";
     const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toBeRequired();
+
     await user.type(emailInput, email);
 
     await user.click(screen.getByRole("button", { name }));

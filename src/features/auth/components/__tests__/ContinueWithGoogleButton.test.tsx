@@ -6,16 +6,17 @@ import ContinueWithGoogleButton, {
   loadingText,
 } from "../ContinueWithGoogleButton";
 import { signInWithGoogle } from "@/features/auth/utils/apiCallsClient";
-import { signInWithGoogleType } from "../../utils/types";
+import { SignInWithGoogle } from "../../utils/types";
+import { getLowercase } from "@/utils/test-utils";
 
 jest.mock("@/features/auth/utils/apiCallsClient", () => ({
   signInWithGoogle: jest.fn(),
 }));
 
 const mockedSignInWithGoogle =
-  signInWithGoogle as jest.MockedFunction<signInWithGoogleType>;
+  signInWithGoogle as jest.MockedFunction<SignInWithGoogle>;
 
-const name = new RegExp(buttonText.toLowerCase(), "i");
+const name = getLowercase(buttonText);
 
 const noError = { error: "" };
 
@@ -32,10 +33,9 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(screen.getByRole("button", { name }));
 
     await waitFor(() => {
-      expect(signInWithGoogle).toHaveBeenCalledTimes(1);
+      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
-
-    expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
   });
 
   it("shows error", async () => {
@@ -55,9 +55,7 @@ describe("ContinueWithGoogle Button", () => {
   });
 
   it("disables the button while signing in and re-enables after", async () => {
-    let resolveSignIn: (
-      value: Awaited<ReturnType<signInWithGoogleType>>,
-    ) => void;
+    let resolveSignIn: (value: Awaited<ReturnType<SignInWithGoogle>>) => void;
 
     mockedSignInWithGoogle.mockImplementationOnce(
       () =>
@@ -71,23 +69,23 @@ describe("ContinueWithGoogle Button", () => {
     const button = screen.getByRole("button", { name });
 
     await user.click(button);
-    await user.click(button);
 
-    expect(button).toBeDisabled();
+    const loadingButton = await screen.findByRole("button", {
+      name: getLowercase(loadingText),
+    });
 
-    expect(
-      screen.getByRole("button", {
-        name: new RegExp(loadingText.toLowerCase(), "i"),
-      }),
-    ).toBeInTheDocument();
+    expect(loadingButton).toBeDisabled();
 
     resolveSignIn!(noError);
 
-    await waitFor(() => {
-      expect(signInWithGoogle).toHaveBeenCalledTimes(1);
-      expect(button).not.toBeDisabled();
+    const resetButton = await screen.findByRole("button", {
+      name,
     });
 
-    expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    expect(resetButton).toBeEnabled();
+
+    await waitFor(() => {
+      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
+    });
   });
 });

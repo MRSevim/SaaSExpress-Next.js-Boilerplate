@@ -24,3 +24,5 @@ export function renderWithProviders(
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
   };
 }
+
+export const getLowercase = (str: string) => new RegExp(str.toLowerCase(), "i");

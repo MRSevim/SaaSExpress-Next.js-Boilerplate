@@ -6,4 +6,5 @@ export type User = {
   image?: string | null | undefined;
 };
 
-export type signInWithGoogleType = () => Promise<{ error: string }>;
+export type SignInWithGoogle = () => Promise<{ error: string }>;
+export type RequestPasswordReset = () => Promise<{ error: string }>;
