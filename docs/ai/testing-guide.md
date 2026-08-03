@@ -229,7 +229,7 @@ and import from there in both the action and the test:
 ```ts
 // utils/constants.ts
 export const signUpSuccessMessage =
-  "A verification email has been sent to your adress";
+  "A verification email has been sent to your address";
 ```
 
 ```tsx

@@ -1,5 +1,5 @@
 export const signUpSuccessMessage =
-  "A verification email has been sent to your adress";
+  "A verification email has been sent to your address";
 
 export const resetPasswordSuccessMessage =
-  "Your password have been successfully reset";
+  "Your password has been successfully reset";
