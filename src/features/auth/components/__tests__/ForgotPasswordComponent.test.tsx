@@ -19,7 +19,7 @@ const mockedRequestPasswordReset =
 
 const name = getLowercase(buttonText);
 
-const noErrorWith = (email: string) => ({ error: "", email });
+const noError = { error: "", email: "" };
 
 describe("ForgotPassword Component", () => {
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe("ForgotPassword Component", () => {
 
     expect(loadingButton).toBeDisabled();
 
-    resolveRequestPasswordReset!(noErrorWith(emailText));
+    resolveRequestPasswordReset!(noError);
     const resetButton = await screen.findByRole("button", {
       name,
     });
