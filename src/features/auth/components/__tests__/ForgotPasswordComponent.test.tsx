@@ -23,7 +23,7 @@ const noError = { error: "", email: "" };
 
 describe("ForgotPassword Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("correctly requests password reset", async () => {

@@ -32,7 +32,7 @@ const noError = { error: "" };
 
 describe("Sign In Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("logs in user correctly", async () => {

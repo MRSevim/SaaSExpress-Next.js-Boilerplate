@@ -22,7 +22,7 @@ const noError = { error: "" };
 
 describe("ContinueWithGoogle Button", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("logs in user correctly", async () => {

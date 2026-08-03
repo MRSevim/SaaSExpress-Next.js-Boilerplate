@@ -37,7 +37,7 @@ const noError: SignUpState = {
 
 describe("Sign Up Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("signs up user correctly", async () => {

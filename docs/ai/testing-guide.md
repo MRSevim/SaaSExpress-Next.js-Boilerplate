@@ -20,7 +20,7 @@ component's behavior changes (e.g., if a future version calls the mocked functio
 
 ```tsx
 beforeEach(() => {
-  jest.clearAllMocks();
+  jest.resetAllMocks();
 });
 ```
 
@@ -327,7 +327,7 @@ const noError = { error: "" };
 
 describe("SomeComponent", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("succeeds", async () => {

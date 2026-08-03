@@ -73,7 +73,7 @@ const renderProfile = () => renderWithProviders(<ProfileComponent />);
 
 describe("Profile Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
     mockedUseUserPromiseContext.mockReturnValue(fulfilledUser);
     mockedCheckCredentialsProvider.mockResolvedValue({
       isTrue: true,

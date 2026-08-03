@@ -39,7 +39,7 @@ const noError: ResetPasswordState = {
 
 describe("Password Reset Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
     mockedUseSearchParams.mockReturnValue({
       get: mockGet,
     } as unknown as ReturnType<typeof useSearchParams>);
