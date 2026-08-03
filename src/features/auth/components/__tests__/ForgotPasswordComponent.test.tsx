@@ -87,6 +87,7 @@ describe("ForgotPassword Component", () => {
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toHaveValue(email);
+      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(email);
     });
   });
 });

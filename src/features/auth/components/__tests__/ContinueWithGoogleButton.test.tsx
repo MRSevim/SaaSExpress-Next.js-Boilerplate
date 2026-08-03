@@ -51,6 +51,7 @@ describe("ContinueWithGoogle Button", () => {
 
     await waitFor(() => {
       expect(screen.getByText(error)).toBeInTheDocument();
+      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
     });
   });
 

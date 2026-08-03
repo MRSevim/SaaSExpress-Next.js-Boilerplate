@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { signOut } from "@/features/auth/utils/apiCalls";
 import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
-import { useUserPromiseContext } from "@/utils/contexts/UserPromiseContext";
+import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import { IterationCw } from "lucide-react";
 import { unstable_catchError as catchError, type ErrorInfo } from "next/error";
 

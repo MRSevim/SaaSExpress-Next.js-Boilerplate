@@ -17,13 +17,18 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { useActionState } from "react";
-import { resetPassword, ResetPasswordState } from "../utils/apiCalls";
+import { resetPassword } from "../utils/apiCalls";
+import { ResetPasswordState } from "../utils/types";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import { useSearchParams } from "next/navigation";
 import Success from "@/components/Success";
 
 export const invalidText = "Please use a valid link to reset your password";
+
+export const buttonText = "Reset Password";
+
+export const loadingText = "Resetting...";
 
 const PasswordResetComponent = () => {
   const searchParams = useSearchParams();
@@ -79,10 +84,10 @@ const PasswordResetComponent = () => {
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
-                Resetting...
+                {loadingText}
               </>
             ) : (
-              <>Reset</>
+              <>{buttonText}</>
             )}
           </Button>
           {state?.successMessage && <Success text={state.successMessage} />}

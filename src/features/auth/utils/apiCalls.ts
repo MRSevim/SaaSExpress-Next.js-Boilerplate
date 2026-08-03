@@ -7,7 +7,16 @@ import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { RequestPasswordReset } from "./types";
+import {
+  RequestPasswordReset,
+  ResetPassword,
+  SignInWithEmailAndPassword,
+  SignUpState,
+  SignUp,
+  SignOut,
+  CheckCredentialsProvider,
+  DeleteUser,
+} from "./types";
 
 export const getSession = cache(async () => {
   const session = await auth.api.getSession({
@@ -22,7 +31,9 @@ const signInSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export const signInWithEmailAndPassword = async (formData: FormData) => {
+export const signInWithEmailAndPassword: SignInWithEmailAndPassword = async (
+  formData: FormData,
+) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -56,21 +67,6 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
   redirect(routes.home);
 };
 
-export type SignUpState = {
-  error?: string;
-  errors?: {
-    name?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-  };
-  successMessage?: string;
-  defaultValues: {
-    name: string;
-    email: string;
-  };
-} | null;
-
 const signUpSchema = z
   .object({
     name: z
@@ -90,7 +86,10 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export const signUp = async (_prevState: SignUpState, formData: FormData) => {
+export const signUp: SignUp = async (
+  _prevState: SignUpState,
+  formData: FormData,
+) => {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -138,7 +137,7 @@ export const signUp = async (_prevState: SignUpState, formData: FormData) => {
   }
 };
 
-export const signOut = async () => {
+export const signOut: SignOut = async () => {
   try {
     await auth.api.signOut({
       headers: await headers(),
@@ -197,16 +196,10 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export type ResetPasswordState = {
-  error?: string;
-  errors?: {
-    password?: string;
-    confirmPassword?: string;
-  };
-  successMessage?: string;
-} | null;
-
-export const resetPassword = async (formData: FormData, token: string) => {
+export const resetPassword: ResetPassword = async (
+  formData: FormData,
+  token: string,
+) => {
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirm-password") as string;
 
@@ -239,7 +232,7 @@ export const resetPassword = async (formData: FormData, token: string) => {
   }
 };
 
-export const checkCredentialsProvider = async () => {
+export const checkCredentialsProvider: CheckCredentialsProvider = async () => {
   try {
     const accounts = await auth.api.listUserAccounts({
       headers: await headers(),
@@ -254,7 +247,7 @@ export const checkCredentialsProvider = async () => {
   }
 };
 
-export const deleteUser = async () => {
+export const deleteUser: DeleteUser = async () => {
   try {
     await auth.api.deleteUser({
       headers: await headers(),

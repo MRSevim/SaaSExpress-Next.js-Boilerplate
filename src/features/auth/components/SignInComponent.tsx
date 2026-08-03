@@ -25,6 +25,10 @@ type SignInState = {
   };
 } | null;
 
+export const signInButtonText = "Sign in";
+
+export const signInLoadingButtonText = "Signing in...";
+
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {
@@ -90,10 +94,10 @@ const SignInComponent = () => {
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
-                Signing in...
+                {signInLoadingButtonText}
               </>
             ) : (
-              <>Sign in</>
+              <>{signInButtonText}</>
             )}
           </Button>
           {state?.error && <Error text={state?.error} />}

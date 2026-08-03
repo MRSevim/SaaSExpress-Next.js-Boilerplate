@@ -21,10 +21,15 @@ import { routes } from "@/utils/routes";
 import Link from "next/link";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import { useActionState } from "react";
-import { signUp, SignUpState } from "../utils/apiCalls";
+import { signUp } from "../utils/apiCalls";
 import Success from "@/components/Success";
 import Error from "@/components/Error";
 import { Spinner } from "@/components/ui/spinner";
+import { SignUpState } from "../utils/types";
+
+export const signUpButtonText = "Sign up";
+
+export const signUpLoadingButtonText = "Signing up...";
 
 const SignUpComponent = () => {
   const [state, action, isPending] = useActionState(
@@ -110,10 +115,10 @@ const SignUpComponent = () => {
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
-                Signing up...
+                {signUpLoadingButtonText}
               </>
             ) : (
-              <>Sign up</>
+              <>{signUpButtonText}</>
             )}
           </Button>
           {state?.successMessage && <Success text={state.successMessage} />}

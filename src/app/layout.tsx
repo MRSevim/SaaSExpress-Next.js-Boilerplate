@@ -5,7 +5,7 @@ import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import { getSession } from "@/features/auth/utils/apiCalls";
-import { UserPromiseProvider } from "@/utils/contexts/UserPromiseContext";
+import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

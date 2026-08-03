@@ -8,7 +8,7 @@ import {
   requestPasswordReset,
 } from "../../utils/apiCalls";
 import { toast } from "sonner";
-import { useUserPromiseContext } from "@/utils/contexts/UserPromiseContext";
+import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import type { User } from "../../utils/types";
 
 jest.mock("@/features/auth/utils/apiCalls", () => ({
@@ -43,8 +43,7 @@ const fulfilledUser = {
   then: () => {},
 };
 
-const renderProfile = () =>
-  renderWithProviders(<ProfileComponent />);
+const renderProfile = () => renderWithProviders(<ProfileComponent />);
 
 describe("Profile Component", () => {
   beforeEach(() => {
