@@ -28,15 +28,16 @@ const ForgotPasswordComponent = () => {
       _prevState: { error: string; successMessage: string },
       formData: FormData,
     ) => {
-      const { error } = await requestPasswordReset(
+      const { error, email } = await requestPasswordReset(
         formData.get("email") as string,
       );
       return {
+        email,
         error,
         successMessage: !error ? resetText : "",
       };
     },
-    { error: "", successMessage: "" },
+    { error: "", successMessage: "", email: "" },
   );
 
   return (
@@ -51,6 +52,7 @@ const ForgotPasswordComponent = () => {
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  defaultValue={state?.email}
                   id="email"
                   name="email"
                   type="email"

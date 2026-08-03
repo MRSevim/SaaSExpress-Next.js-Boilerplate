@@ -7,4 +7,6 @@ export type User = {
 };
 
 export type SignInWithGoogle = () => Promise<{ error: string }>;
-export type RequestPasswordReset = () => Promise<{ error: string }>;
+export type RequestPasswordReset = (
+  email: string,
+) => Promise<{ error: string; email: string }>;

@@ -7,6 +7,7 @@ import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { RequestPasswordReset } from "./types";
 
 export const getSession = cache(async () => {
   const session = await auth.api.getSession({
@@ -153,7 +154,9 @@ const requestPasswordResetSchema = z.object({
   email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
 });
 
-export const requestPasswordReset = async (email: string) => {
+export const requestPasswordReset: RequestPasswordReset = async (
+  email: string,
+) => {
   const parsed = requestPasswordResetSchema.safeParse({
     email,
   });
@@ -162,6 +165,7 @@ export const requestPasswordReset = async (email: string) => {
     const errorMessages = z.flattenError(parsed.error).fieldErrors;
 
     return {
+      email,
       error: errorMessages.email?.[0] || "Email parsing error",
     };
   }
@@ -173,10 +177,10 @@ export const requestPasswordReset = async (email: string) => {
       },
     });
 
-    return { error: "" };
+    return { error: "", email: "" };
   } catch (error) {
     console.error("Request Password Reset error:", error);
-    return returnErrorFromUnknown(error);
+    return { email, ...returnErrorFromUnknown(error) };
   }
 };
 
@@ -233,12 +237,6 @@ export const resetPassword = async (formData: FormData, token: string) => {
     console.error("Password Reset error:", error);
     return { ...returnErrorFromUnknown(error), successMessage: "" };
   }
-};
-
-export const protect = async () => {
-  const user = await getSession();
-  if (!user) throw Error("Please authenticate first!");
-  return user;
 };
 
 export const checkCredentialsProvider = async () => {

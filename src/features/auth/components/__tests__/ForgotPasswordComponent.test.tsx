@@ -19,7 +19,7 @@ const mockedRequestPasswordReset =
 
 const name = getLowercase(buttonText);
 
-const noError = { error: "" };
+const noErrorWith = (email: string) => ({ error: "", email });
 
 describe("ForgotPassword Component", () => {
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe("ForgotPassword Component", () => {
 
     expect(loadingButton).toBeDisabled();
 
-    resolveRequestPasswordReset!(noError);
+    resolveRequestPasswordReset!(noErrorWith(emailText));
     const resetButton = await screen.findByRole("button", {
       name,
     });
@@ -69,13 +69,15 @@ describe("ForgotPassword Component", () => {
 
   it("shows api error", async () => {
     const errorMessage = "Something went wrong";
+    const email = "email@gmail.com";
+
     mockedRequestPasswordReset.mockResolvedValueOnce({
       error: errorMessage,
+      email,
     });
 
     const { user } = renderWithProviders(<ForgotPasswordComponent />);
 
-    const email = "email@gmail.com";
     const emailInput = screen.getByLabelText(/email/i);
 
     await user.type(emailInput, email);
@@ -84,6 +86,7 @@ describe("ForgotPassword Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(screen.getByLabelText(/email/i)).toHaveValue(email);
     });
   });
 });

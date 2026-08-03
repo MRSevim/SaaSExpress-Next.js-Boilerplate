@@ -1,8 +1,8 @@
 import { authClient } from "../lib/authClient";
-import { signInWithGoogleType } from "./types";
+import { SignInWithGoogle } from "./types";
 
 //this does not seem to work as a server action
-export const signInWithGoogle: signInWithGoogleType = async () => {
+export const signInWithGoogle: SignInWithGoogle = async () => {
   try {
     const { error } = await authClient.signIn.social({
       provider: "google",
