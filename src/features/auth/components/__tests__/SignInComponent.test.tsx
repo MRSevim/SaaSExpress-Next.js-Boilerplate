@@ -1,21 +1,15 @@
 import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
-import SignInComponent from "../SignInComponent";
-import { renderWithProviders } from "@/utils/test-utils";
-import { auth } from "../../lib/auth";
-import { routes } from "@/utils/routes";
-import { redirect } from "next/navigation";
+import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import SignInComponent, {
+  signInButtonText,
+  signInLoadingButtonText,
+} from "../SignInComponent";
+import { signInWithEmailAndPassword } from "@/features/auth/utils/apiCalls";
+import { SignInWithEmailAndPassword } from "../../utils/types";
 
-jest.mock("next/navigation", () => ({
-  redirect: jest.fn(),
-}));
-
-jest.mock("@/features/auth/lib/auth", () => ({
-  auth: {
-    api: {
-      signInEmail: jest.fn(),
-    },
-  },
+jest.mock("@/features/auth/utils/apiCalls", () => ({
+  signInWithEmailAndPassword: jest.fn(),
 }));
 
 jest.mock(
@@ -26,103 +20,84 @@ jest.mock(
     },
 );
 
+const mockedSignInWithEmailAndPassword =
+  signInWithEmailAndPassword as jest.MockedFunction<SignInWithEmailAndPassword>;
+
+const name = getLowercase(signInButtonText);
+
+const email = "myemail@gmail.com";
+const password = "mypassword";
+
+const noError = { error: "" };
+
 describe("Sign In Component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("logs in user correctly", async () => {
-    const mockUserReturned = (email: string) => ({
-      user: {
-        id: "123",
-        email,
-        emailVerified: true,
-        name: "myname",
-        image: undefined,
-      },
-    });
+    let resolveSignIn: (
+      value: Awaited<ReturnType<SignInWithEmailAndPassword>>,
+    ) => void;
+
+    mockedSignInWithEmailAndPassword.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSignIn = resolve;
+        }),
+    );
 
     const { user } = renderWithProviders(<SignInComponent />);
 
-    const invalidEmail = "myemail@g";
-    const email = "myemail@gmail.com";
-
     const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toBeRequired();
-
-    (auth.api.signInEmail as unknown as jest.Mock).mockImplementationOnce(
-      async ({ body: { email } }) => {
-        // Artificial delay to ensure loading state is rendered
-        return new Promise((resolve) => {
-          setTimeout(() => resolve(mockUserReturned(email)), 50);
-        });
-      },
-    );
-
-    const password = "mypassword";
     const passwordInput = screen.getByLabelText(/password/i);
+
+    expect(emailInput).toBeRequired();
     expect(passwordInput).toBeRequired();
 
-    // First, sign in with wrong email
-    await user.type(passwordInput, password);
-    await user.type(emailInput, invalidEmail);
-
-    const name = /sign in/i;
-
-    await user.click(screen.getByRole("button", { name }));
-    await waitFor(() => {
-      expect(screen.getByText(/invalid email address/i)).toBeInTheDocument();
-    });
-
-    await user.clear(emailInput);
-    await user.clear(passwordInput);
-
-    // Then, sign in with correct email
     await user.type(emailInput, email);
     await user.type(passwordInput, password);
+
     await user.click(screen.getByRole("button", { name }));
 
-    const loadingSignInButton = await screen.findByRole("button", {
-      name: /signing in.../i,
+    const loadingButton = await screen.findByRole("button", {
+      name: getLowercase(signInLoadingButtonText),
     });
 
-    expect(loadingSignInButton).toBeDisabled();
+    expect(loadingButton).toBeDisabled();
 
-    const resetSignInButton = await screen.findByRole("button", {
-      name,
-    });
+    resolveSignIn!(noError);
 
-    expect(resetSignInButton).toBeEnabled();
+    const resetButton = await screen.findByRole("button", { name });
+    expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(redirect).toHaveBeenCalledWith(routes.home);
+      expect(mockedSignInWithEmailAndPassword).toHaveBeenCalledTimes(1);
+      const [formData] = mockedSignInWithEmailAndPassword.mock.calls[0];
+      expect(formData.get("email")).toBe(email);
+      expect(formData.get("password")).toBe(password);
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
 
-  it("shows invalid credentials error", async () => {
-    const errorMessage = "Invalid credentials";
-    (auth.api.signInEmail as unknown as jest.Mock).mockImplementationOnce(
-      async () => {
-        return Promise.reject(new Error(errorMessage));
-      },
-    );
+  it("shows error", async () => {
+    const error = "Invalid credentials";
+
+    mockedSignInWithEmailAndPassword.mockResolvedValueOnce({ error });
 
     const { user } = renderWithProviders(<SignInComponent />);
 
-    const email = "wrongemail@gmail.com";
-    const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toBeRequired();
+    await user.type(screen.getByLabelText(/email/i), email);
+    await user.type(screen.getByLabelText(/password/i), password);
 
-    await user.type(emailInput, email);
-
-    const password = "mypassword";
-    const passwordInput = screen.getByLabelText(/password/i);
-    expect(passwordInput).toBeRequired();
-
-    await user.type(passwordInput, password);
-
-    await user.click(screen.getByRole("button", { name: /sign in/i }));
+    await user.click(screen.getByRole("button", { name }));
 
     await waitFor(() => {
-      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(screen.getByText(error)).toBeInTheDocument();
+      expect(mockedSignInWithEmailAndPassword).toHaveBeenCalledTimes(1);
+      const [formData] = mockedSignInWithEmailAndPassword.mock.calls[0];
+      expect(formData.get("email")).toBe(email);
+      expect(formData.get("password")).toBe(password);
     });
-
-    expect(redirect).not.toHaveBeenCalled();
   });
 });

@@ -1,15 +1,16 @@
 import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
-import SignUpComponent from "../SignUpComponent";
-import { renderWithProviders } from "@/utils/test-utils";
-import { auth } from "../../lib/auth";
+import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import SignUpComponent, {
+  signUpButtonText,
+  signUpLoadingButtonText,
+} from "../SignUpComponent";
+import { signUp } from "@/features/auth/utils/apiCalls";
+import { signUpSuccessMessage } from "@/features/auth/utils/constants";
+import { SignUp, SignUpState } from "../../utils/types";
 
-jest.mock("@/features/auth/lib/auth", () => ({
-  auth: {
-    api: {
-      signUpEmail: jest.fn(),
-    },
-  },
+jest.mock("@/features/auth/utils/apiCalls", () => ({
+  signUp: jest.fn(),
 }));
 
 jest.mock(
@@ -20,8 +21,35 @@ jest.mock(
     },
 );
 
+const mockedSignUp = signUp as jest.MockedFunction<SignUp>;
+
+const name = getLowercase(signUpButtonText);
+
+const nameValue = "myname";
+const email = "myemail@gmail.com";
+const password = "mypassword";
+
+const noError: SignUpState = {
+  error: "",
+  successMessage: signUpSuccessMessage,
+  defaultValues: { name: nameValue, email },
+};
+
 describe("Sign Up Component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("signs up user correctly", async () => {
+    let resolveSignUp: (value: Awaited<ReturnType<SignUp>>) => void;
+
+    mockedSignUp.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSignUp = resolve;
+        }),
+    );
+
     const { user } = renderWithProviders(<SignUpComponent />);
 
     const nameInput = screen.getByLabelText("Username");
@@ -34,103 +62,56 @@ describe("Sign Up Component", () => {
     expect(passwordInput).toBeRequired();
     expect(confirmPasswordInput).toBeRequired();
 
-    const submitButton = screen.getByRole("button", { name: /sign up/i });
-
-    // First, submit invalid data to check validation errors
-    await user.type(nameInput, "A");
-    await user.type(emailInput, "myemail@g");
-    await user.type(passwordInput, "short");
-    await user.type(confirmPasswordInput, "different");
-
-    await user.click(submitButton);
-
-    await waitFor(() => {
-      expect(
-        screen.getByText("Name must be at least 2 characters"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Invalid email address")).toBeInTheDocument();
-      expect(
-        screen.getByText("Password must be at least 8 characters"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
-    });
-
-    // Then, sign up with valid data
-    (auth.api.signUpEmail as unknown as jest.Mock).mockImplementationOnce(
-      async () => {
-        // Artificial delay to ensure loading state is rendered
-        return new Promise((resolve) => {
-          setTimeout(() => resolve({}), 50);
-        });
-      },
-    );
-
-    await user.clear(nameInput);
-    await user.clear(emailInput);
-    await user.clear(passwordInput);
-    await user.clear(confirmPasswordInput);
-
-    const name = "myname";
-    const email = "myemail@gmail.com";
-    const password = "mypassword";
-
-    await user.type(nameInput, name);
+    await user.type(nameInput, nameValue);
     await user.type(emailInput, email);
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name: /sign up/i }));
+    await user.click(screen.getByRole("button", { name }));
 
-    const signingUpButton = await screen.findByRole("button", {
-      name: /signing up.../i,
+    const loadingButton = await screen.findByRole("button", {
+      name: getLowercase(signUpLoadingButtonText),
     });
 
-    expect(signingUpButton).toBeDisabled();
+    expect(loadingButton).toBeDisabled();
 
-    const resetSignUpButton = await screen.findByRole("button", {
-      name: /sign up/i,
-    });
+    resolveSignUp!(noError);
 
-    expect(resetSignUpButton).toBeEnabled();
+    const resetButton = await screen.findByRole("button", { name });
+    expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(
-        screen.getByText("A verification email has been sent to your adress"),
-      ).toBeInTheDocument();
-    });
-
-    expect(auth.api.signUpEmail).toHaveBeenCalledWith({
-      body: {
-        name,
-        email,
-        password,
-      },
+      expect(screen.getByText(signUpSuccessMessage)).toBeInTheDocument();
+      expect(mockedSignUp).toHaveBeenCalledTimes(1);
+      const [, formData] = mockedSignUp.mock.calls[0];
+      expect(formData.get("name")).toBe(nameValue);
+      expect(formData.get("email")).toBe(email);
+      expect(formData.get("password")).toBe(password);
+      expect(formData.get("confirm-password")).toBe(password);
     });
   });
 
   it("shows api error", async () => {
     const errorMessage = "Email already exists";
-    (auth.api.signUpEmail as unknown as jest.Mock).mockImplementationOnce(
-      async () => {
-        return Promise.reject(new Error(errorMessage));
-      },
-    );
+
+    mockedSignUp.mockResolvedValueOnce({
+      error: errorMessage,
+      defaultValues: { name: nameValue, email },
+    });
 
     const { user } = renderWithProviders(<SignUpComponent />);
 
-    await user.type(screen.getByLabelText("Username"), "myname");
-    await user.type(screen.getByLabelText("Email"), "myemail@gmail.com");
-    await user.type(screen.getByLabelText("Password"), "mypassword");
-    await user.type(screen.getByLabelText("Confirm password"), "mypassword");
+    await user.type(screen.getByLabelText("Username"), nameValue);
+    await user.type(screen.getByLabelText("Email"), email);
+    await user.type(screen.getByLabelText("Password"), password);
+    await user.type(screen.getByLabelText("Confirm password"), password);
 
-    await user.click(screen.getByRole("button", { name: /sign up/i }));
+    await user.click(screen.getByRole("button", { name }));
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(mockedSignUp).toHaveBeenCalledTimes(1);
+      expect(screen.queryByText(signUpSuccessMessage)).not.toBeInTheDocument();
     });
-
-    expect(
-      screen.queryByText("A verification email has been sent to your adress"),
-    ).not.toBeInTheDocument();
   });
 });

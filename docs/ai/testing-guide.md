@@ -202,6 +202,55 @@ Whenever you see same thing repeated in more than one place, make it a variable 
 
 If a component calls for example resetPassword, mock that function with proper typing and check the calls to that function. Any api called inside that function will be tested and mocked in separate unit tests. Component tests should only test outermost function mocks' calls.
 
+### 1.13 Assert `FormData` arguments from `mock.calls`, not `toHaveBeenCalledWith`
+
+Jest can't deep-compare `FormData`, so `expect(mock).toHaveBeenCalledWith(formData)` silently misses
+form actions. Capture the call and read the fields:
+
+```tsx
+await waitFor(() => {
+  expect(mockedSignUp).toHaveBeenCalledTimes(1);
+  const [, formData] = mockedSignUp.mock.calls[0];
+  expect(formData.get("name")).toBe(nameValue);
+  expect(formData.get("email")).toBe(email);
+});
+```
+
+For actions with extra positional args (e.g. `resetPassword(formData, token)`), read them from the
+same entry: `const [formData, token] = mockedResetPassword.mock.calls[0];`
+
+### 1.14 Import message constants from a module that is NOT mocked
+
+A success/error message owned by a mocked function (e.g. `signUp` returns `signUpSuccessMessage`)
+can't be imported from the mocked module — `jest.mock` replaces its exports, so the value is
+`undefined` at runtime. Export such messages from a separate `constants.ts` with no server imports,
+and import from there in both the action and the test:
+
+```ts
+// utils/constants.ts
+export const signUpSuccessMessage =
+  "A verification email has been sent to your adress";
+```
+
+```tsx
+import { signUpSuccessMessage } from "@/features/auth/utils/constants";
+```
+
+### 1.15 Stub child components that fire their own API calls
+
+When the component under test renders a child with its own (separately-tested) API call, replace
+the child with a no-op so the test only exercises the parent's outermost mock (§1.12):
+
+```tsx
+jest.mock(
+  "@/features/auth/components/ContinueWithGoogleButton",
+  () =>
+    function GoogleComp() {
+      return <></>;
+    },
+);
+```
+
 ---
 
 ## 2. TypeScript Type Safety — Required Patterns

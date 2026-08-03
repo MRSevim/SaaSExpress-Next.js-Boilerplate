@@ -17,6 +17,7 @@ import {
   CheckCredentialsProvider,
   DeleteUser,
 } from "./types";
+import { signUpSuccessMessage, resetPasswordSuccessMessage } from "./constants";
 
 export const getSession = cache(async () => {
   const session = await auth.api.getSession({
@@ -128,7 +129,7 @@ export const signUp: SignUp = async (
     });
     return {
       error: "",
-      successMessage: "A verification email has been sent to your adress",
+      successMessage: signUpSuccessMessage,
       defaultValues,
     };
   } catch (error) {
@@ -224,7 +225,7 @@ export const resetPassword: ResetPassword = async (
     await auth.api.resetPassword({ body: { newPassword: password, token } });
     return {
       error: "",
-      successMessage: "Your password have been successfully reset",
+      successMessage: resetPasswordSuccessMessage,
     };
   } catch (error) {
     console.error("Password Reset error:", error);
