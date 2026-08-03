@@ -5,3 +5,5 @@ export type User = {
   name: string;
   image?: string | null | undefined;
 };
+
+export type signInWithGoogleType = () => Promise<{ error: string }>;
