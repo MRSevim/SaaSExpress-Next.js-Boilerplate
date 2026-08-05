@@ -38,7 +38,10 @@ const SignUpComponent = () => {
       const email = formData.get("email") as string;
       const defaultValues = { name, email };
       const result = await signUp(formData);
-      if (result.error || result.errors) {
+
+      const hasFieldErrors = Object.values(result.errors ?? {}).some(Boolean);
+
+      if (result.error || hasFieldErrors) {
         return { ...result, defaultValues };
       }
       return { ...result, defaultValues: { name: "", email: "" } };
