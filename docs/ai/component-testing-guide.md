@@ -2,21 +2,9 @@
 
 This guide encodes the conventions used across this project's component tests.
 
-## 1. Core Rules (in priority order)
+## Core Rules (in priority order)
 
-### 1.1 Mock setup always comes before render/interaction
-
-```tsx
-mockedSomeApiCall.mockResolvedValueOnce(noError); // ARRANGE first
-const { user } = renderWithProviders(<SomeComponent />); // then render
-await user.click(...); // then act
-```
-
-Never set up a mock's return value after the component has already rendered/been interacted with,
-even if it happens to work due to call timing. Consistent ordering prevents subtle bugs when a
-component's behavior changes (e.g., if a future version calls the mocked function during mount).
-
-### 1.2 Reset mocks between tests
+### Reset mocks between tests
 
 ```tsx
 beforeEach(() => {
@@ -25,9 +13,9 @@ beforeEach(() => {
 ```
 
 This clears call history and mock implementations so tests can't leak state into each other and so
-`toHaveBeenCalledTimes(n)` assertions are meaningful.
+`toHaveBeenCalledTimes(n)` assertions are meaningful. Only do this when there is at least one mock to reset.
 
-### 1.3 Never hardcode UI text or use ad hoc regexes in tests
+### Never hardcode UI text or use ad hoc regexes in tests
 
 Component files export their own text constants:
 
@@ -40,7 +28,19 @@ Tests import and reference these constants — never re-type the string. This gu
 can't drift out of sync with the actual rendered UI, and a copy change only needs to happen in one
 place (the component).
 
-### 1.4 Use the shared `getLowercase` helper for role-name matching
+### Mock setup always comes before render/interaction
+
+```tsx
+mockedSomeApiCall.mockResolvedValueOnce(noError); // ARRANGE first
+const { user } = renderWithProviders(<SomeComponent />); // then render
+await user.click(...); // then act
+```
+
+Never set up a mock's return value after the component has already rendered/been interacted with,
+even if it happens to work due to call timing. Consistent ordering prevents subtle bugs when a
+component's behavior changes (e.g., if a future version calls the mocked function during mount).
+
+### Use the shared `getLowercase` helper for role-name matching
 
 ```ts
 // utils/test-utils.ts
@@ -55,7 +55,7 @@ screen.getByRole("button", { name });
 Do not write `new RegExp(x.toLowerCase(), "i")` inline repeatedly — always route through the shared
 helper so the matching behavior (case-insensitive) stays centralized and consistent project-wide.
 
-### 1.5 Prefer `findByRole` over `getByRole` for any state that results from user interaction
+### Prefer `findByRole` over `getByRole` for any state that results from user interaction
 
 - `getByRole`/`getByText` — synchronous, use only for state that's **already true** (initial render,
   or immediately after a `waitFor`/`findBy*` already confirmed the state landed).
@@ -79,7 +79,7 @@ const loadingButton = await screen.findByRole("button", {
 expect(loadingButton).toBeDisabled();
 ```
 
-### 1.6 Testing a pending/loading state requires a manually-controlled promise
+### Testing a pending/loading state requires a manually-controlled promise
 
 `mockResolvedValueOnce` resolves on the next microtick — too fast to observe an intermediate
 loading state, since `user.click()` awaits all pending microtasks before returning. Use a promise
@@ -125,13 +125,13 @@ Never use a real `setTimeout` delay to simulate a pending promise (e.g.
 
 The manually-resolved promise pattern above is fully deterministic and has none of these risks.
 
-### 1.7 Do not click a disabled button "to prove it's a no-op"
+### Do not click a disabled button "to prove it's a no-op"
 
 Once `toBeDisabled()` passes, a second `user.click()` on that element is guaranteed to be a no-op
 by RTL/DOM semantics (disabled elements don't dispatch click handlers) — a second click doesn't add
 coverage and should be omitted. One click, then assert disabled, is sufficient.
 
-### 1.8 Assert both call count and call arguments where relevant
+### Assert both call count and call arguments where relevant
 
 Don't stop at "was the mock called" — for anything that takes user input, assert what it was called
 **with**, so a bug like a wrong `formData.get(...)` key or an off-by-one wiring mistake gets caught:
@@ -142,7 +142,7 @@ await waitFor(() => {
 });
 ```
 
-### 1.9 Test the negative case for the happy path too
+### Test the negative case for the happy path too
 
 Don't just assert the mock was called on success — also assert the error UI is absent:
 
@@ -156,7 +156,7 @@ await waitFor(() => {
 Use `queryByText` (not `getByText`) when asserting **absence** — `getByText` throws immediately if
 not found, which would break a negative assertion; `queryByText` returns `null` instead.
 
-### 1.10 Assert the mock's call behavior in every applicable test case, not just the happy path
+### Assert the mock's call behavior in every applicable test case, not just the happy path
 
 Whatever mock assertion is relevant for a given scenario — call count, call arguments, or how the
 resolved value flowed into the UI — should be checked in **every** test for that mock, not left out
@@ -188,21 +188,17 @@ The exact check depends on the scenario — it doesn't have to always be `toHave
 - **Error path** — call count (guards against an accidental double-call that only happens on the
   error branch), and `toHaveBeenCalledWith(...)` if relevant — the fact that the error rendered
   doesn't prove the mock wasn't also called with the wrong arguments.
-- **Loading/pending path** — call count once the promise resolves, same as the other branches.
+- **Loading/pending path** — call count once the promise resolves and/or `toHaveBeenCalledWith(...)`, same as the other branches.
 
 Applying the same category of assertion consistently across every test for a given mock — rather
 than only in the branch where it's most obviously needed — closes gaps where a regression could
 slip through on whichever branch was left unchecked.
 
-### 1.11 Apply the do not repeat yourself (DRY) principle
-
-Whenever you see same thing repeated in more than one place, make it a variable with explicit name and apply the variable instead. It can be in same test folder or in the test itself.
-
-### 1.12 Only test the functions called inside components and mock them
+### Only test the functions called inside components and mock them
 
 If a component calls for example resetPassword, mock that function with proper typing and check the calls to that function. Any api called inside that function will be tested and mocked in separate unit tests. Component tests should only test outermost function mocks' calls.
 
-### 1.13 Assert `FormData` arguments from `mock.calls`, not `toHaveBeenCalledWith`
+### Assert `FormData` arguments from `mock.calls`, not `toHaveBeenCalledWith`
 
 Jest can't deep-compare `FormData`, so `expect(mock).toHaveBeenCalledWith(formData)` silently misses
 form actions. Capture the call and read the fields:
@@ -219,24 +215,7 @@ await waitFor(() => {
 For actions with extra positional args (e.g. `resetPassword(formData, token)`), read them from the
 same entry: `const [formData, token] = mockedResetPassword.mock.calls[0];`
 
-### 1.14 Import message constants from a module that is NOT mocked
-
-A success/error message owned by a mocked function (e.g. `signUp` returns `signUpSuccessMessage`)
-can't be imported from the mocked module — `jest.mock` replaces its exports, so the value is
-`undefined` at runtime. Export such messages from a separate `constants.ts` with no server imports,
-and import from there in both the action and the test:
-
-```ts
-// utils/constants.ts
-export const signUpSuccessMessage =
-  "A verification email has been sent to your address";
-```
-
-```tsx
-import { signUpSuccessMessage } from "@/features/auth/utils/constants";
-```
-
-### 1.15 Stub child components that fire their own API calls
+### Stub child components that fire their own API calls
 
 When the component under test renders a child with its own (separately-tested) API call, replace
 the child with a no-op so the test only exercises the parent's outermost mock (§1.12):
@@ -252,59 +231,6 @@ jest.mock(
 ```
 
 ---
-
-## 2. TypeScript Type Safety — Required Patterns
-
-This is the part most likely to be skipped by an AI agent working quickly. Do not skip it.
-
-### 2.1 Every mocked async function must have an explicit exported type
-
-Define the function's type once, next to (or exported from) the module that implements it:
-
-```ts
-export type SomeApiCallType = (arg: string) => Promise<{ error: string }>;
-
-export const someApiCall: SomeApiCallType = async (arg) => {
-  // implementation
-};
-```
-
-Shared types used by multiple test files should live in a common types module
-(e.g. `utils/types.ts`), imported by both the implementation and every test file that mocks it.
-
-### 2.2 Never cast a jest mock with a bare `as jest.Mock`
-
-```ts
-// ❌ Wrong — untyped, no shape checking on mockResolvedValueOnce / mockImplementationOnce args
-(someApiCall as jest.Mock).mockResolvedValueOnce({ wrong: "shape" }); // silently allowed
-
-// ✅ Correct — TypeScript enforces the real function signature
-const mockedSomeApiCall = someApiCall as jest.MockedFunction<SomeApiCallType>;
-mockedSomeApiCall.mockResolvedValueOnce({ error: "" }); // shape-checked
-mockedSomeApiCall.mockResolvedValueOnce({ wrong: "shape" }); // ❌ compile error, as desired
-```
-
-`jest.MockedFunction<T>` makes every mock method (`mockResolvedValueOnce`, `mockImplementationOnce`,
-`mockReturnValueOnce`, etc.) type-check its argument against `T`'s real signature. This is the
-single most important type-safety upgrade for this test pattern — it converts "wrong mock shape"
-from a runtime failure (or worse, a silent pass) into a compile-time error.
-
-### 2.3 Deriving the resolved-value type for manual promise resolution
-
-When manually controlling a pending promise, the resolver function's parameter type must match the
-function's **resolved** value — not the `Promise` wrapper itself:
-
-```ts
-let resolveSomeApiCall: (value: Awaited<ReturnType<SomeApiCallType>>) => void;
-```
-
-- `ReturnType<SomeApiCallType>` → `Promise<{ error: string }>` (still wrapped)
-- `Awaited<ReturnType<SomeApiCallType>>` → `{ error: string }` (unwrapped — this is what you want)
-
-Always derive this from the source type rather than duplicating the shape by hand
-(`let resolveSomeApiCall: (value: { error: string }) => void;`). Deriving keeps the test
-automatically in sync if the real function's return shape ever changes — duplicating it by hand
-creates a second source of truth that can silently drift.
 
 ## Minimal Worked Example
 

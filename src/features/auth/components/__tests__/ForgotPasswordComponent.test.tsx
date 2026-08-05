@@ -26,6 +26,15 @@ describe("ForgotPassword Component", () => {
     jest.resetAllMocks();
   });
 
+  const renderComponent = () => {
+    const { user } = renderWithProviders(<ForgotPasswordComponent />);
+    return {
+      user,
+      button: screen.getByRole("button", { name }),
+      emailInput: screen.getByLabelText(/email/i),
+    };
+  };
+
   it("correctly requests password reset", async () => {
     let resolveRequestPasswordReset: (
       value: Awaited<ReturnType<RequestPasswordReset>>,
@@ -38,15 +47,14 @@ describe("ForgotPassword Component", () => {
         }),
     );
 
-    const { user } = renderWithProviders(<ForgotPasswordComponent />);
+    const { user, emailInput, button } = renderComponent();
 
-    const emailInput = screen.getByLabelText(/email/i);
     expect(emailInput).toBeRequired();
 
     const emailText = "myemail@gmail.com";
 
     await user.type(emailInput, emailText);
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
       name: getLowercase(loadingText),
@@ -63,6 +71,8 @@ describe("ForgotPassword Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(resetText)).toBeInTheDocument();
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+      expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith(emailText);
     });
   });
@@ -87,6 +97,7 @@ describe("ForgotPassword Component", () => {
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toHaveValue(email);
+      expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith(email);
     });
   });

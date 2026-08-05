@@ -25,12 +25,17 @@ describe("ContinueWithGoogle Button", () => {
     jest.resetAllMocks();
   });
 
+  const renderButton = () => {
+    const { user } = renderWithProviders(<ContinueWithGoogleButton />);
+    return { user, button: screen.getByRole("button", { name }) };
+  };
+
   it("logs in user correctly", async () => {
     mockedSignInWithGoogle.mockResolvedValueOnce(noError);
 
-    const { user } = renderWithProviders(<ContinueWithGoogleButton />);
+    const { user, button } = renderButton();
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     await waitFor(() => {
       expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
@@ -45,9 +50,9 @@ describe("ContinueWithGoogle Button", () => {
       error,
     });
 
-    const { user } = renderWithProviders(<ContinueWithGoogleButton />);
+    const { user, button } = renderButton();
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     await waitFor(() => {
       expect(screen.getByText(error)).toBeInTheDocument();
@@ -65,9 +70,7 @@ describe("ContinueWithGoogle Button", () => {
         }),
     );
 
-    const { user } = renderWithProviders(<ContinueWithGoogleButton />);
-
-    const button = screen.getByRole("button", { name });
+    const { user, button } = renderButton();
 
     await user.click(button);
 
