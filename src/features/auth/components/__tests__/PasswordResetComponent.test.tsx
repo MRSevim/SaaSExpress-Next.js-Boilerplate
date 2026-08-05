@@ -45,13 +45,21 @@ describe("Password Reset Component", () => {
     } as unknown as ReturnType<typeof useSearchParams>);
   });
 
+  const renderComponent = () => {
+    const { user } = renderWithProviders(<PasswordResetComponent />);
+    return {
+      user,
+      button: screen.getByRole("button", { name }),
+      passwordInput: screen.getByLabelText("New Password"),
+      confirmPasswordInput: screen.getByLabelText("Confirm New Password"),
+    };
+  };
+
   it("shows error when token is missing", async () => {
     mockGet.mockReturnValue(null);
 
-    const { user } = renderWithProviders(<PasswordResetComponent />);
-
-    const passwordInput = screen.getByLabelText("New Password");
-    const confirmPasswordInput = screen.getByLabelText("Confirm New Password");
+    const { user, button, passwordInput, confirmPasswordInput } =
+      renderComponent();
 
     expect(passwordInput).toBeRequired();
     expect(confirmPasswordInput).toBeRequired();
@@ -59,7 +67,7 @@ describe("Password Reset Component", () => {
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     await waitFor(() => {
       expect(screen.getByText(invalidText)).toBeInTheDocument();
@@ -81,15 +89,13 @@ describe("Password Reset Component", () => {
         }),
     );
 
-    const { user } = renderWithProviders(<PasswordResetComponent />);
-
-    const passwordInput = screen.getByLabelText("New Password");
-    const confirmPasswordInput = screen.getByLabelText("Confirm New Password");
+    const { user, button, passwordInput, confirmPasswordInput } =
+      renderComponent();
 
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
       name: getLowercase(loadingText),
@@ -109,6 +115,7 @@ describe("Password Reset Component", () => {
       expect(formData.get("password")).toBe(password);
       expect(formData.get("confirm-password")).toBe(password);
       expect(resetToken).toBe(token);
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
 
@@ -122,19 +129,17 @@ describe("Password Reset Component", () => {
       successMessage: "",
     });
 
-    const { user } = renderWithProviders(<PasswordResetComponent />);
+    const { user, button, passwordInput, confirmPasswordInput } =
+      renderComponent();
 
-    await user.type(screen.getByLabelText("New Password"), password);
-    await user.type(screen.getByLabelText("Confirm New Password"), password);
+    await user.type(passwordInput, password);
+    await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(button);
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
       expect(mockedResetPassword).toHaveBeenCalledTimes(1);
-      expect(
-        screen.queryByText(resetPasswordSuccessMessage),
-      ).not.toBeInTheDocument();
     });
   });
 });

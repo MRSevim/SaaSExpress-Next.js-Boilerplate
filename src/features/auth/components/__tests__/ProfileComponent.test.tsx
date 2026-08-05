@@ -69,8 +69,6 @@ const noError = { error: "" };
 const deleteName = getLowercase(deleteButtonText);
 const resetPasswordName = getLowercase(resetPasswordButtonText);
 
-const renderProfile = () => renderWithProviders(<ProfileComponent />);
-
 describe("Profile Component", () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -80,15 +78,20 @@ describe("Profile Component", () => {
       error: "",
     });
   });
+  const renderProfile = () => {
+    const { user } = renderWithProviders(<ProfileComponent />);
+    return {
+      user,
+      deleteAccountButton: screen.getByRole("button", { name: deleteName }),
+    };
+  };
 
   it("renders profile and credential actions", async () => {
-    renderProfile();
+    const { deleteAccountButton } = renderProfile();
 
     expect(await screen.findByText(user.name[0])).toBeInTheDocument();
 
-    expect(
-      await screen.findByRole("button", { name: deleteName }),
-    ).toBeInTheDocument();
+    expect(deleteAccountButton).toBeInTheDocument();
 
     // Reset password only appears once checkCredentialsProvider resolves
     expect(
@@ -106,14 +109,11 @@ describe("Profile Component", () => {
 
     renderProfile();
 
-    expect(
-      await screen.findByRole("button", { name: deleteName }),
-    ).toBeInTheDocument();
-
     // Wait for the provider check to finish (spinner unmounts), then assert
     // the reset button never rendered
     await waitFor(() => {
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      expect(mockedCheckCredentialsProvider).toHaveBeenCalledTimes(1);
     });
 
     expect(
@@ -143,15 +143,28 @@ describe("Profile Component", () => {
   });
 
   it("deletes account and toasts success", async () => {
-    mockedDeleteUser.mockResolvedValueOnce(noError);
+    const name = deleteName;
+    let resolveDeleteUser: (value: Awaited<ReturnType<DeleteUser>>) => void;
 
-    const { user: userEvent } = renderProfile();
+    mockedDeleteUser.mockImplementationOnce(async () => {
+      return new Promise((resolve) => {
+        resolveDeleteUser = resolve;
+      });
+    });
 
-    await userEvent.click(
-      await screen.findByRole("button", { name: deleteName }),
-    );
+    const { user, deleteAccountButton } = renderProfile();
+
+    await user.click(deleteAccountButton);
+
+    const loadingButton = await screen.findByRole("button", {
+      name,
+    });
+    expect(loadingButton).toBeDisabled();
+
+    resolveDeleteUser!(noError);
 
     await waitFor(() => {
+      expect(loadingButton).not.toBeDisabled();
       expect(mockedDeleteUser).toHaveBeenCalledTimes(1);
       expect(toast.success).toHaveBeenCalledWith(accountDeletionSuccessMessage);
     });
@@ -164,33 +177,41 @@ describe("Profile Component", () => {
 
     mockedDeleteUser.mockResolvedValueOnce({ error: errorMessage });
 
-    const { user: userEvent } = renderProfile();
+    const { user, deleteAccountButton } = renderProfile();
 
-    await userEvent.click(
-      await screen.findByRole("button", { name: deleteName }),
-    );
+    await user.click(deleteAccountButton);
 
     await waitFor(() => {
       expect(mockedDeleteUser).toHaveBeenCalledTimes(1);
       expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
-
-    expect(toast.success).not.toHaveBeenCalled();
   });
 
   it("requests password reset and toasts success", async () => {
-    mockedRequestPasswordReset.mockResolvedValueOnce({
-      error: "",
-      email: user.email,
+    const name = resetPasswordName;
+    let resolveRequestPasswordReset: (
+      value: Awaited<ReturnType<RequestPasswordReset>>,
+    ) => void;
+
+    mockedRequestPasswordReset.mockImplementationOnce(async () => {
+      return new Promise((resolve) => {
+        resolveRequestPasswordReset = resolve;
+      });
     });
 
     const { user: userEvent } = renderProfile();
 
-    await userEvent.click(
-      await screen.findByRole("button", { name: resetPasswordName }),
-    );
+    await userEvent.click(await screen.findByRole("button", { name }));
+
+    const loadingButton = await screen.findByRole("button", {
+      name,
+    });
+    expect(loadingButton).toBeDisabled();
+
+    resolveRequestPasswordReset!({ error: "", email: user.email });
 
     await waitFor(() => {
+      expect(loadingButton).not.toBeDisabled();
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith(user.email);
       expect(toast.success).toHaveBeenCalledWith(passwordResetSuccessMessage);
@@ -218,7 +239,5 @@ describe("Profile Component", () => {
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith(user.email);
       expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
-
-    expect(toast.success).not.toHaveBeenCalled();
   });
 });

@@ -25,6 +25,47 @@ export const resetPasswordButtonText = "Reset password";
 const ProfilePage = () => {
   const userPromise = useUserPromiseContext();
   const user = use(userPromise);
+
+  if (!user) return;
+  return (
+    <div className="flex flex-col gap-3 items-center">
+      <Avatar size="lg">
+        <AvatarImage
+          src={user.image || undefined}
+          alt={`${user.name}'s avatar`}
+        />
+        <AvatarFallback>{user.name[0]}</AvatarFallback>
+      </Avatar>
+      <DeleteButton />
+      <ResetButton email={user.email} />
+    </div>
+  );
+};
+
+export default ProfilePage;
+
+const DeleteButton = () => {
+  const [loading, setLoading] = useState(false);
+  return (
+    <Button
+      disabled={loading}
+      variant="destructive"
+      onClick={async () => {
+        setLoading(true);
+        const { error } = await deleteUser();
+        if (error) {
+          toast.error(error);
+        } else toast.success(accountDeletionSuccessMessage);
+        setLoading(false);
+      }}
+    >
+      {deleteButtonText}
+    </Button>
+  );
+};
+
+const ResetButton = ({ email }: { email: string }) => {
+  const [loading, setLoading] = useState(false);
   const [checkProviderLoading, setCheckProviderLoading] = useState(true);
   const [isCredentialsProvider, setIsCredentialsProvider] = useState(false);
   const [checkError, setCheckError] = useState("");
@@ -39,45 +80,26 @@ const ProfilePage = () => {
     };
     check();
   }, []);
-
-  if (!user) return;
   return (
-    <div className="flex flex-col gap-3 items-center">
-      <Avatar size="lg">
-        <AvatarImage
-          src={user.image || undefined}
-          alt={`${user.name}'s avatar`}
-        />
-        <AvatarFallback>{user.name[0]}</AvatarFallback>
-      </Avatar>
-      <Button
-        variant="destructive"
-        onClick={async () => {
-          const { error } = await deleteUser();
-          if (error) {
-            toast.error(error);
-          } else toast.success(accountDeletionSuccessMessage);
-        }}
-      >
-        {deleteButtonText}
-      </Button>
+    <>
       {checkProviderLoading && <Spinner className="size-8" />}
       {checkError && <Error text={checkError} />}
       {isCredentialsProvider && !checkError && (
         <Button
+          disabled={loading}
           variant="secondary"
           onClick={async () => {
-            const { error } = await requestPasswordReset(user.email);
+            setLoading(true);
+            const { error } = await requestPasswordReset(email);
             if (error) {
               toast.error(error);
             } else toast.success(passwordResetSuccessMessage);
+            setLoading(false);
           }}
         >
           {resetPasswordButtonText}
         </Button>
       )}
-    </div>
+    </>
   );
 };
-
-export default ProfilePage;
