@@ -32,11 +32,13 @@ export const signInLoadingButtonText = "Signing in...";
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {
-      const result = await signInWithEmailAndPassword(formData);
+      const { error } = await signInWithEmailAndPassword(formData);
 
       return {
-        error: result?.error,
-        defaultValues: { email: formData.get("email") as string },
+        error: error,
+        defaultValues: {
+          email: error ? (formData.get("email") as string) : "",
+        },
       };
     },
     null,

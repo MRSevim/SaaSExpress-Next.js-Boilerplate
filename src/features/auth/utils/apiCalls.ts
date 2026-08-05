@@ -11,7 +11,6 @@ import {
   RequestPasswordReset,
   ResetPassword,
   SignInWithEmailAndPassword,
-  SignUpState,
   SignUp,
   SignOut,
   CheckCredentialsProvider,
@@ -87,14 +86,10 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export const signUp: SignUp = async (
-  _prevState: SignUpState,
-  formData: FormData,
-) => {
+export const signUp: SignUp = async (formData: FormData) => {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const defaultValues = { name, email };
   const confirmPassword = formData.get("confirm-password") as string;
 
   const parsed = signUpSchema.safeParse({
@@ -116,7 +111,6 @@ export const signUp: SignUp = async (
         confirmPassword: errorMessages.confirmPassword?.[0],
       },
       successMessage: "",
-      defaultValues,
     };
   }
   try {
@@ -130,11 +124,10 @@ export const signUp: SignUp = async (
     return {
       error: "",
       successMessage: signUpSuccessMessage,
-      defaultValues,
     };
   } catch (error) {
     console.error("Sign-up error:", error);
-    return { ...returnErrorFromUnknown(error), defaultValues };
+    return { ...returnErrorFromUnknown(error) };
   }
 };
 

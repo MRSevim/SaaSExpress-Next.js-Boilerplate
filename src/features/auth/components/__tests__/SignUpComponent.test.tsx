@@ -32,13 +32,25 @@ const password = "mypassword";
 const noError: SignUpState = {
   error: "",
   successMessage: signUpSuccessMessage,
-  defaultValues: { name: nameValue, email },
+  defaultValues: { name: "", email: "" },
 };
 
 describe("Sign Up Component", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
+
+  const renderComponent = () => {
+    const { user } = renderWithProviders(<SignUpComponent />);
+    return {
+      user,
+      nameInput: screen.getByLabelText("Username"),
+      emailInput: screen.getByLabelText("Email"),
+      passwordInput: screen.getByLabelText("Password"),
+      confirmPasswordInput: screen.getByLabelText("Confirm password"),
+      submitButton: screen.getByRole("button", { name }),
+    };
+  };
 
   it("signs up user correctly", async () => {
     let resolveSignUp: (value: Awaited<ReturnType<SignUp>>) => void;
@@ -50,12 +62,14 @@ describe("Sign Up Component", () => {
         }),
     );
 
-    const { user } = renderWithProviders(<SignUpComponent />);
-
-    const nameInput = screen.getByLabelText("Username");
-    const emailInput = screen.getByLabelText("Email");
-    const passwordInput = screen.getByLabelText("Password");
-    const confirmPasswordInput = screen.getByLabelText("Confirm password");
+    const {
+      user,
+      nameInput,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      submitButton,
+    } = renderComponent();
 
     expect(nameInput).toBeRequired();
     expect(emailInput).toBeRequired();
@@ -67,7 +81,7 @@ describe("Sign Up Component", () => {
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(submitButton);
 
     const loadingButton = await screen.findByRole("button", {
       name: getLowercase(signUpLoadingButtonText),
@@ -82,12 +96,17 @@ describe("Sign Up Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText(signUpSuccessMessage)).toBeInTheDocument();
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(mockedSignUp).toHaveBeenCalledTimes(1);
-      const [, formData] = mockedSignUp.mock.calls[0];
+      const [formData] = mockedSignUp.mock.calls[0];
       expect(formData.get("name")).toBe(nameValue);
       expect(formData.get("email")).toBe(email);
       expect(formData.get("password")).toBe(password);
       expect(formData.get("confirm-password")).toBe(password);
+      expect(nameInput).toHaveValue("");
+      expect(emailInput).toHaveValue("");
+      expect(passwordInput).toHaveValue("");
+      expect(confirmPasswordInput).toHaveValue("");
     });
   });
 
@@ -96,22 +115,31 @@ describe("Sign Up Component", () => {
 
     mockedSignUp.mockResolvedValueOnce({
       error: errorMessage,
-      defaultValues: { name: nameValue, email },
     });
 
-    const { user } = renderWithProviders(<SignUpComponent />);
+    const {
+      user,
+      nameInput,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      submitButton,
+    } = renderComponent();
 
-    await user.type(screen.getByLabelText("Username"), nameValue);
-    await user.type(screen.getByLabelText("Email"), email);
-    await user.type(screen.getByLabelText("Password"), password);
-    await user.type(screen.getByLabelText("Confirm password"), password);
+    await user.type(nameInput, nameValue);
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
+    await user.type(confirmPasswordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
       expect(mockedSignUp).toHaveBeenCalledTimes(1);
-      expect(screen.queryByText(signUpSuccessMessage)).not.toBeInTheDocument();
+      expect(nameInput).toHaveValue(nameValue);
+      expect(emailInput).toHaveValue(email);
+      expect(passwordInput).toHaveValue("");
+      expect(confirmPasswordInput).toHaveValue("");
     });
   });
 });

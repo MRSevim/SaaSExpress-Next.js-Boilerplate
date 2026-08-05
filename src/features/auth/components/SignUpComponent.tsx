@@ -22,10 +22,10 @@ import Link from "next/link";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import { useActionState } from "react";
 import { signUp } from "../utils/apiCalls";
+import { SignUpState } from "../utils/types";
 import Success from "@/components/Success";
 import Error from "@/components/Error";
 import { Spinner } from "@/components/ui/spinner";
-import { SignUpState } from "../utils/types";
 
 export const signUpButtonText = "Sign up";
 
@@ -33,7 +33,16 @@ export const signUpLoadingButtonText = "Signing up...";
 
 const SignUpComponent = () => {
   const [state, action, isPending] = useActionState(
-    signUp,
+    async (_prevState: SignUpState, formData: FormData) => {
+      const name = formData.get("name") as string;
+      const email = formData.get("email") as string;
+      const defaultValues = { name, email };
+      const result = await signUp(formData);
+      if (result.error || result.errors) {
+        return { ...result, defaultValues };
+      }
+      return { ...result, defaultValues: { name: "", email: "" } };
+    },
     null as SignUpState,
   );
   return (

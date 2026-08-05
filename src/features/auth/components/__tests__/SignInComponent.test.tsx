@@ -35,6 +35,16 @@ describe("Sign In Component", () => {
     jest.resetAllMocks();
   });
 
+  const renderComponent = () => {
+    const { user } = renderWithProviders(<SignInComponent />);
+    return {
+      user,
+      submitButton: screen.getByRole("button", { name }),
+      emailInput: screen.getByLabelText(/email/i),
+      passwordInput: screen.getByLabelText(/password/i),
+    };
+  };
+
   it("logs in user correctly", async () => {
     let resolveSignIn: (
       value: Awaited<ReturnType<SignInWithEmailAndPassword>>,
@@ -47,10 +57,7 @@ describe("Sign In Component", () => {
         }),
     );
 
-    const { user } = renderWithProviders(<SignInComponent />);
-
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const { user, emailInput, passwordInput, submitButton } = renderComponent();
 
     expect(emailInput).toBeRequired();
     expect(passwordInput).toBeRequired();
@@ -58,7 +65,7 @@ describe("Sign In Component", () => {
     await user.type(emailInput, email);
     await user.type(passwordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(submitButton);
 
     const loadingButton = await screen.findByRole("button", {
       name: getLowercase(signInLoadingButtonText),
@@ -77,6 +84,8 @@ describe("Sign In Component", () => {
       expect(formData.get("email")).toBe(email);
       expect(formData.get("password")).toBe(password);
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+      expect(emailInput).toHaveValue("");
+      expect(passwordInput).toHaveValue("");
     });
   });
 
@@ -85,12 +94,12 @@ describe("Sign In Component", () => {
 
     mockedSignInWithEmailAndPassword.mockResolvedValueOnce({ error });
 
-    const { user } = renderWithProviders(<SignInComponent />);
+    const { user, emailInput, passwordInput, submitButton } = renderComponent();
 
-    await user.type(screen.getByLabelText(/email/i), email);
-    await user.type(screen.getByLabelText(/password/i), password);
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
 
-    await user.click(screen.getByRole("button", { name }));
+    await user.click(submitButton);
 
     await waitFor(() => {
       expect(screen.getByText(error)).toBeInTheDocument();
@@ -98,6 +107,8 @@ describe("Sign In Component", () => {
       const [formData] = mockedSignInWithEmailAndPassword.mock.calls[0];
       expect(formData.get("email")).toBe(email);
       expect(formData.get("password")).toBe(password);
+      expect(emailInput).toHaveValue(email);
+      expect(passwordInput).toHaveValue("");
     });
   });
 });

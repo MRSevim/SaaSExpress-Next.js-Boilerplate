@@ -6,7 +6,7 @@ export type User = {
   image?: string | null | undefined;
 };
 
-export type SignUpState = {
+export type SignUpReturn = {
   error?: string;
   errors?: {
     name?: string;
@@ -15,11 +15,10 @@ export type SignUpState = {
     confirmPassword?: string;
   };
   successMessage?: string;
-  defaultValues: {
-    name: string;
-    email: string;
-  };
-} | null;
+};
+
+export type SignUpState =
+  (SignUpReturn & { defaultValues: { name: string; email: string } }) | null;
 
 export type ResetPasswordState = {
   error?: string;
@@ -36,10 +35,7 @@ export type SignInWithEmailAndPassword = (formData: FormData) => Promise<{
   error: string;
 }>;
 
-export type SignUp = (
-  prevState: SignUpState,
-  formData: FormData,
-) => Promise<SignUpState>;
+export type SignUp = (formData: FormData) => Promise<SignUpReturn>;
 
 export type SignOut = () => Promise<{ error: string }>;
 
