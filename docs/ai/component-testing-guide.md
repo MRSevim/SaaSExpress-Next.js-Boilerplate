@@ -216,8 +216,6 @@ Source: Jest's `equals` implementation applies `iterableEquality` as a default
 custom tester (see [Jest — Custom Equality Testers](https://jestjs.io/docs/expect#custom-equality-testers),
 and the original iterableEquality PR: https://github.com/jestjs/jest/pull/923).
 
-````
-
 For actions with extra positional args (e.g. `resetPassword(formData, token)`), read them from the
 same entry: `const [formData, token] = mockedResetPassword.mock.calls[0];`
 
@@ -318,4 +316,3 @@ describe("SomeComponent", () => {
   });
 });
 ```
-````
