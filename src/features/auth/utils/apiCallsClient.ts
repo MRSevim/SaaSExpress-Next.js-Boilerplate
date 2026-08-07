@@ -10,7 +10,6 @@ export const signInWithGoogle: SignInWithGoogle = async () => {
     if (error) throw Error(error.message);
     return { error: "" };
   } catch (error) {
-    console.error("Sign-in with Google error:", error);
     if (error instanceof Error && error.message) {
       return { error: error.message };
     }

@@ -22,6 +22,17 @@ export const signUpSuccessMessage =
 import { signUpSuccessMessage } from "@/features/auth/utils/constants";
 ```
 
+### Reset mocks between tests
+
+```tsx
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+```
+
+This clears call history and mock implementations so tests can't leak state into each other and so
+`toHaveBeenCalledTimes(n)` assertions are meaningful. Only do this when there is at least one mock to reset.
+
 ## TypeScript Type Safety — Required Patterns
 
 This is the part most likely to be skipped by an AI agent working quickly. Do not skip it.

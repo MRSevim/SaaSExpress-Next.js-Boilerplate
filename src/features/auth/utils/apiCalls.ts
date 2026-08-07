@@ -27,7 +27,11 @@ export const getSession = cache(async () => {
 });
 
 const signInSchema = z.object({
-  email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.email({ message: "Invalid email address" })),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
@@ -56,12 +60,11 @@ export const signInWithEmailAndPassword: SignInWithEmailAndPassword = async (
   try {
     await auth.api.signInEmail({
       body: {
-        email,
+        email: parsed.data.email,
         password,
       },
     });
   } catch (error) {
-    console.error("Sign-in with Email and Password error:", error);
     return { ...returnErrorFromUnknown(error) };
   }
   redirect(routes.home);
@@ -74,7 +77,11 @@ const signUpSchema = z
       .trim()
       .min(2, { message: "Name must be at least 2 characters" })
       .max(100, { message: "Name is too long (max 100 characters)" }),
-    email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+    email: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .pipe(z.email({ message: "Invalid email address" })),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -116,8 +123,8 @@ export const signUp: SignUp = async (formData: FormData) => {
   try {
     await auth.api.signUpEmail({
       body: {
-        name,
-        email,
+        name: parsed.data.name,
+        email: parsed.data.email,
         password,
       },
     });
@@ -126,7 +133,6 @@ export const signUp: SignUp = async (formData: FormData) => {
       successMessage: signUpSuccessMessage,
     };
   } catch (error) {
-    console.error("Sign-up error:", error);
     return { ...returnErrorFromUnknown(error) };
   }
 };
@@ -137,14 +143,17 @@ export const signOut: SignOut = async () => {
       headers: await headers(),
     });
   } catch (error) {
-    console.error("signOut error:", error);
     return returnErrorFromUnknown(error);
   }
   redirect(routes.signIn);
 };
 
 const requestPasswordResetSchema = z.object({
-  email: z.email({ message: "Invalid email address" }).trim().toLowerCase(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.email({ message: "Invalid email address" })),
 });
 
 export const requestPasswordReset: RequestPasswordReset = async (
@@ -165,14 +174,13 @@ export const requestPasswordReset: RequestPasswordReset = async (
   try {
     await auth.api.requestPasswordReset({
       body: {
-        email,
+        email: parsed.data.email,
         redirectTo: env.BASE_URL + routes.passwordReset,
       },
     });
 
     return { error: "", email: "" };
   } catch (error) {
-    console.error("Request Password Reset error:", error);
     return { email, ...returnErrorFromUnknown(error) };
   }
 };
@@ -221,7 +229,6 @@ export const resetPassword: ResetPassword = async (
       successMessage: resetPasswordSuccessMessage,
     };
   } catch (error) {
-    console.error("Password Reset error:", error);
     return { ...returnErrorFromUnknown(error), successMessage: "" };
   }
 };
@@ -236,7 +243,6 @@ export const checkCredentialsProvider: CheckCredentialsProvider = async () => {
     );
     return { isTrue, error: "" };
   } catch (error) {
-    console.error("Check Credentials Provider error:", error);
     return { isTrue: false, ...returnErrorFromUnknown(error) };
   }
 };
@@ -249,7 +255,6 @@ export const deleteUser: DeleteUser = async () => {
     });
     return { error: "" };
   } catch (error) {
-    console.error("Delete User error:", error);
     return returnErrorFromUnknown(error);
   }
 };

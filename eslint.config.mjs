@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "prefer-template": "error",
+      "no-console": "warn",
     },
   },
   // Override default ignores of eslint-config-next.

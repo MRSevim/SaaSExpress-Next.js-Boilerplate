@@ -4,27 +4,16 @@ This guide encodes the conventions used across this project's component tests.
 
 ## Core Rules (in priority order)
 
-### Reset mocks between tests
+### Dont hardcode UI text or use ad hoc regexes in tests if user has added them as exported variable
 
-```tsx
-beforeEach(() => {
-  jest.resetAllMocks();
-});
-```
-
-This clears call history and mock implementations so tests can't leak state into each other and so
-`toHaveBeenCalledTimes(n)` assertions are meaningful. Only do this when there is at least one mock to reset.
-
-### Never hardcode UI text or use ad hoc regexes in tests
-
-Component files export their own text constants:
+Component files can export their own text constants :
 
 ```tsx
 export const buttonText = "Sign in With Google";
 export const loadingText = "Redirecting...";
 ```
 
-Tests import and reference these constants — never re-type the string. This guarantees the test
+Tests import and reference these constants — never re-type the string if already present as constant somewhere. This guarantees the test
 can't drift out of sync with the actual rendered UI, and a copy change only needs to happen in one
 place (the component).
 
@@ -200,8 +189,19 @@ If a component calls for example resetPassword, mock that function with proper t
 
 ### Assert `FormData` arguments from `mock.calls`, not `toHaveBeenCalledWith`
 
-Jest can't deep-compare `FormData`, so `expect(mock).toHaveBeenCalledWith(formData)` silently misses
-form actions. Capture the call and read the fields:
+Jest _can_ deep-compare `FormData` — it applies `iterableEquality` as a built-in
+custom tester whenever a compared object implements `Symbol.iterator` (which
+`FormData` does via `entries()`), so `toHaveBeenCalledWith` does walk actual
+field values rather than ignoring them.
+
+The catch: `iterableEquality` compares entries as an ordered stream, pairing
+entry 0 with entry 0, entry 1 with entry 1, etc. So `expect(mock).toHaveBeenCalledWith(formData)`
+passes only if the expected `FormData` was built with fields appended in the
+exact same order as the actual call — two `FormData` objects with identical
+key/value pairs in different append order will fail the match. That
+order-coupling makes the assertion brittle to harmless refactors of field
+append order in the component. Capture the call and read the fields instead,
+which checks each field independently of order:
 
 ```tsx
 await waitFor(() => {
@@ -211,6 +211,12 @@ await waitFor(() => {
   expect(formData.get("email")).toBe(email);
 });
 ```
+
+Source: Jest's `equals` implementation applies `iterableEquality` as a default
+custom tester (see [Jest — Custom Equality Testers](https://jestjs.io/docs/expect#custom-equality-testers),
+and the original iterableEquality PR: https://github.com/jestjs/jest/pull/923).
+
+````
 
 For actions with extra positional args (e.g. `resetPassword(formData, token)`), read them from the
 same entry: `const [formData, token] = mockedResetPassword.mock.calls[0];`
@@ -312,3 +318,4 @@ describe("SomeComponent", () => {
   });
 });
 ```
+````

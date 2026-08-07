@@ -10,7 +10,6 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { CircleAlert } from "lucide-react";
-import { useEffect } from "react";
 
 export default function ErrorBoundary({
   error,
@@ -19,10 +18,6 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
   return (
     <Container className="text-center">
       <Item
