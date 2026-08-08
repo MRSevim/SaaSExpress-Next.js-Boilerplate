@@ -18,38 +18,6 @@ import {
 import { env } from "@/utils/env";
 import { headers } from "next/headers";
 
-jest.mock("@/features/auth/lib/auth", () => ({
-  auth: {
-    api: {
-      signInEmail: jest.fn(),
-      signUpEmail: jest.fn(),
-      requestPasswordReset: jest.fn(),
-      resetPassword: jest.fn(),
-      listUserAccounts: jest.fn(),
-      deleteUser: jest.fn(),
-      signOut: jest.fn(),
-      getSession: jest.fn(),
-    },
-  },
-}));
-
-jest.mock("@/utils/helpers", () => ({
-  returnErrorFromUnknown: (
-    error: unknown,
-    fallback = "Unknown error occurred!",
-  ) => ({
-    error: error instanceof Error && error.message ? error.message : fallback,
-  }),
-}));
-
-jest.mock("next/headers", () => ({
-  headers: jest.fn(() => Promise.resolve(new Headers())),
-}));
-
-jest.mock("next/navigation", () => ({
-  redirect: jest.fn(),
-}));
-
 const mockedAuth = auth as unknown as {
   api: {
     signInEmail: jest.Mock;

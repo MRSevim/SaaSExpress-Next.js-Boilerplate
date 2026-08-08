@@ -1,29 +1,23 @@
-import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
-import { requestPasswordReset } from "@/features/auth/utils/apiCalls";
-import { RequestPasswordReset } from "../../utils/types";
 import ForgotPasswordComponent, {
   resetText,
   buttonText,
   loadingText,
 } from "../ForgotPasswordComponent";
 import { getLowercase } from "@/utils/test-utils";
-
-jest.mock("@/features/auth/utils/apiCalls", () => ({
-  requestPasswordReset: jest.fn(),
-}));
-
-const mockedRequestPasswordReset =
-  requestPasswordReset as jest.MockedFunction<RequestPasswordReset>;
+import { auth } from "../../lib/auth";
+import { env } from "@/utils/env";
+import { routes } from "@/utils/routes";
 
 const name = getLowercase(buttonText);
 
-const noError = { error: "", email: "" };
+const mockedRequestPasswordReset = auth.api
+  .requestPasswordReset as unknown as jest.Mock;
 
 describe("ForgotPassword Component", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   const renderComponent = () => {
@@ -36,9 +30,7 @@ describe("ForgotPassword Component", () => {
   };
 
   it("correctly requests password reset", async () => {
-    let resolveRequestPasswordReset: (
-      value: Awaited<ReturnType<RequestPasswordReset>>,
-    ) => void;
+    let resolveRequestPasswordReset;
 
     mockedRequestPasswordReset.mockImplementationOnce(
       () =>
@@ -51,9 +43,9 @@ describe("ForgotPassword Component", () => {
 
     expect(emailInput).toBeRequired();
 
-    const emailText = "myemail@gmail.com";
+    const email = "   USER@example.com";
 
-    await user.type(emailInput, emailText);
+    await user.type(emailInput, email);
     await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
@@ -62,7 +54,7 @@ describe("ForgotPassword Component", () => {
 
     expect(loadingButton).toBeDisabled();
 
-    resolveRequestPasswordReset!(noError);
+    resolveRequestPasswordReset!();
     const resetButton = await screen.findByRole("button", {
       name,
     });
@@ -73,7 +65,25 @@ describe("ForgotPassword Component", () => {
       expect(screen.getByText(resetText)).toBeInTheDocument();
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
-      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(emailText);
+      expect(mockedRequestPasswordReset).toHaveBeenCalledWith({
+        body: {
+          email: email.trim().toLowerCase(),
+          redirectTo: env.BASE_URL + routes.passwordReset,
+        },
+      });
+      expect(emailInput).toHaveValue("");
+    });
+  });
+
+  it("returns an error for invalid request password reset input", async () => {
+    const { user, emailInput, button } = renderComponent();
+
+    await user.type(emailInput, "bad-email@d");
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid email address")).toBeInTheDocument();
+      expect(mockedRequestPasswordReset).not.toHaveBeenCalled();
     });
   });
 
@@ -81,14 +91,9 @@ describe("ForgotPassword Component", () => {
     const errorMessage = "Something went wrong";
     const email = "email@gmail.com";
 
-    mockedRequestPasswordReset.mockResolvedValueOnce({
-      error: errorMessage,
-      email,
-    });
+    mockedRequestPasswordReset.mockRejectedValueOnce(new Error(errorMessage));
 
-    const { user } = renderWithProviders(<ForgotPasswordComponent />);
-
-    const emailInput = screen.getByLabelText(/email/i);
+    const { user, emailInput } = renderComponent();
 
     await user.type(emailInput, email);
 
@@ -98,7 +103,6 @@ describe("ForgotPassword Component", () => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toHaveValue(email);
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
-      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(email);
     });
   });
 });

@@ -1,28 +1,21 @@
-import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
 import ContinueWithGoogleButton, {
   buttonText,
   loadingText,
 } from "../ContinueWithGoogleButton";
-import { signInWithGoogle } from "@/features/auth/utils/apiCallsClient";
-import { SignInWithGoogle } from "../../utils/types";
 import { getLowercase } from "@/utils/test-utils";
-
-jest.mock("@/features/auth/utils/apiCallsClient", () => ({
-  signInWithGoogle: jest.fn(),
-}));
-
-const mockedSignInWithGoogle =
-  signInWithGoogle as jest.MockedFunction<SignInWithGoogle>;
+import { authClient } from "../../lib/authClient";
 
 const name = getLowercase(buttonText);
 
 const noError = { error: "" };
 
+const mockedSocialSignIn = authClient.signIn.social as jest.Mock;
+
 describe("ContinueWithGoogle Button", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   const renderButton = () => {
@@ -31,23 +24,26 @@ describe("ContinueWithGoogle Button", () => {
   };
 
   it("logs in user correctly", async () => {
-    mockedSignInWithGoogle.mockResolvedValueOnce(noError);
+    mockedSocialSignIn.mockResolvedValueOnce(noError);
 
     const { user, button } = renderButton();
 
     await user.click(button);
 
     await waitFor(() => {
-      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
+      expect(mockedSocialSignIn).toHaveBeenCalledWith({
+        provider: "google",
+      });
+      expect(mockedSocialSignIn).toHaveBeenCalledTimes(1);
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
 
-  it("shows error", async () => {
+  it("shows error when api resolves to error", async () => {
     const error = "Google Auth Failed";
 
-    mockedSignInWithGoogle.mockResolvedValueOnce({
-      error,
+    mockedSocialSignIn.mockResolvedValueOnce({
+      error: { message: error },
     });
 
     const { user, button } = renderButton();
@@ -56,14 +52,27 @@ describe("ContinueWithGoogle Button", () => {
 
     await waitFor(() => {
       expect(screen.getByText(error)).toBeInTheDocument();
-      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("shows error when api rejects", async () => {
+    const error = "Google Auth Failed";
+
+    mockedSocialSignIn.mockRejectedValueOnce(new Error(error));
+
+    const { user, button } = renderButton();
+
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(screen.getByText(error)).toBeInTheDocument();
     });
   });
 
   it("disables the button while signing in and re-enables after", async () => {
-    let resolveSignIn: (value: Awaited<ReturnType<SignInWithGoogle>>) => void;
+    let resolveSignIn;
 
-    mockedSignInWithGoogle.mockImplementationOnce(
+    mockedSocialSignIn.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
           resolveSignIn = resolve;
@@ -89,7 +98,38 @@ describe("ContinueWithGoogle Button", () => {
     expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(mockedSignInWithGoogle).toHaveBeenCalledTimes(1);
+      expect(mockedSocialSignIn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("shows unknown error when rejected value is not an Error instance", async () => {
+    mockedSocialSignIn.mockRejectedValueOnce("some string, not an Error");
+
+    const { user, button } = renderButton();
+
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(screen.getByText("Unknown error occurred!")).toBeInTheDocument();
+    });
+  });
+
+  it("clears previous error on retry", async () => {
+    const error = "Google Auth Failed";
+
+    mockedSocialSignIn.mockResolvedValueOnce({ error: { message: error } });
+    mockedSocialSignIn.mockResolvedValueOnce(noError);
+
+    const { user, button } = renderButton();
+
+    await user.click(button);
+
+    await screen.findByText(error);
+
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(screen.queryByText(error)).not.toBeInTheDocument();
     });
   });
 });

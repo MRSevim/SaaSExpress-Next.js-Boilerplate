@@ -1,5 +1,8 @@
 import "@testing-library/jest-dom";
 
+jest.mock("@/features/auth/lib/authClient");
+jest.mock("@/features/auth/lib/auth");
+
 global.console = {
   ...console,
   // uncomment to ignore a specific log level

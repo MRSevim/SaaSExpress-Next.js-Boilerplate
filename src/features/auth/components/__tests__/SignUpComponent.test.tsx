@@ -1,4 +1,3 @@
-import "../../utils/commonMocks";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders, getLowercase } from "@/utils/test-utils";
 import SignUpComponent, {
