@@ -4,6 +4,9 @@ import { setCookie } from "@/utils/helpers";
 import { Sun, Moon } from "lucide-react";
 import { useState } from "react";
 
+export const switchToLightText = "Switch to light theme";
+export const switchToDarkText = "Switch to dark theme";
+
 export default function ThemeToggle({
   initialTheme,
 }: {
@@ -24,7 +27,7 @@ export default function ThemeToggle({
       variant="outline"
       onClick={toggleTheme}
       aria-pressed={isDark}
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={isDark ? switchToLightText : switchToDarkText}
     >
       {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       <span className="hidden md:inline">{isDark ? "Light" : "Dark"}</span>
