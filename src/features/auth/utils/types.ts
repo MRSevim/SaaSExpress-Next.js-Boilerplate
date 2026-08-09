@@ -28,29 +28,3 @@ export type ResetPasswordState = {
   };
   successMessage?: string;
 } | null;
-
-export type SignInWithGoogle = () => Promise<{ error: string }>;
-
-export type SignInWithEmailAndPassword = (formData: FormData) => Promise<{
-  error: string;
-}>;
-
-export type SignUp = (formData: FormData) => Promise<SignUpReturn>;
-
-export type SignOut = () => Promise<{ error: string }>;
-
-export type RequestPasswordReset = (
-  email: string,
-) => Promise<{ error: string; email: string }>;
-
-export type ResetPassword = (
-  formData: FormData,
-  token: string,
-) => Promise<ResetPasswordState>;
-
-export type CheckCredentialsProvider = () => Promise<{
-  isTrue: boolean;
-  error: string;
-}>;
-
-export type DeleteUser = () => Promise<{ error: string }>;

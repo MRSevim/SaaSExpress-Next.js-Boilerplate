@@ -8,15 +8,6 @@ import { routes } from "@/utils/routes";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import {
-  RequestPasswordReset,
-  ResetPassword,
-  SignInWithEmailAndPassword,
-  SignUp,
-  SignOut,
-  CheckCredentialsProvider,
-  DeleteUser,
-} from "./types";
-import {
   signUpSuccessMessage,
   resetPasswordSuccessMessage,
   invalidEmail,
@@ -42,9 +33,7 @@ const signInSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export const signInWithEmailAndPassword: SignInWithEmailAndPassword = async (
-  formData: FormData,
-) => {
+export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -100,7 +89,7 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export const signUp: SignUp = async (formData: FormData) => {
+export const signUp = async (formData: FormData) => {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -144,7 +133,7 @@ export const signUp: SignUp = async (formData: FormData) => {
   }
 };
 
-export const signOut: SignOut = async () => {
+export const signOut = async () => {
   try {
     await auth.api.signOut({
       headers: await headers(),
@@ -163,9 +152,7 @@ const requestPasswordResetSchema = z.object({
     .pipe(z.email({ message: invalidEmail })),
 });
 
-export const requestPasswordReset: RequestPasswordReset = async (
-  email: string,
-) => {
+export const requestPasswordReset = async (email: string) => {
   const parsed = requestPasswordResetSchema.safeParse({
     email,
   });
@@ -205,10 +192,7 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export const resetPassword: ResetPassword = async (
-  formData: FormData,
-  token: string,
-) => {
+export const resetPassword = async (formData: FormData, token: string) => {
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirm-password") as string;
 
@@ -240,7 +224,7 @@ export const resetPassword: ResetPassword = async (
   }
 };
 
-export const checkCredentialsProvider: CheckCredentialsProvider = async () => {
+export const checkCredentialsProvider = async () => {
   try {
     const accounts = await auth.api.listUserAccounts({
       headers: await headers(),
@@ -254,7 +238,7 @@ export const checkCredentialsProvider: CheckCredentialsProvider = async () => {
   }
 };
 
-export const deleteUser: DeleteUser = async () => {
+export const deleteUser = async () => {
   try {
     await auth.api.deleteUser({
       headers: await headers(),

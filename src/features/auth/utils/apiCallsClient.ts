@@ -1,9 +1,8 @@
 import { authClient } from "../lib/authClient";
 import { unknownError } from "@/utils/constants";
-import { SignInWithGoogle } from "./types";
 
 //this does not seem to work as a server action
-export const signInWithGoogle: SignInWithGoogle = async () => {
+export const signInWithGoogle = async () => {
   try {
     const { error } = await authClient.signIn.social({
       provider: "google",
