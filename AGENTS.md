@@ -8,6 +8,4 @@ Before any Next.js work, find and read the relevant doc in `node_modules/next/di
 
 ## Testing
 
-When writing or reviewing component tests (React Testing Library + Jest), follow
-`docs/ai/testing-guide.md` — covers mock typing conventions, loading-state test patterns,
-and required TypeScript type guards. Read it before writing any new `*.test.tsx` file.
+Always check amd follow markdown files' names inside `docs/ai/` folder to see if user gave you a task relevant to any of those files. Read the relevant files if task given necessitates it. For example if user gave you test writing task, use the files inside `docs/ai/testing`.
