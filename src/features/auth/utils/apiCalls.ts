@@ -22,6 +22,7 @@ import {
   invalidEmail,
   shortPassword,
   notMatchingPassword,
+  shortName,
 } from "./constants";
 
 export const getSession = cache(async () => {
@@ -81,7 +82,7 @@ const signUpSchema = z
     name: z
       .string()
       .trim()
-      .min(2, { message: "Name must be at least 2 characters" })
+      .min(2, { message: shortName })
       .max(100, { message: "Name is too long (max 100 characters)" }),
     email: z
       .string()

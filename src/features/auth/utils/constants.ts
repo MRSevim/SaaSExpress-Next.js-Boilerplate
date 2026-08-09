@@ -12,3 +12,5 @@ export const notMatchingPassword = "Passwords do not match";
 
 export const passwordResetSuccessMessage =
   "Password reset email has been sent to your email address";
+
+export const shortName = "Name must be at least 2 characters";

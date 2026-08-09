@@ -1,16 +1,23 @@
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders, getLowercase } from "@/utils/test-utils";
 import SignUpComponent, {
+  confirmPasswordErrorId,
+  emailErrorId,
+  nameErrorId,
+  passwordErrorId,
   signUpButtonText,
   signUpLoadingButtonText,
+  submitButtonErrorId,
+  submitButtonSuccessId,
 } from "../SignUpComponent";
-import { signUp } from "@/features/auth/utils/apiCalls";
-import { signUpSuccessMessage } from "@/features/auth/utils/constants";
-import { SignUp, SignUpState } from "../../utils/types";
-
-jest.mock("@/features/auth/utils/apiCalls", () => ({
-  signUp: jest.fn(),
-}));
+import {
+  invalidEmail,
+  notMatchingPassword,
+  shortName,
+  shortPassword,
+  signUpSuccessMessage,
+} from "@/features/auth/utils/constants";
+import { auth } from "../../lib/auth";
 
 jest.mock(
   "@/features/auth/components/ContinueWithGoogleButton",
@@ -20,25 +27,13 @@ jest.mock(
     },
 );
 
-const mockedSignUp = signUp as jest.MockedFunction<SignUp>;
+const mockedSignUp = auth.api.signUpEmail as unknown as jest.Mock;
 
 const name = getLowercase(signUpButtonText);
 
-const nameValue = "myname";
-const email = "myemail@gmail.com";
 const password = "mypassword";
 
-const noError: SignUpState = {
-  error: "",
-  successMessage: signUpSuccessMessage,
-  defaultValues: { name: "", email: "" },
-};
-
 describe("Sign Up Component", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   const renderComponent = () => {
     const { user } = renderWithProviders(<SignUpComponent />);
     return {
@@ -51,9 +46,11 @@ describe("Sign Up Component", () => {
     };
   };
 
-  it("signs up user correctly", async () => {
-    let resolveSignUp: (value: Awaited<ReturnType<SignUp>>) => void;
+  it("signs user up correctly", async () => {
+    let resolveSignUp;
 
+    const username = "  myname";
+    const email = "   BIGemail@gmail.com";
     mockedSignUp.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
@@ -70,12 +67,27 @@ describe("Sign Up Component", () => {
       submitButton,
     } = renderComponent();
 
+    expect(submitButton.getAttribute("aria-describedby")).toContain(
+      submitButtonErrorId,
+    );
+    expect(submitButton.getAttribute("aria-describedby")).toContain(
+      submitButtonSuccessId,
+    );
+    expect(nameInput.getAttribute("aria-describedby")).toContain(nameErrorId);
+    expect(emailInput.getAttribute("aria-describedby")).toContain(emailErrorId);
+    expect(passwordInput.getAttribute("aria-describedby")).toContain(
+      passwordErrorId,
+    );
+    expect(confirmPasswordInput.getAttribute("aria-describedby")).toContain(
+      confirmPasswordErrorId,
+    );
+
     expect(nameInput).toBeRequired();
     expect(emailInput).toBeRequired();
     expect(passwordInput).toBeRequired();
     expect(confirmPasswordInput).toBeRequired();
 
-    await user.type(nameInput, nameValue);
+    await user.type(nameInput, username);
     await user.type(emailInput, email);
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
@@ -88,20 +100,24 @@ describe("Sign Up Component", () => {
 
     expect(loadingButton).toBeDisabled();
 
-    resolveSignUp!(noError);
+    resolveSignUp!();
 
     const resetButton = await screen.findByRole("button", { name });
     expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(screen.getByText(signUpSuccessMessage)).toBeInTheDocument();
+      expect(document.getElementById(submitButtonSuccessId)).toHaveTextContent(
+        signUpSuccessMessage,
+      );
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(mockedSignUp).toHaveBeenCalledTimes(1);
-      const [formData] = mockedSignUp.mock.calls[0];
-      expect(formData.get("name")).toBe(nameValue);
-      expect(formData.get("email")).toBe(email);
-      expect(formData.get("password")).toBe(password);
-      expect(formData.get("confirm-password")).toBe(password);
+      expect(mockedSignUp).toHaveBeenCalledWith({
+        body: {
+          name: username.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+        },
+      });
       expect(nameInput).toHaveValue("");
       expect(emailInput).toHaveValue("");
       expect(passwordInput).toHaveValue("");
@@ -111,10 +127,10 @@ describe("Sign Up Component", () => {
 
   it("shows api error", async () => {
     const errorMessage = "Email already exists";
+    const email = "myemail@gmail.com";
+    const name = "myname";
 
-    mockedSignUp.mockResolvedValueOnce({
-      error: errorMessage,
-    });
+    mockedSignUp.mockRejectedValueOnce(new Error(errorMessage));
 
     const {
       user,
@@ -125,7 +141,7 @@ describe("Sign Up Component", () => {
       submitButton,
     } = renderComponent();
 
-    await user.type(nameInput, nameValue);
+    await user.type(nameInput, name);
     await user.type(emailInput, email);
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
@@ -133,9 +149,51 @@ describe("Sign Up Component", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(errorMessage)).toBeInTheDocument();
-      expect(mockedSignUp).toHaveBeenCalledTimes(1);
-      expect(nameInput).toHaveValue(nameValue);
+      expect(document.getElementById(submitButtonErrorId)).toHaveTextContent(
+        errorMessage,
+      );
+      expect(nameInput).toHaveValue(name);
+      expect(emailInput).toHaveValue(email);
+      expect(passwordInput).toHaveValue("");
+      expect(confirmPasswordInput).toHaveValue("");
+    });
+  });
+
+  it("shows validation errors", async () => {
+    const email = "myemail@g";
+    const name = "m";
+    const password = "short";
+    const confirmPassword = "different";
+
+    const {
+      user,
+      nameInput,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      submitButton,
+    } = renderComponent();
+
+    await user.type(nameInput, name);
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
+    await user.type(confirmPasswordInput, confirmPassword);
+
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(document.getElementById(nameErrorId)).toHaveTextContent(shortName);
+      expect(document.getElementById(emailErrorId)).toHaveTextContent(
+        invalidEmail,
+      );
+      expect(document.getElementById(passwordErrorId)).toHaveTextContent(
+        shortPassword,
+      );
+      expect(document.getElementById(confirmPasswordErrorId)).toHaveTextContent(
+        notMatchingPassword,
+      );
+      expect(mockedSignUp).not.toHaveBeenCalled();
+      expect(nameInput).toHaveValue(name);
       expect(emailInput).toHaveValue(email);
       expect(passwordInput).toHaveValue("");
       expect(confirmPasswordInput).toHaveValue("");

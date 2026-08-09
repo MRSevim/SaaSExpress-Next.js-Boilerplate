@@ -28,8 +28,15 @@ import Error from "@/components/Error";
 import { Spinner } from "@/components/ui/spinner";
 
 export const signUpButtonText = "Sign up";
-
 export const signUpLoadingButtonText = "Signing up...";
+
+export const submitButtonErrorId = "sign-up-submit-error";
+export const submitButtonSuccessId = "sign-up-submit-success";
+
+export const nameErrorId = "sign-up-name-error";
+export const emailErrorId = "sign-up-email-error";
+export const passwordErrorId = "sign-up-password-error";
+export const confirmPasswordErrorId = "sign-up-confirm-password-error";
 
 const SignUpComponent = () => {
   const [state, action, isPending] = useActionState(
@@ -66,6 +73,7 @@ const SignUpComponent = () => {
               <Field>
                 <FieldLabel htmlFor="name">Username</FieldLabel>
                 <Input
+                  aria-describedby={nameErrorId}
                   defaultValue={state?.defaultValues.name}
                   id="name"
                   name="name"
@@ -73,12 +81,13 @@ const SignUpComponent = () => {
                   placeholder="Your username"
                   required
                 />
-                <FieldError>{state?.errors?.name}</FieldError>
+                <FieldError id={nameErrorId}>{state?.errors?.name}</FieldError>
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+                  aria-describedby={emailErrorId}
                   id="email"
                   name="email"
                   defaultValue={state?.defaultValues.email}
@@ -86,23 +95,28 @@ const SignUpComponent = () => {
                   placeholder="youremail@example.com"
                   required
                 />
-                <FieldError>{state?.errors?.email}</FieldError>
+                <FieldError id={emailErrorId}>
+                  {state?.errors?.email}
+                </FieldError>
               </Field>
 
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
+                  aria-describedby={`${passwordErrorId} password-desc`}
                   id="password"
                   name="password"
                   type="password"
                   placeholder="••••••••"
                   required
                 />
-                <FieldDescription>
+                <FieldDescription id="password-desc">
                   Must be at least 8 characters long
                 </FieldDescription>
 
-                <FieldError>{state?.errors?.password}</FieldError>
+                <FieldError id={passwordErrorId}>
+                  {state?.errors?.password}
+                </FieldError>
               </Field>
 
               <Field>
@@ -110,20 +124,28 @@ const SignUpComponent = () => {
                   Confirm password
                 </FieldLabel>
                 <Input
+                  aria-describedby={confirmPasswordErrorId}
                   id="confirm-password"
                   name="confirm-password"
                   type="password"
                   placeholder="••••••••"
                   required
                 />
-                <FieldError>{state?.errors?.confirmPassword}</FieldError>
+                <FieldError id={confirmPasswordErrorId}>
+                  {state?.errors?.confirmPassword}
+                </FieldError>
               </Field>
             </FieldGroup>
           </FieldSet>
         </CardContent>
 
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+            aria-describedby={`${submitButtonErrorId} ${submitButtonSuccessId}`}
+          >
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
@@ -133,8 +155,11 @@ const SignUpComponent = () => {
               <>{signUpButtonText}</>
             )}
           </Button>
-          {state?.successMessage && <Success text={state.successMessage} />}
-          {state?.error && <Error text={state.error} />}
+          <Success
+            id={submitButtonSuccessId}
+            text={state?.successMessage ?? ""}
+          />
+          <Error id={submitButtonErrorId} text={state?.error ?? ""} />
           or
           <ContinueWithGoogleButton />
         </CardFooter>
