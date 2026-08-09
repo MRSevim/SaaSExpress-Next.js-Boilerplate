@@ -11,14 +11,12 @@ import { use, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { passwordResetSuccessMessage } from "../utils/constants";
 
 export const deleteButtonText = "Delete Account";
 
 export const accountDeletionSuccessMessage =
   "Account deletion email has been sent to your email address";
-
-export const passwordResetSuccessMessage =
-  "Password reset email has been sent to your email address";
 
 export const resetPasswordButtonText = "Reset password";
 
@@ -83,7 +81,7 @@ const ResetButton = ({ email }: { email: string }) => {
   return (
     <>
       {checkProviderLoading && <Spinner className="size-8" />}
-      {checkError && <Error text={checkError} />}
+      <Error text={checkError} />
       {isCredentialsProvider && !checkError && (
         <Button
           disabled={loading}

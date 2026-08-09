@@ -1,7 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
 import ForgotPasswordComponent, {
-  resetText,
   buttonText,
   loadingText,
   forgotPasswordResetErrorId,
@@ -11,7 +10,10 @@ import { getLowercase } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
-import { invalidEmail } from "@/features/auth/utils/constants";
+import {
+  invalidEmail,
+  passwordResetSuccessMessage,
+} from "@/features/auth/utils/constants";
 
 const name = getLowercase(buttonText);
 
@@ -69,7 +71,7 @@ describe("ForgotPassword Component", () => {
     await waitFor(() => {
       expect(
         document.getElementById(forgotPasswordResetSuccessId),
-      ).toHaveTextContent(resetText);
+      ).toHaveTextContent(passwordResetSuccessMessage);
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith({

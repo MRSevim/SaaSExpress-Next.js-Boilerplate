@@ -9,3 +9,6 @@ export const invalidEmail = "Invalid email address";
 export const shortPassword = "Password must be at least 8 characters";
 
 export const notMatchingPassword = "Passwords do not match";
+
+export const passwordResetSuccessMessage =
+  "Password reset email has been sent to your email address";

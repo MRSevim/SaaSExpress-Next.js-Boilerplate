@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 
 jest.mock("@/features/auth/lib/authClient");
 jest.mock("@/features/auth/lib/auth");
+jest.mock("@/features/auth/utils/contexts/UserPromiseContext");
 
 global.console = {
   ...console,

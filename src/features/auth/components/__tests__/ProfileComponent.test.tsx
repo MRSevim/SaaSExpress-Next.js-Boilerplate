@@ -3,47 +3,25 @@ import { renderWithProviders, getLowercase } from "@/utils/test-utils";
 import ProfileComponent, {
   deleteButtonText,
   accountDeletionSuccessMessage,
-  passwordResetSuccessMessage,
   resetPasswordButtonText,
 } from "../ProfileComponent";
-import {
-  checkCredentialsProvider,
-  deleteUser,
-  requestPasswordReset,
-} from "@/features/auth/utils/apiCalls";
-import {
-  CheckCredentialsProvider,
-  DeleteUser,
-  RequestPasswordReset,
-  User,
-} from "../../utils/types";
+
+import { User } from "../../utils/types";
 import { toast } from "sonner";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { passwordResetSuccessMessage } from "../../utils/constants";
+import { auth } from "../../lib/auth";
+import { headers } from "next/headers";
+import { routes } from "@/utils/routes";
+import { env } from "@/utils/env";
 
-jest.mock("@/features/auth/utils/apiCalls", () => ({
-  checkCredentialsProvider: jest.fn(),
-  deleteUser: jest.fn(),
-  requestPasswordReset: jest.fn(),
-}));
+const mockedListUserAccounts = auth.api
+  .listUserAccounts as unknown as jest.Mock;
 
-jest.mock("sonner", () => ({
-  toast: {
-    success: jest.fn(),
-    error: jest.fn(),
-  },
-}));
+const mockedDeleteUser = auth.api.deleteUser as unknown as jest.Mock;
 
-jest.mock("@/features/auth/utils/contexts/UserPromiseContext", () => ({
-  useUserPromiseContext: jest.fn(),
-}));
-
-const mockedCheckCredentialsProvider =
-  checkCredentialsProvider as jest.MockedFunction<CheckCredentialsProvider>;
-
-const mockedDeleteUser = deleteUser as jest.MockedFunction<DeleteUser>;
-
-const mockedRequestPasswordReset =
-  requestPasswordReset as jest.MockedFunction<RequestPasswordReset>;
+const mockedRequestPasswordReset = auth.api
+  .requestPasswordReset as unknown as jest.Mock;
 
 const mockedUseUserPromiseContext =
   useUserPromiseContext as jest.MockedFunction<typeof useUserPromiseContext>;
@@ -63,23 +41,19 @@ const fulfilledUser = {
   then: () => {},
 } as unknown as Promise<User | undefined>;
 
-const noError = { error: "" };
-
 const deleteName = getLowercase(deleteButtonText);
 const resetPasswordName = getLowercase(resetPasswordButtonText);
 
 describe("Profile Component", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
     mockedUseUserPromiseContext.mockReturnValue(fulfilledUser);
-    mockedCheckCredentialsProvider.mockResolvedValue({
-      isTrue: true,
-      error: "",
-    });
+    mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
   });
+
   const renderProfile = () => {
-    const { user } = renderWithProviders(<ProfileComponent />);
+    const { user, container } = renderWithProviders(<ProfileComponent />);
     return {
+      container,
       user,
       deleteAccountButton: screen.getByRole("button", { name: deleteName }),
     };
@@ -97,14 +71,25 @@ describe("Profile Component", () => {
       await screen.findByRole("button", { name: resetPasswordName }),
     ).toBeInTheDocument();
 
-    expect(mockedCheckCredentialsProvider).toHaveBeenCalledTimes(1);
+    expect(mockedListUserAccounts).toHaveBeenCalledTimes(1);
+    expect(mockedListUserAccounts).toHaveBeenCalledWith({
+      headers: await headers(),
+    });
+  });
+
+  it("renders nothing if user is not there", () => {
+    mockedUseUserPromiseContext.mockReturnValueOnce({
+      status: "fulfilled" as const,
+      value: undefined,
+      then: () => {},
+    } as unknown as Promise<User | undefined>);
+
+    const { container } = renderWithProviders(<ProfileComponent />);
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("hides reset button for non-credential providers", async () => {
-    mockedCheckCredentialsProvider.mockResolvedValue({
-      isTrue: false,
-      error: "",
-    });
+    mockedListUserAccounts.mockResolvedValue([{ providerId: "google" }]);
 
     renderProfile();
 
@@ -112,23 +97,18 @@ describe("Profile Component", () => {
     // the reset button never rendered
     await waitFor(() => {
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
-      expect(mockedCheckCredentialsProvider).toHaveBeenCalledTimes(1);
+      expect(mockedListUserAccounts).toHaveBeenCalledTimes(1);
     });
 
     expect(
       screen.queryByRole("button", { name: resetPasswordName }),
     ).not.toBeInTheDocument();
-
-    expect(mockedCheckCredentialsProvider).toHaveBeenCalledTimes(1);
   });
 
   it("shows check error", async () => {
     const errorMessage = "Something went wrong";
 
-    mockedCheckCredentialsProvider.mockResolvedValue({
-      isTrue: false,
-      error: errorMessage,
-    });
+    mockedListUserAccounts.mockRejectedValue(new Error(errorMessage));
 
     renderProfile();
 
@@ -137,13 +117,11 @@ describe("Profile Component", () => {
     expect(
       screen.queryByRole("button", { name: resetPasswordName }),
     ).not.toBeInTheDocument();
-
-    expect(mockedCheckCredentialsProvider).toHaveBeenCalledTimes(1);
   });
 
   it("deletes account and toasts success", async () => {
     const name = deleteName;
-    let resolveDeleteUser: (value: Awaited<ReturnType<DeleteUser>>) => void;
+    let resolveDeleteUser;
 
     mockedDeleteUser.mockImplementationOnce(async () => {
       return new Promise((resolve) => {
@@ -160,37 +138,38 @@ describe("Profile Component", () => {
     });
     expect(loadingButton).toBeDisabled();
 
-    resolveDeleteUser!(noError);
+    resolveDeleteUser!();
 
-    await waitFor(() => {
+    await waitFor(async () => {
+      expect(toast.success).toHaveBeenCalledWith(accountDeletionSuccessMessage);
+      expect(toast.error).not.toHaveBeenCalled();
       expect(loadingButton).not.toBeDisabled();
       expect(mockedDeleteUser).toHaveBeenCalledTimes(1);
-      expect(toast.success).toHaveBeenCalledWith(accountDeletionSuccessMessage);
+      expect(mockedDeleteUser).toHaveBeenCalledWith({
+        headers: await headers(),
+        body: { callbackURL: routes.home },
+      });
     });
-
-    expect(toast.error).not.toHaveBeenCalled();
   });
 
-  it("deletes account and toasts error", async () => {
+  it("toasts error when clicking delete account", async () => {
     const errorMessage = "Deletion failed";
 
-    mockedDeleteUser.mockResolvedValueOnce({ error: errorMessage });
+    mockedDeleteUser.mockRejectedValueOnce(new Error(errorMessage));
 
     const { user, deleteAccountButton } = renderProfile();
 
     await user.click(deleteAccountButton);
 
     await waitFor(() => {
-      expect(mockedDeleteUser).toHaveBeenCalledTimes(1);
+      expect(toast.success).not.toHaveBeenCalled();
       expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
   });
 
   it("requests password reset and toasts success", async () => {
     const name = resetPasswordName;
-    let resolveRequestPasswordReset: (
-      value: Awaited<ReturnType<RequestPasswordReset>>,
-    ) => void;
+    let resolveRequestPasswordReset;
 
     mockedRequestPasswordReset.mockImplementationOnce(async () => {
       return new Promise((resolve) => {
@@ -207,25 +186,26 @@ describe("Profile Component", () => {
     });
     expect(loadingButton).toBeDisabled();
 
-    resolveRequestPasswordReset!({ error: "", email: user.email });
+    resolveRequestPasswordReset!();
 
     await waitFor(() => {
       expect(loadingButton).not.toBeDisabled();
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
-      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(user.email);
+      expect(mockedRequestPasswordReset).toHaveBeenCalledWith({
+        body: {
+          email: user.email,
+          redirectTo: env.BASE_URL + routes.passwordReset,
+        },
+      });
       expect(toast.success).toHaveBeenCalledWith(passwordResetSuccessMessage);
+      expect(toast.error).not.toHaveBeenCalled();
     });
-
-    expect(toast.error).not.toHaveBeenCalled();
   });
 
-  it("requests password reset and toasts error", async () => {
+  it("toasts error when clicking request password reset", async () => {
     const errorMessage = "Reset failed";
 
-    mockedRequestPasswordReset.mockResolvedValueOnce({
-      error: errorMessage,
-      email: user.email,
-    });
+    mockedRequestPasswordReset.mockRejectedValueOnce(new Error(errorMessage));
 
     const { user: userEvent } = renderProfile();
 
@@ -234,8 +214,6 @@ describe("Profile Component", () => {
     );
 
     await waitFor(() => {
-      expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
-      expect(mockedRequestPasswordReset).toHaveBeenCalledWith(user.email);
       expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
   });

@@ -20,4 +20,8 @@ export function renderWithProviders(
   };
 }
 
-export const getLowercase = (str: string) => str.toLowerCase();
+// utils/test-utils.ts
+const escapeRegExp = (str: string) =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
