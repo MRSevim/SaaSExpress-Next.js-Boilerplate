@@ -4,9 +4,9 @@ This guide encodes the conventions used across this project's component tests.
 
 ## Core Rules (in priority order)
 
-### Dont hardcode UI text or use ad hoc regexes in tests if user has added them as exported variable
+### Do not hardcode UI text or use ad hoc regexes in tests if user has added them as exported variable
 
-Component files can export their own text constants :
+Component files can export their own text constants:
 
 ```tsx
 export const buttonText = "Sign in With Google";
@@ -31,18 +31,12 @@ component's behavior changes (e.g., if a future version calls the mocked functio
 
 ### Use the shared `getLowercase` helper for role-name matching
 
-```ts
-// utils/test-utils.ts
-export const getLowercase = (str: string) => new RegExp(str.toLowerCase(), "i");
-```
-
 ```tsx
 const name = getLowercase(buttonText);
 screen.getByRole("button", { name });
 ```
 
-Do not write `new RegExp(x.toLowerCase(), "i")` inline repeatedly — always route through the shared
-helper so the matching behavior (case-insensitive) stays centralized and consistent project-wide.
+Always route through the shared helper so the matching behavior (case-insensitive) stays centralized and consistent project-wide.
 
 ### Prefer `findByRole` over `getByRole` for any state that results from user interaction
 

@@ -8,4 +8,4 @@ Before any Next.js work, find and read the relevant doc in `node_modules/next/di
 
 ## Testing
 
-Always check amd follow markdown files' names inside `docs/ai/` folder to see if user gave you a task relevant to any of those files. Read the relevant files if task given necessitates it. For example if user gave you test writing task, use the files inside `docs/ai/testing`.
+Always check the Markdown files inside `docs/ai/` to identify task-specific instructions. Read and follow the relevant files when the task requires it. For example if user gave you test writing task, use the files inside `docs/ai/testing`.
