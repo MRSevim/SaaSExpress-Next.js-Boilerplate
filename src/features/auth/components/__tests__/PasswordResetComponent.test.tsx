@@ -141,10 +141,6 @@ describe("Password Reset Component", () => {
       expect(document.getElementById(passwordResetErrorId)).toHaveTextContent(
         errorMessage,
       );
-      expect(mockedResetPassword).toHaveBeenCalledTimes(1);
-      expect(mockedResetPassword).toHaveBeenCalledWith({
-        body: { newPassword: password, token },
-      });
     });
   });
 

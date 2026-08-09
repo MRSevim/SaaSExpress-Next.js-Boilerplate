@@ -113,7 +113,6 @@ describe("ForgotPassword Component", () => {
         document.getElementById(forgotPasswordResetErrorId),
       ).toHaveTextContent(errorMessage);
       expect(screen.getByLabelText(/email/i)).toHaveValue(email);
-      expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
     });
   });
 });

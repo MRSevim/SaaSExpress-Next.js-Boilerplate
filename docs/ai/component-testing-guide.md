@@ -75,7 +75,7 @@ loading state, since `user.click()` awaits all pending microtasks before returni
 you resolve yourself:
 
 ```tsx
-let resolveSomeApiCall: (value: Awaited<ReturnType<SomeApiCallType>>) => void;
+let resolveSomeApiCall;
 
 mockedSomeApiCall.mockImplementationOnce(
   () =>
@@ -145,174 +145,24 @@ await waitFor(() => {
 Use `queryByText` (not `getByText`) when asserting **absence** — `getByText` throws immediately if
 not found, which would break a negative assertion; `queryByText` returns `null` instead.
 
-### Assert the mock's call behavior in every applicable test case, not just the happy path
+### Test the negative case for the error paths when relevant
 
-Whatever mock assertion is relevant for a given scenario — call count, call arguments, or how the
-resolved value flowed into the UI — should be checked in **every** test for that mock, not left out
-of some branches just because another assertion in that test happens to imply it.
-
-For example, in an error-path test, the fact that `screen.getByText(error)` renders already implies
-the mock was called and resolved — but that implication isn't the same as an explicit assertion, and
-it doesn't rule out a bug where the mock is accidentally invoked more than once on that branch. Add
-the explicit check anyway:
+Some error paths do not call api, for example zod validation errors return before api is called. Test that api was not called on those type of cases. Check the relevant code pieces in the project to see if not calling the function is expected. Example
 
 ```tsx
-it("shows an error", async () => {
-  const error = "Something went wrong";
-  mockedSomeApiCall.mockResolvedValueOnce({ error });
-  const { user } = renderWithProviders(<SomeComponent />);
+it("returns an error for invalid request password reset input", async () => {
+  const { user, emailInput, button } = renderComponent();
 
-  await user.click(screen.getByRole("button", { name }));
+  await user.type(emailInput, "bad-email@d");
+  await user.click(button);
 
   await waitFor(() => {
-    expect(screen.getByText(error)).toBeInTheDocument();
-    expect(mockedSomeApiCall).toHaveBeenCalledTimes(1);
+    expect(
+      document.getElementById(forgotPasswordResetErrorId),
+    ).toHaveTextContent(invalidEmail);
+    expect(mockedRequestPasswordReset).not.toHaveBeenCalled();
   });
 });
 ```
 
-The exact check depends on the scenario — it doesn't have to always be `toHaveBeenCalledTimes`:
-
-- **Happy path** — call count, and/or `toHaveBeenCalledWith(...)` if the call takes input.
-- **Error path** — call count (guards against an accidental double-call that only happens on the
-  error branch), and `toHaveBeenCalledWith(...)` if relevant — the fact that the error rendered
-  doesn't prove the mock wasn't also called with the wrong arguments.
-- **Loading/pending path** — call count once the promise resolves and/or `toHaveBeenCalledWith(...)`, same as the other branches.
-
-Applying the same category of assertion consistently across every test for a given mock — rather
-than only in the branch where it's most obviously needed — closes gaps where a regression could
-slip through on whichever branch was left unchecked.
-
-### Only test the functions called inside components and mock them
-
-If a component calls for example resetPassword, mock that function with proper typing and check the calls to that function. Any api called inside that function will be tested and mocked in separate unit tests. Component tests should only test outermost function mocks' calls.
-
-### Assert `FormData` arguments from `mock.calls`, not `toHaveBeenCalledWith`
-
-Jest _can_ deep-compare `FormData` — it applies `iterableEquality` as a built-in
-custom tester whenever a compared object implements `Symbol.iterator` (which
-`FormData` does via `entries()`), so `toHaveBeenCalledWith` does walk actual
-field values rather than ignoring them.
-
-The catch: `iterableEquality` compares entries as an ordered stream, pairing
-entry 0 with entry 0, entry 1 with entry 1, etc. So `expect(mock).toHaveBeenCalledWith(formData)`
-passes only if the expected `FormData` was built with fields appended in the
-exact same order as the actual call — two `FormData` objects with identical
-key/value pairs in different append order will fail the match. That
-order-coupling makes the assertion brittle to harmless refactors of field
-append order in the component. Capture the call and read the fields instead,
-which checks each field independently of order:
-
-```tsx
-await waitFor(() => {
-  expect(mockedSignUp).toHaveBeenCalledTimes(1);
-  const [, formData] = mockedSignUp.mock.calls[0];
-  expect(formData.get("name")).toBe(nameValue);
-  expect(formData.get("email")).toBe(email);
-});
-```
-
-Source: Jest's `equals` implementation applies `iterableEquality` as a default
-custom tester (see [Jest — Custom Equality Testers](https://jestjs.io/docs/expect#custom-equality-testers),
-and the original iterableEquality PR: https://github.com/jestjs/jest/pull/923).
-
-For actions with extra positional args (e.g. `resetPassword(formData, token)`), read them from the
-same entry: `const [formData, token] = mockedResetPassword.mock.calls[0];`
-
-### Stub child components that fire their own API calls
-
-When the component under test renders a child with its own (separately-tested) API call, replace
-the child with a no-op so the test only exercises the parent's outermost mock (§1.12):
-
-```tsx
-jest.mock(
-  "@/features/auth/components/ContinueWithGoogleButton",
-  () =>
-    function GoogleComp() {
-      return <></>;
-    },
-);
-```
-
----
-
-## Minimal Worked Example
-
-```tsx
-import "../../utils/commonMocks";
-import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders } from "@/utils/test-utils";
-import SomeComponent, { buttonText, loadingText } from "../SomeComponent";
-import { someApiCall } from "@/features/x/utils/apiCalls";
-import { SomeApiCallType } from "../../utils/types";
-import { getLowercase } from "../../utils/testHelpers";
-
-jest.mock("@/features/x/utils/apiCalls", () => ({
-  someApiCall: jest.fn(),
-}));
-
-const mockedSomeApiCall = someApiCall as jest.MockedFunction<SomeApiCallType>;
-const name = getLowercase(buttonText);
-const noError = { error: "" };
-
-describe("SomeComponent", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  it("succeeds", async () => {
-    mockedSomeApiCall.mockResolvedValueOnce(noError);
-    const { user } = renderWithProviders(<SomeComponent />);
-
-    await user.click(screen.getByRole("button", { name }));
-
-    await waitFor(() => {
-      expect(mockedSomeApiCall).toHaveBeenCalledTimes(1);
-      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
-    });
-  });
-
-  it("shows an error", async () => {
-    const error = "Something went wrong";
-    mockedSomeApiCall.mockResolvedValueOnce({ error });
-    const { user } = renderWithProviders(<SomeComponent />);
-
-    await user.click(screen.getByRole("button", { name }));
-
-    await waitFor(() => {
-      expect(screen.getByText(error)).toBeInTheDocument();
-      expect(mockedSomeApiCall).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it("disables the button while pending and re-enables after", async () => {
-    let resolveSomeApiCall: (
-      value: Awaited<ReturnType<SomeApiCallType>>,
-    ) => void;
-
-    mockedSomeApiCall.mockImplementationOnce(
-      () =>
-        new Promise((resolve) => {
-          resolveSomeApiCall = resolve;
-        }),
-    );
-
-    const { user } = renderWithProviders(<SomeComponent />);
-    await user.click(screen.getByRole("button", { name }));
-
-    const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(loadingText),
-    });
-    expect(loadingButton).toBeDisabled();
-
-    resolveSomeApiCall!(noError);
-
-    const resetButton = await screen.findByRole("button", { name });
-    expect(resetButton).toBeEnabled();
-
-    await waitFor(() => {
-      expect(mockedSomeApiCall).toHaveBeenCalledTimes(1);
-    });
-  });
-});
-```
+Here, mockedRequestPasswordReset should not be called because zod returns before actually calling the function if it has validation errors. You would check the function requestPasswordReset by seeing "srx/app/features/auth/utils/apiCalls.ts" and indeed see it returns early for validation errors. That is what I mean by check the code and apply the negative checks when relevant.
