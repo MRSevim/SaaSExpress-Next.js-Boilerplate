@@ -17,6 +17,7 @@ import { useActionState } from "react";
 import { signInWithEmailAndPassword } from "../utils/apiCalls";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
+import { Separator } from "@/components/ui/separator";
 
 type SignInState = {
   error?: string;
@@ -29,11 +30,14 @@ export const signInButtonText = "Sign in";
 
 export const signInLoadingButtonText = "Signing in...";
 
+export const signInErrorId = "sign-in-error";
+
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {
-      const { error } = await signInWithEmailAndPassword(formData);
+      const result = await signInWithEmailAndPassword(formData);
 
+      const error = result ? result.error : "";
       return {
         error: error,
         defaultValues: {
@@ -92,7 +96,12 @@ const SignInComponent = () => {
           </FieldSet>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+            aria-describedby={signInErrorId}
+          >
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
@@ -102,8 +111,8 @@ const SignInComponent = () => {
               <>{signInButtonText}</>
             )}
           </Button>
-          {state?.error && <Error text={state?.error} />}
-          or
+          <Error text={state?.error ?? ""} id={signInErrorId} />
+          <Separator />
           <ContinueWithGoogleButton />
         </CardFooter>
       </Card>

@@ -2,14 +2,18 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders, getLowercase } from "@/utils/test-utils";
 import SignInComponent, {
   signInButtonText,
+  signInErrorId,
   signInLoadingButtonText,
 } from "../SignInComponent";
-import { signInWithEmailAndPassword } from "@/features/auth/utils/apiCalls";
-import { SignInWithEmailAndPassword } from "../../utils/types";
+import { auth } from "../../lib/auth";
+import { invalidEmail } from "../../utils/constants";
+import { routes } from "@/utils/routes";
+import { redirect } from "next/navigation";
 
-jest.mock("@/features/auth/utils/apiCalls", () => ({
-  signInWithEmailAndPassword: jest.fn(),
-}));
+const mockedSignInWithEmailAndPassword = auth.api
+  .signInEmail as unknown as jest.Mock;
+
+const mockedRedirect = redirect as jest.MockedFunction<typeof redirect>;
 
 jest.mock(
   "@/features/auth/components/ContinueWithGoogleButton",
@@ -19,21 +23,11 @@ jest.mock(
     },
 );
 
-const mockedSignInWithEmailAndPassword =
-  signInWithEmailAndPassword as jest.MockedFunction<SignInWithEmailAndPassword>;
-
 const name = getLowercase(signInButtonText);
 
-const email = "myemail@gmail.com";
 const password = "mypassword";
 
-const noError = { error: "" };
-
 describe("Sign In Component", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   const renderComponent = () => {
     const { user } = renderWithProviders(<SignInComponent />);
     return {
@@ -45,9 +39,8 @@ describe("Sign In Component", () => {
   };
 
   it("logs in user correctly", async () => {
-    let resolveSignIn: (
-      value: Awaited<ReturnType<SignInWithEmailAndPassword>>,
-    ) => void;
+    let resolveSignIn;
+    const email = "   MYemail@gmail.com";
 
     mockedSignInWithEmailAndPassword.mockImplementationOnce(
       () =>
@@ -58,6 +51,9 @@ describe("Sign In Component", () => {
 
     const { user, emailInput, passwordInput, submitButton } = renderComponent();
 
+    expect(submitButton.getAttribute("aria-describedby")).toContain(
+      signInErrorId,
+    );
     expect(emailInput).toBeRequired();
     expect(passwordInput).toBeRequired();
 
@@ -72,26 +68,31 @@ describe("Sign In Component", () => {
 
     expect(loadingButton).toBeDisabled();
 
-    resolveSignIn!(noError);
+    resolveSignIn!();
 
     const resetButton = await screen.findByRole("button", { name });
     expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
       expect(mockedSignInWithEmailAndPassword).toHaveBeenCalledTimes(1);
-      const [formData] = mockedSignInWithEmailAndPassword.mock.calls[0];
-      expect(formData.get("email")).toBe(email);
-      expect(formData.get("password")).toBe(password);
-      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+      expect(mockedSignInWithEmailAndPassword).toHaveBeenCalledWith({
+        body: {
+          email: email.trim().toLowerCase(),
+          password,
+        },
+      });
       expect(emailInput).toHaveValue("");
       expect(passwordInput).toHaveValue("");
     });
+    expect(mockedRedirect).toHaveBeenCalledWith(routes.home);
+    expect(mockedRedirect).toHaveBeenCalledTimes(1);
   });
 
-  it("shows error", async () => {
+  it("shows api error", async () => {
     const error = "Invalid credentials";
+    const email = "mymail@gmail.com";
 
-    mockedSignInWithEmailAndPassword.mockResolvedValueOnce({ error });
+    mockedSignInWithEmailAndPassword.mockRejectedValueOnce(new Error(error));
 
     const { user, emailInput, passwordInput, submitButton } = renderComponent();
 
@@ -101,13 +102,31 @@ describe("Sign In Component", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(error)).toBeInTheDocument();
-      expect(mockedSignInWithEmailAndPassword).toHaveBeenCalledTimes(1);
-      const [formData] = mockedSignInWithEmailAndPassword.mock.calls[0];
-      expect(formData.get("email")).toBe(email);
-      expect(formData.get("password")).toBe(password);
+      expect(document.getElementById(signInErrorId)).toHaveTextContent(error);
       expect(emailInput).toHaveValue(email);
       expect(passwordInput).toHaveValue("");
     });
+    expect(mockedRedirect).not.toHaveBeenCalled();
+  });
+
+  it("shows validation error", async () => {
+    const { user, emailInput, passwordInput, submitButton } = renderComponent();
+
+    const email = "invalid@m";
+
+    await user.type(emailInput, email);
+    await user.type(passwordInput, password);
+
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(document.getElementById(signInErrorId)).toHaveTextContent(
+        invalidEmail,
+      );
+      expect(emailInput).toHaveValue(email);
+      expect(passwordInput).toHaveValue("");
+    });
+    expect(mockedSignInWithEmailAndPassword).not.toHaveBeenCalled();
+    expect(mockedRedirect).not.toHaveBeenCalled();
   });
 });
