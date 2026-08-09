@@ -2,10 +2,12 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
 import ContinueWithGoogleButton, {
   buttonText,
+  googleSignInErrorId,
   loadingText,
 } from "../ContinueWithGoogleButton";
 import { getLowercase } from "@/utils/test-utils";
 import { authClient } from "../../lib/authClient";
+import { unknownError } from "@/utils/constants";
 
 const name = getLowercase(buttonText);
 
@@ -14,10 +16,6 @@ const noError = { error: "" };
 const mockedSocialSignIn = authClient.signIn.social as jest.Mock;
 
 describe("ContinueWithGoogle Button", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   const renderButton = () => {
     const { user } = renderWithProviders(<ContinueWithGoogleButton />);
     return { user, button: screen.getByRole("button", { name }) };
@@ -27,7 +25,9 @@ describe("ContinueWithGoogle Button", () => {
     mockedSocialSignIn.mockResolvedValueOnce(noError);
 
     const { user, button } = renderButton();
-
+    expect(button.getAttribute("aria-describedby")).toContain(
+      googleSignInErrorId,
+    );
     await user.click(button);
 
     await waitFor(() => {
@@ -51,7 +51,9 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.getByText(error)).toBeInTheDocument();
+      expect(document.getElementById(googleSignInErrorId)).toHaveTextContent(
+        error,
+      );
     });
   });
 
@@ -65,7 +67,9 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.getByText(error)).toBeInTheDocument();
+      expect(document.getElementById(googleSignInErrorId)).toHaveTextContent(
+        error,
+      );
     });
   });
 
@@ -110,7 +114,9 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.getByText("Unknown error occurred!")).toBeInTheDocument();
+      expect(document.getElementById(googleSignInErrorId)).toHaveTextContent(
+        unknownError,
+      );
     });
   });
 
@@ -129,7 +135,9 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.queryByText(error)).not.toBeInTheDocument();
+      expect(
+        document.getElementById(googleSignInErrorId),
+      ).not.toHaveTextContent(error);
     });
   });
 });

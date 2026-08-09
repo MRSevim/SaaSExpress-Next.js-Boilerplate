@@ -7,6 +7,8 @@ export const loadingText = "Redirecting...";
 
 export const buttonText = "Sign in With Google";
 
+export const googleSignInErrorId = "google-sign-in-error";
+
 const ContinueWithGoogleButton = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +20,7 @@ const ContinueWithGoogleButton = () => {
         variant="outline"
         className="w-full"
         disabled={isLoading}
+        aria-describedby={googleSignInErrorId}
         onClick={async () => {
           setError("");
           setIsLoading(true);
@@ -34,7 +37,8 @@ const ContinueWithGoogleButton = () => {
         </svg>
         {isLoading ? loadingText : buttonText}
       </Button>
-      {error && <Error text={error} />}
+
+      <Error id={googleSignInErrorId} text={error} />
     </>
   );
 };

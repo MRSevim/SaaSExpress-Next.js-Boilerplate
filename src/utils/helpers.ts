@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { isAPIError } from "better-auth/api";
+import { unknownError } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,9 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export const returnErrorFromUnknown = (
   error: unknown,
-  fallback: string = "Unknown error occurred!",
+  fallback: string = unknownError,
 ) => {
-  if (isAPIError(error)) return { error: error.message };
+  if (isAPIError(error)) return { error: error.message || fallback };
 
   return { error: fallback };
 };

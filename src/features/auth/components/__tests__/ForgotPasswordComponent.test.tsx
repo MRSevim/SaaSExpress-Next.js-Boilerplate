@@ -4,11 +4,14 @@ import ForgotPasswordComponent, {
   resetText,
   buttonText,
   loadingText,
+  forgotPasswordResetErrorId,
+  forgotPasswordResetSuccessId,
 } from "../ForgotPasswordComponent";
 import { getLowercase } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
+import { invalidEmail } from "@/features/auth/utils/constants";
 
 const name = getLowercase(buttonText);
 
@@ -16,10 +19,6 @@ const mockedRequestPasswordReset = auth.api
   .requestPasswordReset as unknown as jest.Mock;
 
 describe("ForgotPassword Component", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   const renderComponent = () => {
     const { user } = renderWithProviders(<ForgotPasswordComponent />);
     return {
@@ -42,6 +41,12 @@ describe("ForgotPassword Component", () => {
     const { user, emailInput, button } = renderComponent();
 
     expect(emailInput).toBeRequired();
+    expect(emailInput.getAttribute("aria-describedby")).toContain(
+      forgotPasswordResetErrorId,
+    );
+    expect(emailInput.getAttribute("aria-describedby")).toContain(
+      forgotPasswordResetSuccessId,
+    );
 
     const email = "   USER@example.com";
 
@@ -62,7 +67,9 @@ describe("ForgotPassword Component", () => {
     expect(resetButton).toBeEnabled();
 
     await waitFor(() => {
-      expect(screen.getByText(resetText)).toBeInTheDocument();
+      expect(
+        document.getElementById(forgotPasswordResetSuccessId),
+      ).toHaveTextContent(resetText);
       expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith({
@@ -82,7 +89,9 @@ describe("ForgotPassword Component", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.getByText("Invalid email address")).toBeInTheDocument();
+      expect(
+        document.getElementById(forgotPasswordResetErrorId),
+      ).toHaveTextContent(invalidEmail);
       expect(mockedRequestPasswordReset).not.toHaveBeenCalled();
     });
   });
@@ -100,7 +109,9 @@ describe("ForgotPassword Component", () => {
     await user.click(screen.getByRole("button", { name }));
 
     await waitFor(() => {
-      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+      expect(
+        document.getElementById(forgotPasswordResetErrorId),
+      ).toHaveTextContent(errorMessage);
       expect(screen.getByLabelText(/email/i)).toHaveValue(email);
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
     });

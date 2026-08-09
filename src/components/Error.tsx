@@ -1,13 +1,17 @@
 import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
-const Error = ({ text }: { text: string }) => {
+const Error = ({ text, id }: { text: string; id?: string }) => {
   return (
-    <Alert variant="destructive">
-      <AlertCircleIcon />
-      <AlertTitle>An error occurred!</AlertTitle>
-      <AlertDescription>{text}</AlertDescription>
-    </Alert>
+    <div aria-live="polite" id={id} className="w-full">
+      {text && (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>An error occurred!</AlertTitle>
+          <AlertDescription>{text}</AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 };
 

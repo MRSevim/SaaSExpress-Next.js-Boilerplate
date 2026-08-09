@@ -30,6 +30,14 @@ export const buttonText = "Reset Password";
 
 export const loadingText = "Resetting...";
 
+export const passwordErrorId = "password-error";
+
+export const confirmPasswordErrorId = "confirm-password-error";
+
+export const passwordResetSuccessId = "password-reset-success";
+
+export const passwordResetErrorId = "password-reset-error";
+
 const PasswordResetComponent = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -56,12 +64,20 @@ const PasswordResetComponent = () => {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="password">New Password</FieldLabel>
-                <Input name="password" id="password" type="password" required />
-                <FieldDescription>
+                <Input
+                  aria-describedby={`${passwordErrorId} password-desc`}
+                  name="password"
+                  id="password"
+                  type="password"
+                  required
+                />
+                <FieldDescription id="password-desc">
                   Must be at least 8 characters long
                 </FieldDescription>
 
-                <FieldError>{state?.errors?.password}</FieldError>
+                <FieldError id={passwordErrorId}>
+                  {state?.errors?.password}
+                </FieldError>
               </Field>
 
               <Field>
@@ -69,18 +85,26 @@ const PasswordResetComponent = () => {
                   Confirm New Password
                 </FieldLabel>
                 <Input
+                  aria-describedby={confirmPasswordErrorId}
                   id="confirm-password"
                   name="confirm-password"
                   type="password"
                   required
                 />
-                <FieldError>{state?.errors?.confirmPassword}</FieldError>
+                <FieldError id={confirmPasswordErrorId}>
+                  {state?.errors?.confirmPassword}
+                </FieldError>
               </Field>
             </FieldGroup>
           </FieldSet>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button
+            aria-describedby={`${passwordResetSuccessId} ${passwordResetErrorId}`}
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+          >
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" />
@@ -90,8 +114,11 @@ const PasswordResetComponent = () => {
               <>{buttonText}</>
             )}
           </Button>
-          {state?.successMessage && <Success text={state.successMessage} />}
-          {state?.error && <Error text={state.error} />}
+          <Success
+            text={state?.successMessage ?? ""}
+            id={passwordResetSuccessId}
+          />
+          <Error text={state?.error ?? ""} id={passwordResetErrorId} />
         </CardFooter>
       </Card>
     </form>

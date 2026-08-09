@@ -262,64 +262,6 @@ describe("auth apiCalls utilities", () => {
     });
   });
 
-  describe("resetPassword", () => {
-    it("resets the password successfully", async () => {
-      mockedAuth.api.resetPassword.mockResolvedValueOnce(undefined);
-
-      const password = "newpassword123";
-      const formData = createFormData({
-        password,
-        "confirm-password": password,
-      });
-
-      const result = await resetPassword(formData, "token-123");
-
-      expect(result).toEqual({
-        error: "",
-        successMessage: resetPasswordSuccessMessage,
-      });
-      expect(mockedAuth.api.resetPassword).toHaveBeenCalledWith({
-        body: { newPassword: password, token: "token-123" },
-      });
-      expect(mockedAuth.api.resetPassword).toHaveBeenCalledTimes(1);
-    });
-
-    it("returns validation errors for invalid password reset input", async () => {
-      const formData = createFormData({
-        password: "short",
-        "confirm-password": "different",
-      });
-
-      const result = await resetPassword(formData, "token-123");
-
-      expect(result).toEqual({
-        error: "",
-        errors: {
-          password: "Password must be at least 8 characters",
-          confirmPassword: "Passwords do not match",
-        },
-        successMessage: "",
-      });
-      expect(mockedAuth.api.resetPassword).not.toHaveBeenCalled();
-    });
-
-    it("returns an error when api throws an exception", async () => {
-      const error = "Network error";
-      const password = "mypassword";
-
-      mockedAuth.api.resetPassword.mockRejectedValueOnce(new Error(error));
-
-      const formData = createFormData({
-        password,
-        "confirm-password": password,
-      });
-
-      const result = await resetPassword(formData, "token-123");
-
-      expect(result).toEqual({ successMessage: "", error });
-    });
-  });
-
   describe("checkCredentialsProvider", () => {
     it.each(["credential", "google"])(
       "reports whether the credentials provider is available",

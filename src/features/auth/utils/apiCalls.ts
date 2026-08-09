@@ -16,7 +16,13 @@ import {
   CheckCredentialsProvider,
   DeleteUser,
 } from "./types";
-import { signUpSuccessMessage, resetPasswordSuccessMessage } from "./constants";
+import {
+  signUpSuccessMessage,
+  resetPasswordSuccessMessage,
+  invalidEmail,
+  shortPassword,
+  notMatchingPassword,
+} from "./constants";
 
 export const getSession = cache(async () => {
   const session = await auth.api.getSession({
@@ -31,7 +37,7 @@ const signInSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .pipe(z.email({ message: "Invalid email address" })),
+    .pipe(z.email({ message: invalidEmail })),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
@@ -81,15 +87,15 @@ const signUpSchema = z
       .string()
       .trim()
       .toLowerCase()
-      .pipe(z.email({ message: "Invalid email address" })),
+      .pipe(z.email({ message: invalidEmail })),
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" })
+      .min(8, { message: shortPassword })
       .max(128, { message: "Password is too long (max 128 characters)" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: notMatchingPassword,
     path: ["confirmPassword"],
   });
 
@@ -153,7 +159,7 @@ const requestPasswordResetSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .pipe(z.email({ message: "Invalid email address" })),
+    .pipe(z.email({ message: invalidEmail })),
 });
 
 export const requestPasswordReset: RequestPasswordReset = async (
@@ -189,12 +195,12 @@ const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" })
+      .min(8, { message: shortPassword })
       .max(128, { message: "Password is too long (max 128 characters)" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: notMatchingPassword,
     path: ["confirmPassword"],
   });
 
