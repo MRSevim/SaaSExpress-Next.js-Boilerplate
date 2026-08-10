@@ -23,7 +23,7 @@ import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import { IterationCw } from "lucide-react";
-import { unstable_catchError as catchError, type ErrorInfo } from "next/error";
+import { catchError, type ErrorInfo } from "next/error";
 
 const UserMenu = () => {
   const userPromise = useUserPromiseContext();
@@ -109,15 +109,13 @@ const LogoutButton = () => {
   );
 };
 
-export const HeaderButtonError = catchError(
-  (_props, { unstable_retry }: ErrorInfo) => {
-    return (
-      <Button variant="destructive" onClick={() => unstable_retry()}>
-        <IterationCw />
-        Try again
-      </Button>
-    );
-  },
-);
+export const HeaderButtonError = catchError((_props, { retry }: ErrorInfo) => {
+  return (
+    <Button variant="destructive" onClick={() => retry()}>
+      <IterationCw />
+      Try again
+    </Button>
+  );
+});
 
 export default UserMenu;

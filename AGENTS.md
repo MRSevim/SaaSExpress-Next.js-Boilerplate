@@ -6,6 +6,6 @@ Before any Next.js work, find and read the relevant doc in `node_modules/next/di
 
 <!-- END:nextjs-agent-rules -->
 
-## Testing
+# Testing
 
 Always check the Markdown files inside `docs/ai/` to identify task-specific instructions. Read and follow the relevant files when the task requires it. For example if user gave you test writing task, use the files inside `docs/ai/testing`.
