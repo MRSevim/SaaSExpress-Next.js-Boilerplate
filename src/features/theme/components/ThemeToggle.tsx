@@ -24,6 +24,7 @@ export default function ThemeToggle({
 
   return (
     <Button
+      className="h-9 w-20"
       variant="outline"
       onClick={toggleTheme}
       aria-pressed={isDark}
