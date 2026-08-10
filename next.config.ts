@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   experimental: {
     turbopackRustReactCompiler: true,
-    instantInsights: {
-      validationLevel: "manual-warning",
-    },
   },
 };
 
