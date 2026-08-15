@@ -70,7 +70,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col justify-between`}
+        className={`${geistSans.variable} ${geistMono.className} antialiased min-h-screen flex flex-col justify-between`}
       >
         <UserPromiseProvider userPromise={userPromise}>
           <Header />
