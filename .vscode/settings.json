@@ -2,10 +2,13 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
+    "source.fixAll.eslint": "explicit"
   },
+  "eslint.enable": true,
+  "eslint.run": "onType",
   "files.associations": {
     "*.css": "tailwindcss"
   },
+  "eslint.workingDirectories": [{ "mode": "auto" }],
   "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }

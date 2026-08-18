@@ -21,9 +21,10 @@ const eslintConfig = defineConfig([
       // TSDoc Syntax Validation (catches tag typos)
       "tsdoc/syntax": "error",
 
+      "jsdoc/check-param-names": "error",
       // JSDoc Structure Enforcement (enforces comment presence)
       "jsdoc/require-jsdoc": [
-        "error",
+        "warn",
         {
           publicOnly: true, // Only requires docs on EXPORTED functions/classes
           require: {
@@ -44,7 +45,13 @@ const eslintConfig = defineConfig([
       },
     },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "src/components/ui/*",
+  ]),
 ]);
 
 export default eslintConfig;

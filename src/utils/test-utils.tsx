@@ -41,9 +41,9 @@ export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
  * Polls the file system until an email file is created and written to,
  * then reads and returns its raw string content.
  *
- * @param filePath - The absolute or relative file path where the Next.js server writes the intercepted email.
+ * @param path - The absolute or relative file path where the Next.js server writes the intercepted email.
  * @returns A promise that resolves to the full raw text or HTML content of the email.
- * @throws {Error} If Playwright times out waiting for the file to be created or populated.
+ * @throws If Playwright times out waiting for the file to be created or populated.
  */
 export const getEmailContentFromFile = async (path: string) => {
   // Use Playwright's built-in polling to wait for the file to exist and not be empty
@@ -70,9 +70,9 @@ export const getEmailContentFromFile = async (path: string) => {
 /**
  * Parses a raw email text or HTML string and extracts the first HTTP/HTTPS link.
  *
- * @param emailText - The raw text or HTML string content of the received email.
+ * @param text - The raw text or HTML string content of the received email.
  * @returns The extracted verification URL string starting with http or https.
- * @throws {Error} If no valid HTTP or HTTPS link is present in the provided email text.
+ * @throws If no valid HTTP or HTTPS link is present in the provided email text.
  */
 export const extractVerificationLink = (text: string) => {
   // Regex to match a standard http or https URL

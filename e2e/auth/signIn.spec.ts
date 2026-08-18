@@ -1,5 +1,4 @@
 import { signUpSuccessMessage } from "@/features/auth/utils/constants";
-import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import {
   extractVerificationLink,
