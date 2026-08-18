@@ -1,8 +1,8 @@
 "use server";
 import { env } from "@/utils/env";
 import resend from "./resend";
-
-const dev = env.NODE_ENV === "development";
+import fs from "fs";
+import path from "path";
 
 export const sendEmail = async ({
   to,
@@ -20,6 +20,13 @@ export const sendEmail = async ({
     text,
   };
   try {
+    if (env.NODE_ENV === "test") {
+      // Use the email to create a unique file for this specific signup
+      const filePath = path.join(process.cwd(), `.e2e-link-${to}.txt`);
+      fs.writeFileSync(filePath, text);
+      return;
+    }
+
     await resend.emails.send(obj);
 
     return;

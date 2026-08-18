@@ -70,6 +70,11 @@ const authOptions = {
     },
   },
   plugins: [nextCookies()],
+  advanced: {
+    database: {
+      joins: true,
+    },
+  },
 };
 
 const globalForAuth = global as unknown as {
