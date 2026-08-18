@@ -60,8 +60,8 @@ const SignUpComponent = () => {
       <Card>
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
-          <CardAction>
-            <Button variant="link" asChild>
+          <CardAction className="leading-none">
+            <Button className="p-0 h-0" variant="link" asChild>
               <Link href={routes.signIn}>Sign In</Link>
             </Button>
           </CardAction>
