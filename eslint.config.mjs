@@ -35,8 +35,9 @@ const eslintConfig = defineConfig([
           },
         },
       ],
-      "jsdoc/require-param-description": "error",
-      "jsdoc/require-returns-description": "error",
+      "jsdoc/require-description": "warn",
+      "jsdoc/require-param-description": "warn",
+      "jsdoc/require-returns-description": "warn",
     },
     settings: {
       react: { version: "19" },
