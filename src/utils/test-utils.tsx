@@ -2,6 +2,8 @@ import React, { PropsWithChildren } from "react";
 import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { expect } from "@playwright/test";
+import fs from "fs";
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as store.
@@ -20,8 +22,68 @@ export function renderWithProviders(
   };
 }
 
-// utils/test-utils.ts
-const escapeRegExp = (str: string) =>
-  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/**
+ * Escapes all regular expression metacharacters in a string.
+ *
+ * Ensures the string can be safely passed into a `new RegExp()` constructor
+ * to be matched as a literal string rather than interpreted as regex pattern syntax.
+ *
+ * @param str - The raw string that may contain regex control characters.
+ * @returns The escaped string with backslashes preceding all regex metacharacters.
+ */
+const escapeRegExp = (str: string): string => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
 
 export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
+
+/**
+ * Polls the file system until an email file is created and written to,
+ * then reads and returns its raw string content.
+ *
+ * @param filePath - The absolute or relative file path where the Next.js server writes the intercepted email.
+ * @returns A promise that resolves to the full raw text or HTML content of the email.
+ * @throws {Error} If Playwright times out waiting for the file to be created or populated.
+ */
+export const getEmailContentFromFile = async (path: string) => {
+  // Use Playwright's built-in polling to wait for the file to exist and not be empty
+  await expect
+    .poll(
+      () => {
+        try {
+          return fs.readFileSync(path, "utf8");
+        } catch {
+          return "";
+        }
+      },
+      {
+        message: `Waiting for email file to be written at: ${path}`,
+        timeout: 5000,
+      },
+    )
+    .not.toBe(""); // Ensure we actually got some text back
+
+  // Once the poll passes, read and return the text
+  return fs.readFileSync(path, "utf8");
+};
+
+/**
+ * Parses a raw email text or HTML string and extracts the first HTTP/HTTPS link.
+ *
+ * @param emailText - The raw text or HTML string content of the received email.
+ * @returns The extracted verification URL string starting with http or https.
+ * @throws {Error} If no valid HTTP or HTTPS link is present in the provided email text.
+ */
+export const extractVerificationLink = (text: string) => {
+  // Regex to match a standard http or https URL
+  const urlRegex = /(https?:\/\/[^\s"'<>]+)/;
+  const match = text.match(urlRegex);
+
+  if (!match) {
+    throw new Error(
+      "Could not find a valid verification link in the email text.",
+    );
+  }
+
+  return match[0];
+};
