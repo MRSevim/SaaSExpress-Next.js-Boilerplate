@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/item";
 import { CircleAlert } from "lucide-react";
 
+/**
+ *
+ */
 export default function ErrorBoundary({
   error,
   reset,

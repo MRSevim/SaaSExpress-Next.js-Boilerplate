@@ -20,6 +20,9 @@ export const accountDeletionSuccessMessage =
 
 export const resetPasswordButtonText = "Reset password";
 
+/**
+ *
+ */
 const ProfilePage = () => {
   const userPromise = useUserPromiseContext();
   const user = use(userPromise);

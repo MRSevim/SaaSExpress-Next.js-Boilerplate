@@ -25,6 +25,9 @@ import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromis
 import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 
+/**
+ *
+ */
 const UserMenu = () => {
   const userPromise = useUserPromiseContext();
   const user = use(userPromise);

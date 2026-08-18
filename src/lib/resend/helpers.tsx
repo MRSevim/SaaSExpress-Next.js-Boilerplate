@@ -4,6 +4,9 @@ import resend from "./resend";
 import fs from "fs";
 import path from "path";
 
+/**
+ *
+ */
 export const sendEmail = async ({
   to,
   subject,

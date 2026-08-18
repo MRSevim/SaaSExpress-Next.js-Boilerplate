@@ -38,6 +38,9 @@ export const passwordResetSuccessId = "password-reset-success";
 
 export const passwordResetErrorId = "password-reset-error";
 
+/**
+ *
+ */
 const PasswordResetComponent = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");

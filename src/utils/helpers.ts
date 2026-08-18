@@ -3,10 +3,16 @@ import { twMerge } from "tailwind-merge";
 import { isAPIError } from "better-auth/api";
 import { unknownError } from "./constants";
 
+/**
+ *
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ *
+ */
 export const returnErrorFromUnknown = (
   error: unknown,
   fallback: string = unknownError,
@@ -16,6 +22,9 @@ export const returnErrorFromUnknown = (
   return { error: fallback };
 };
 
+/**
+ *
+ */
 export const setCookie = (name: string, value: string, days: number = 365) => {
   const maxAge = days * 24 * 60 * 60;
   document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
@@ -23,6 +32,9 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
   )};path=/;max-age=${maxAge}`;
 };
 
+/**
+ *
+ */
 export const getRandomNumber = () => {
   return (Math.random() * 100).toFixed(2);
 };

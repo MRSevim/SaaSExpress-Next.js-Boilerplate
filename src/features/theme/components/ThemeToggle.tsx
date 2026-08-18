@@ -7,6 +7,9 @@ import { useState } from "react";
 export const switchToLightText = "Switch to light theme";
 export const switchToDarkText = "Switch to dark theme";
 
+/**
+ *
+ */
 export default function ThemeToggle({
   initialTheme,
 }: {

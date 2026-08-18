@@ -38,6 +38,9 @@ export const emailErrorId = "sign-up-email-error";
 export const passwordErrorId = "sign-up-password-error";
 export const confirmPasswordErrorId = "sign-up-confirm-password-error";
 
+/**
+ *
+ */
 const SignUpComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignUpState, formData: FormData) => {

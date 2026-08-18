@@ -9,6 +9,9 @@ import fs from "fs";
 // as allows the user to specify other things such as store.
 type ExtendedRenderOptions = Omit<RenderOptions, "queries" | "wrapper">;
 
+/**
+ *
+ */
 export function renderWithProviders(
   ui: React.ReactElement,
   extendedRenderOptions: ExtendedRenderOptions = {},
@@ -35,6 +38,9 @@ const escapeRegExp = (str: string): string => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
+/**
+ *
+ */
 export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
 
 /**

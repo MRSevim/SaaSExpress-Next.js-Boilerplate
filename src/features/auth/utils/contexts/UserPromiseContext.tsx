@@ -6,6 +6,9 @@ type UserPromise = Promise<User | undefined> | null;
 
 const UserPromiseContext = createContext<UserPromise>(null);
 
+/**
+ *
+ */
 export const useUserPromiseContext = () => {
   const userPromise = useContext(UserPromiseContext);
   if (!userPromise) {
@@ -16,6 +19,9 @@ export const useUserPromiseContext = () => {
   return userPromise;
 };
 
+/**
+ *
+ */
 export const UserPromiseProvider = ({
   userPromise,
   children,

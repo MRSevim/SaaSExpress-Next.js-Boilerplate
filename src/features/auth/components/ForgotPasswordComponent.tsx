@@ -24,6 +24,9 @@ export const forgotPasswordResetErrorId = "forgot-password-error";
 
 export const forgotPasswordResetSuccessId = "forgot-password-success";
 
+/**
+ *
+ */
 const ForgotPasswordComponent = () => {
   const [state, action, isPending] = useActionState(
     async (

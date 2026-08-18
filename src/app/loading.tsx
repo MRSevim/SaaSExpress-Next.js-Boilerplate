@@ -2,6 +2,9 @@ import Container from "@/components/Container";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 
+/**
+ *
+ */
 export default function Loading() {
   return (
     <Container>

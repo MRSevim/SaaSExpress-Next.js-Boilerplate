@@ -15,6 +15,9 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { Skeleton } from "../ui/skeleton";
 
+/**
+ *
+ */
 const Header = async () => {
   return (
     <header className="p-3 border-b border-b-slate-200 dark:border-b-slate-700">

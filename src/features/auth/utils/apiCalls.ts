@@ -33,6 +33,9 @@ const signInSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
+/**
+ *
+ */
 export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -89,6 +92,9 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
+/**
+ *
+ */
 export const signUp = async (formData: FormData) => {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
@@ -133,6 +139,9 @@ export const signUp = async (formData: FormData) => {
   }
 };
 
+/**
+ *
+ */
 export const signOut = async () => {
   try {
     await auth.api.signOut({
@@ -152,6 +161,9 @@ const requestPasswordResetSchema = z.object({
     .pipe(z.email({ message: invalidEmail })),
 });
 
+/**
+ *
+ */
 export const requestPasswordReset = async (email: string) => {
   const parsed = requestPasswordResetSchema.safeParse({
     email,
@@ -192,6 +204,9 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+/**
+ *
+ */
 export const resetPassword = async (formData: FormData, token: string) => {
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirm-password") as string;
@@ -224,6 +239,9 @@ export const resetPassword = async (formData: FormData, token: string) => {
   }
 };
 
+/**
+ *
+ */
 export const checkCredentialsProvider = async () => {
   try {
     const accounts = await auth.api.listUserAccounts({
@@ -238,6 +256,9 @@ export const checkCredentialsProvider = async () => {
   }
 };
 
+/**
+ *
+ */
 export const deleteUser = async () => {
   try {
     await auth.api.deleteUser({

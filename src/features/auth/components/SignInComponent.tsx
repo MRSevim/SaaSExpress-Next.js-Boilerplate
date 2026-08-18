@@ -32,6 +32,9 @@ export const signInLoadingButtonText = "Signing in...";
 
 export const signInErrorId = "sign-in-error";
 
+/**
+ *
+ */
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(
     async (_prevState: SignInState, formData: FormData) => {

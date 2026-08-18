@@ -1,6 +1,9 @@
 import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
+/**
+ *
+ */
 const Error = ({ text, id }: { text: string; id?: string }) => {
   return (
     <div aria-live="polite" id={id} className="w-full">

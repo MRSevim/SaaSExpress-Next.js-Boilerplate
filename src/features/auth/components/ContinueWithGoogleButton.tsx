@@ -9,6 +9,9 @@ export const buttonText = "Sign in With Google";
 
 export const googleSignInErrorId = "google-sign-in-error";
 
+/**
+ *
+ */
 const ContinueWithGoogleButton = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
