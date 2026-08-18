@@ -20,11 +20,7 @@ export const sendEmail = async ({
     text,
   };
   try {
-    if (dev) {
-      console.log(obj);
-    } else {
-      await resend.emails.send(obj);
-    }
+    await resend.emails.send(obj);
 
     return;
   } catch (error) {
