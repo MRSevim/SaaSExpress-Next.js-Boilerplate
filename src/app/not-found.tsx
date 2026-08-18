@@ -11,9 +11,6 @@ import {
 import { routes } from "@/utils/routes";
 import { Button } from "@/components/ui/button";
 
-/**
- *
- */
 export default function NotFound() {
   return (
     <Container className="text-center">

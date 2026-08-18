@@ -45,6 +45,25 @@ const eslintConfig = defineConfig([
       },
     },
   },
+  {
+    files: [
+      "**/page.{js,jsx,ts,tsx}",
+      "**/layout.{js,jsx,ts,tsx}",
+      "**/loading.{js,jsx,ts,tsx}",
+      "**/error.{js,jsx,ts,tsx}",
+      "**/not-found.{js,jsx,ts,tsx}",
+      "**/template.{js,jsx,ts,tsx}",
+      "**/default.{js,jsx,ts,tsx}",
+      "**/route.{js,ts}",
+      "**/robots.{js,ts}",
+      "**/sitemap.{js,ts}",
+      "**/middleware.{js,ts}",
+      "**/instrumentation.{js,ts}",
+    ],
+    rules: {
+      "jsdoc/require-jsdoc": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",
