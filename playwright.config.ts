@@ -1,8 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
-import path from "path";
 
-dotenv.config({ path: path.resolve(__dirname, ".env.test") });
+dotenv.config({ path: "./.env.test" });
 
 export default defineConfig({
   testDir: "./e2e",
@@ -28,7 +27,7 @@ export default defineConfig({
     : [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 
   webServer: {
-    command: "npm run dev",
+    command: "npm run test-server",
     url: process.env.BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

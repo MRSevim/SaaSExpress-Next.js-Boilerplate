@@ -1,26 +1,33 @@
 import { signUpSuccessMessage } from "@/features/auth/utils/constants";
 import { routes } from "@/utils/routes";
 import {
+  clearE2eEmailFiles,
+  createE2EMailfilename,
   extractVerificationLink,
   getEmailContentFromFile,
 } from "@/utils/test-utils";
 import { test, expect } from "@playwright/test";
-import fs from "fs";
 import path from "path";
 
 test.beforeEach(async ({ page }) => {
   await page.goto(routes.home);
-
-  await page.getByText(/Sign Up/i).click();
 });
 
-test("User can sign up", async ({ page }) => {
-  // Generate a unique email so tests don't collide in parallel
-  const testEmail = `testuser+${Date.now()}@example.com`;
-  const filePath = path.join(process.cwd(), `.e2e-link-${testEmail}.txt`);
-  const password = "securepassword123";
+// Generate a unique email so tests don't collide in parallel
+export const testEmail = `testuser+${Date.now()}@example.com`;
+const password = "securepassword123";
+const username = "myusername";
 
-  await page.fill('input[name="name"]', "myusername");
+test("User can sign up and then logout", async ({ page }) => {
+  await page.getByText(/Sign Up/i).click();
+
+  const filePath = path.join(
+    process.cwd(),
+    ".e2e-emails",
+    createE2EMailfilename(testEmail),
+  );
+
+  await page.fill('input[name="name"]', username);
   await page.fill('input[name="email"]', testEmail);
   await page.fill('input[name="password"]', password);
   await page.fill('input[name="confirm-password"]', password);
@@ -34,9 +41,12 @@ test("User can sign up", async ({ page }) => {
 
   await page.goto(verificationUrl);
 
-  // Clean up this specific test's file
-  fs.unlinkSync(filePath);
+  await page.getByRole("button", { name: `User menu for ${username}` }).click();
+  await page.getByRole("menuitem", { name: "Logout" }).click();
 
-  //TODO ENSURE USER IS SIGNED IN
-  //TODO SIGNOUT
+  await expect(page.getByRole("link", { name: /sign in/i })).toBeVisible();
+});
+
+test.afterEach(async () => {
+  clearE2eEmailFiles();
 });

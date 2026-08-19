@@ -4,6 +4,7 @@ import type { RenderOptions } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { expect } from "@playwright/test";
 import fs from "fs";
+import path from "path";
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as store.
@@ -92,4 +93,22 @@ export const extractVerificationLink = (text: string) => {
   }
 
   return match[0];
+};
+
+/**
+ * Clears all .e2e-link-*.txt files
+ */
+export const clearE2eEmailFiles = () => {
+  const dir = path.join(process.cwd(), ".e2e-emails");
+  fs.rmSync(dir, { recursive: true, force: true });
+};
+
+/**
+ * Creates e2e-link-*.txt filepaths with users' emails.
+ *
+ * @param text - email to be inserted
+ * @returns - created file path
+ */
+export const createE2EMailfilename = (email: string) => {
+  return `${email}.txt`;
 };

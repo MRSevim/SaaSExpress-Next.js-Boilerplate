@@ -68,7 +68,11 @@ const Dropdown = ({ user }: { user: User }) => {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="rounded-md w-20">
+        <Button
+          variant="outline"
+          className="rounded-md w-20"
+          aria-label={`User menu for ${user.name}`}
+        >
           <Avatar>
             <AvatarImage
               src={user.image || undefined}

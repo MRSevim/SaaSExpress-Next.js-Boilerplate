@@ -3,6 +3,7 @@ import { env } from "@/utils/env";
 import resend from "./resend";
 import fs from "fs";
 import path from "path";
+import { createE2EMailfilename } from "@/utils/test-utils";
 
 /**
  *
@@ -25,7 +26,12 @@ export const sendEmail = async ({
   try {
     if (env.NODE_ENV === "test") {
       // Use the email to create a unique file for this specific signup
-      const filePath = path.join(process.cwd(), `.e2e-link-${to}.txt`);
+      const filePath = path.join(
+        process.cwd(),
+        ".e2e-emails",
+        createE2EMailfilename(to),
+      );
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
       fs.writeFileSync(filePath, text);
       return;
     }
