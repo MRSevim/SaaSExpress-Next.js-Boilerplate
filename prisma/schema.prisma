@@ -61,6 +61,7 @@ model Account {
 
   @@index([userId])
   @@map("account")
+  @@unique([issuer, accountId], map: "account_issuer_accountId_uidx")
 }
 
 model Verification {
