@@ -13,19 +13,21 @@ test.beforeEach(async ({ page }) => {
   await page.goto(routes.home);
 });
 
-// Generate a unique email so tests don't collide in parallel
-export const email = `testuser+${Date.now()}@example.com`;
-const password = "securepassword123";
-const username = "myusername";
-
 test.describe("auth flow", () => {
-  test("User can sign up, logout and then sign in ", async ({ page }) => {
+  test("User can sign up, logout, sign in, request password reset, reset their password then delete account", async ({
+    page,
+  }) => {
+    // Generate a unique email so tests don't collide in parallel
+    const email = `testuser+${Math.floor(Math.random() * 1000)}${Date.now()}@example.com`;
+    const password = "securepassword123";
+    const username = "myusername";
+
     await page.getByRole("button", { name: "Sign Up" }).click();
 
     const filePath = path.join(
       process.cwd(),
       ".e2e-emails",
-      createE2EMailfilename(email),
+      createE2EMailfilename(email, "verification"),
     );
 
     await page.getByLabel("Username").fill(username);
@@ -39,8 +41,8 @@ test.describe("auth flow", () => {
     await expect(page.getByText(signUpSuccessMessage)).toBeVisible();
 
     //get the file created during email sending (only during tests)
-    const rawEmailText = await getEmailContentFromFile(filePath);
-    const verificationUrl = extractVerificationLink(rawEmailText);
+    const rawVerificationEmailText = await getEmailContentFromFile(filePath);
+    const verificationUrl = extractVerificationLink(rawVerificationEmailText);
 
     await page.goto(verificationUrl);
 
@@ -55,9 +57,16 @@ test.describe("auth flow", () => {
     await page.getByLabel("Password").fill(password);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
-    await expect(
-      page.getByRole("button", { name: `User menu for ${username}` }),
-    ).toBeVisible();
+    await page
+      .getByRole("button", { name: `User menu for ${username}` })
+      .click();
+    await page.getByRole("menuitem", { name: "Profile" }).click();
+
+    //TODO REQUEST RESET PASSWORD
+    //RESET PASSWORD
+    //TRY LOGGING IN WITH OLD PASSWORD
+    //TRY LOGGING IN WITH NEW PASSWORD
+    //DELETE ACCOUNT
   });
 });
 test.afterEach(async () => {

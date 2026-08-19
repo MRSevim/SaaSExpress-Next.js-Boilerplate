@@ -28,3 +28,6 @@ export type ResetPasswordState = {
   };
   successMessage?: string;
 } | null;
+
+export type EmailType =
+  "verification" | "account-deletion" | "password-reset-request";

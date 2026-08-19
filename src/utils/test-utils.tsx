@@ -5,6 +5,7 @@ import { userEvent } from "@testing-library/user-event";
 import { expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
+import { EmailType } from "@/features/auth/utils/types";
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as store.
@@ -53,12 +54,15 @@ export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
  * @throws If Playwright times out waiting for the file to be created or populated.
  */
 export const getEmailContentFromFile = async (path: string) => {
+  let content = "";
+
   // Use Playwright's built-in polling to wait for the file to exist and not be empty
   await expect
     .poll(
       () => {
         try {
-          return fs.readFileSync(path, "utf8");
+          content = fs.readFileSync(path, "utf8");
+          return content;
         } catch {
           return "";
         }
@@ -70,8 +74,11 @@ export const getEmailContentFromFile = async (path: string) => {
     )
     .not.toBe(""); // Ensure we actually got some text back
 
-  // Once the poll passes, read and return the text
-  return fs.readFileSync(path, "utf8");
+  //  Delete the file immediately
+  fs.unlinkSync(path);
+
+  //  Return the saved content
+  return content;
 };
 
 /**
@@ -109,6 +116,6 @@ export const clearE2eEmailFiles = () => {
  * @param text - email to be inserted
  * @returns - created file path
  */
-export const createE2EMailfilename = (email: string) => {
-  return `${email}.txt`;
+export const createE2EMailfilename = (email: string, type: EmailType) => {
+  return `${email}-${type}.txt`;
 };

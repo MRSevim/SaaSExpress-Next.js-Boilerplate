@@ -25,6 +25,7 @@ const authOptions = {
         to: user.email,
         subject: `Reset your password on ${APP_NAME}`,
         text: `Click the link to reset your password: ${url}`,
+        type: "password-reset-request",
       });
     },
   },
@@ -42,6 +43,7 @@ const authOptions = {
           to: user.email,
           subject: `Verify your account deletion on ${APP_NAME}`,
           text: `Click the link to delete your account: ${url}`,
+          type: "account-deletion",
         });
       },
     },
@@ -66,6 +68,7 @@ const authOptions = {
         to: user.email,
         subject: `Verify your email address on ${APP_NAME}`,
         text: `Click the link to verify your email: ${url}`,
+        type: "verification",
       });
     },
   },

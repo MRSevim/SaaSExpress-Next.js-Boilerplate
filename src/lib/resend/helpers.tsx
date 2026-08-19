@@ -4,6 +4,7 @@ import resend from "./resend";
 import fs from "fs";
 import path from "path";
 import { createE2EMailfilename } from "@/utils/test-utils";
+import { EmailType } from "@/features/auth/utils/types";
 
 /**
  *
@@ -12,10 +13,12 @@ export const sendEmail = async ({
   to,
   subject,
   text,
+  type,
 }: {
   to: string;
   subject: string;
   text: string;
+  type: EmailType;
 }) => {
   const obj = {
     from: env.RESEND_FROM,
@@ -29,14 +32,14 @@ export const sendEmail = async ({
       const filePath = path.join(
         process.cwd(),
         ".e2e-emails",
-        createE2EMailfilename(to),
+        createE2EMailfilename(to, type),
       );
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
       fs.writeFileSync(filePath, text);
-      return;
-    }
-
-    await resend.emails.send(obj);
+    } else if (env.NODE_ENV === "development") {
+      // eslint-disable-next-line no-console
+      console.log(obj);
+    } else await resend.emails.send(obj);
 
     return;
   } catch (error) {
