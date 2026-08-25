@@ -23,7 +23,7 @@ export const returnErrorFromUnknown = (
 };
 
 /**
- * sets coookie to browser
+ * sets cookie to browser
  */
 export const setCookie = (name: string, value: string, days: number = 365) => {
   const maxAge = days * 24 * 60 * 60;

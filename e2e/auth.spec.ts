@@ -5,7 +5,7 @@ import {
   createE2EMailfilename,
   extractLink,
   getEmailContentFromFile,
-} from "@/utils/test-utils";
+} from "@/utils/test-utils/playwright-utils";
 import { test, expect } from "@playwright/test";
 import path from "path";
 

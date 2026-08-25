@@ -1,5 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders, getInsensitiveExp } from "@/utils/test-utils";
+import {
+  renderWithProviders,
+  getInsensitiveExp,
+} from "@/utils/test-utils/jest-utils";
 import SignInComponent, {
   signInButtonText,
   signInErrorId,

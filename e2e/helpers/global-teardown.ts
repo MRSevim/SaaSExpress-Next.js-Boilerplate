@@ -1,6 +1,6 @@
 // e2e/helpers/global-teardown.ts
 import prisma from "@/lib/prisma";
-import { clearE2eEmailFiles } from "@/utils/test-utils";
+import { clearE2eEmailFiles } from "@/utils/test-utils/playwright-utils";
 
 export default async function globalTeardown() {
   // Wipe all data, keep schema intact

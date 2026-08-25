@@ -1,5 +1,8 @@
 import { screen } from "@testing-library/react";
-import { getInsensitiveExp, renderWithProviders } from "@/utils/test-utils";
+import {
+  getInsensitiveExp,
+  renderWithProviders,
+} from "@/utils/test-utils/jest-utils";
 import ThemeToggle, {
   switchToDarkText,
   switchToLightText,

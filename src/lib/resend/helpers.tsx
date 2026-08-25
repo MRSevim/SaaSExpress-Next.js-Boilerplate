@@ -3,7 +3,7 @@ import { env } from "@/utils/env";
 import resend from "./resend";
 import fs from "fs";
 import path from "path";
-import { createE2EMailfilename } from "@/utils/test-utils";
+import { createE2EMailfilename } from "@/utils/test-utils/playwright-utils";
 import { EmailType } from "@/features/auth/utils/types";
 
 /**

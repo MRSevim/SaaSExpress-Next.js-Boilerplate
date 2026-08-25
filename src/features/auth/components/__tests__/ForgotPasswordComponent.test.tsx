@@ -1,12 +1,12 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders } from "@/utils/test-utils";
+import { renderWithProviders } from "@/utils/test-utils/jest-utils";
 import ForgotPasswordComponent, {
   buttonText,
   loadingText,
   forgotPasswordResetErrorId,
   forgotPasswordResetSuccessId,
 } from "../ForgotPasswordComponent";
-import { getInsensitiveExp } from "@/utils/test-utils";
+import { getInsensitiveExp } from "@/utils/test-utils/jest-utils";
 import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
