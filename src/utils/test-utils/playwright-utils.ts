@@ -55,7 +55,7 @@ export const extractLink = (text: string) => {
     throw new Error("Could not find a valid link in the email text.");
   }
 
-  return match[0];
+  return match[0].replace(/&amp;/gi, "&");
 };
 
 /**
