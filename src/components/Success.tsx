@@ -2,7 +2,7 @@ import { CheckCircle2Icon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 /**
- *
+ * Success alert displayer
  */
 const Success = ({ text, id }: { id?: string; text: string }) => {
   return (

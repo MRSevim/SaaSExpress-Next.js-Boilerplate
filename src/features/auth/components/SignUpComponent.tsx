@@ -21,7 +21,7 @@ import { routes } from "@/utils/routes";
 import Link from "next/link";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import { useActionState } from "react";
-import { signUp } from "../utils/apiCalls";
+import { signUp } from "../utils/serverActions";
 import { SignUpState } from "../utils/types";
 import Success from "@/components/Success";
 import Error from "@/components/Error";
@@ -39,7 +39,7 @@ export const passwordErrorId = "sign-up-password-error";
 export const confirmPasswordErrorId = "sign-up-confirm-password-error";
 
 /**
- *
+ * Sign up/register comp
  */
 const SignUpComponent = () => {
   const [state, action, isPending] = useActionState(

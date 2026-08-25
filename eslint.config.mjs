@@ -58,8 +58,9 @@ const eslintConfig = defineConfig([
       "**/route.{js,ts}",
       "**/robots.{js,ts}",
       "**/sitemap.{js,ts}",
-      "**/middleware.{js,ts}",
+      "**/proxy.{js,ts}",
       "**/instrumentation.{js,ts}",
+      "e2e/helpers/global-teardown.ts",
     ],
     rules: {
       "jsdoc/require-jsdoc": "off",

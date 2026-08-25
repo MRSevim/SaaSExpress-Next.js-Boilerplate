@@ -2,7 +2,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 /**
- *
+ * Error alert displayer
  */
 const Error = ({ text, id }: { text: string; id?: string }) => {
   return (

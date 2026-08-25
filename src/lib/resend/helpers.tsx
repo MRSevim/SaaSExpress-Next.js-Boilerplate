@@ -7,7 +7,7 @@ import { createE2EMailfilename } from "@/utils/test-utils";
 import { EmailType } from "@/features/auth/utils/types";
 
 /**
- *
+ * Sends email through provider (can do other things depending on the environment. Prod, test and dev all behaves differently)
  */
 export const sendEmail = async ({
   to,
@@ -43,6 +43,7 @@ export const sendEmail = async ({
 
     return;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
   }
 };

@@ -18,7 +18,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { signOut } from "@/features/auth/utils/apiCalls";
+import { signOut } from "@/features/auth/utils/serverActions";
 import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
@@ -26,7 +26,7 @@ import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 
 /**
- *
+ * Logged in user's menu
  */
 const UserMenu = () => {
   const userPromise = useUserPromiseContext();

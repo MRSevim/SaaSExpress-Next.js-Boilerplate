@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import { renderWithProviders, getInsensitiveExp } from "@/utils/test-utils";
 import SignInComponent, {
   signInButtonText,
   signInErrorId,
@@ -23,7 +23,7 @@ jest.mock(
     },
 );
 
-const name = getLowercase(signInButtonText);
+const name = getInsensitiveExp(signInButtonText);
 
 const password = "mypassword";
 
@@ -63,7 +63,7 @@ describe("Sign In Component", () => {
     await user.click(submitButton);
 
     const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(signInLoadingButtonText),
+      name: getInsensitiveExp(signInLoadingButtonText),
     });
 
     expect(loadingButton).toBeDisabled();

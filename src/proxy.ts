@@ -3,9 +3,6 @@ import { headers } from "next/headers";
 import { routes } from "./utils/routes";
 import { auth } from "./features/auth/lib/auth";
 
-/**
- *
- */
 export default async function proxy(request: NextRequest) {
   /*
    * ==============================

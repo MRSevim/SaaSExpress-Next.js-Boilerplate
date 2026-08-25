@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { signInWithGoogle } from "@/features/auth/utils/apiCallsClient";
+import { signInWithGoogle } from "@/features/auth/utils/ClientActions";
 import Error from "@/components/Error";
 
 export const loadingText = "Redirecting...";
@@ -10,7 +10,7 @@ export const buttonText = "Sign in With Google";
 export const googleSignInErrorId = "google-sign-in-error";
 
 /**
- *
+ * Google login button
  */
 const ContinueWithGoogleButton = () => {
   const [error, setError] = useState("");

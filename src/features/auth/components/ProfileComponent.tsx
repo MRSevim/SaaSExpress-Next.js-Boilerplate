@@ -5,7 +5,7 @@ import {
   checkCredentialsProvider,
   deleteUser,
   requestPasswordReset,
-} from "../utils/apiCalls";
+} from "../utils/serverActions";
 import { toast } from "sonner";
 import { use, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
@@ -21,7 +21,7 @@ export const accountDeletionSuccessMessage =
 export const resetPasswordButtonText = "Reset password";
 
 /**
- *
+ * Registered user's profile page
  */
 const ProfilePage = () => {
   const userPromise = useUserPromiseContext();

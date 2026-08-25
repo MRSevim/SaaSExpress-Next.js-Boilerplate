@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import { renderWithProviders, getInsensitiveExp } from "@/utils/test-utils";
 import ProfileComponent, {
   deleteButtonText,
   accountDeletionSuccessMessage,
@@ -41,8 +41,8 @@ const fulfilledUser = {
   then: () => {},
 } as unknown as Promise<User | undefined>;
 
-const deleteName = getLowercase(deleteButtonText);
-const resetPasswordName = getLowercase(resetPasswordButtonText);
+const deleteName = getInsensitiveExp(deleteButtonText);
+const resetPasswordName = getInsensitiveExp(resetPasswordButtonText);
 
 describe("Profile Component", () => {
   beforeEach(() => {

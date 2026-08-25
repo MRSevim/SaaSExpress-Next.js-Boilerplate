@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import { renderWithProviders, getInsensitiveExp } from "@/utils/test-utils";
 import PasswordResetComponent, {
   invalidText,
   buttonText,
@@ -27,7 +27,7 @@ const mockGet = jest.fn();
 
 const mockedResetPassword = auth.api.resetPassword as unknown as jest.Mock;
 
-const name = getLowercase(buttonText);
+const name = getInsensitiveExp(buttonText);
 
 const password = "newpassword123";
 const token = "mytoken";
@@ -78,7 +78,7 @@ describe("Password Reset Component", () => {
     await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(loadingText),
+      name: getInsensitiveExp(loadingText),
     });
 
     expect(loadingButton).toBeDisabled();

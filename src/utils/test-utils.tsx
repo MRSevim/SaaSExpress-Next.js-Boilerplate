@@ -12,7 +12,7 @@ import { EmailType } from "@/features/auth/utils/types";
 type ExtendedRenderOptions = Omit<RenderOptions, "queries" | "wrapper">;
 
 /**
- *
+ * adds user object for tests so you can do actions
  */
 export function renderWithProviders(
   ui: React.ReactElement,
@@ -29,10 +29,6 @@ export function renderWithProviders(
 
 /**
  * Escapes all regular expression metacharacters in a string.
- *
- * Ensures the string can be safely passed into a `new RegExp()` constructor
- * to be matched as a literal string rather than interpreted as regex pattern syntax.
- *
  * @param str - The raw string that may contain regex control characters.
  * @returns The escaped string with backslashes preceding all regex metacharacters.
  */
@@ -41,9 +37,10 @@ const escapeRegExp = (str: string): string => {
 };
 
 /**
- *
+ * Turns param to case insensitive regular expression
  */
-export const getLowercase = (str: string) => new RegExp(escapeRegExp(str), "i");
+export const getInsensitiveExp = (str: string) =>
+  new RegExp(escapeRegExp(str), "i");
 
 /**
  * Polls the file system until an email file is created and written to,
@@ -88,15 +85,13 @@ export const getEmailContentFromFile = async (path: string) => {
  * @returns The extracted verification URL string starting with http or https.
  * @throws If no valid HTTP or HTTPS link is present in the provided email text.
  */
-export const extractVerificationLink = (text: string) => {
+export const extractLink = (text: string) => {
   // Regex to match a standard http or https URL
   const urlRegex = /(https?:\/\/[^\s"'<>]+)/;
   const match = text.match(urlRegex);
 
   if (!match) {
-    throw new Error(
-      "Could not find a valid verification link in the email text.",
-    );
+    throw new Error("Could not find a valid link in the email text.");
   }
 
   return match[0];
@@ -113,7 +108,8 @@ export const clearE2eEmailFiles = () => {
 /**
  * Creates e2e-link-*.txt filepaths with users' emails.
  *
- * @param text - email to be inserted
+ * @param email - email to be inserted
+ * @param type - type of email to be sent
  * @returns - created file path
  */
 export const createE2EMailfilename = (email: string, type: EmailType) => {

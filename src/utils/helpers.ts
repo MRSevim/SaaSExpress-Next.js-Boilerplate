@@ -4,14 +4,14 @@ import { isAPIError } from "better-auth/api";
 import { unknownError } from "./constants";
 
 /**
- *
+ * Merges inputs with clsx
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- *
+ * Returns user facing error message
  */
 export const returnErrorFromUnknown = (
   error: unknown,
@@ -23,7 +23,7 @@ export const returnErrorFromUnknown = (
 };
 
 /**
- *
+ * sets coookie to browser
  */
 export const setCookie = (name: string, value: string, days: number = 365) => {
   const maxAge = days * 24 * 60 * 60;
@@ -33,7 +33,7 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
 };
 
 /**
- *
+ * gets random number between 0-100
  */
 export const getRandomNumber = () => {
   return (Math.random() * 100).toFixed(2);

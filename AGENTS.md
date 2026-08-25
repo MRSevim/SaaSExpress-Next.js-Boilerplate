@@ -1,10 +1,11 @@
 This is Next.js boilerplate that includes placeholder todo app, auth, billing/subscription, error/activity tracking, email+in-app notifications and analytics. It uses npm. Run these commands to check your code where relevant:
 
-1. `npm run format` — ESLint
-2. `npm run type-check` — TypeScript
-3. `npm run test` — Jest
-4. `npm run build` — Next.js build
-5. `npm run e2e` — Playwright
+1. `npm run lint` — ESLint
+2. `npm run format` — Prettier
+3. `npm run type-check` — TypeScript
+4. `npm run test` — Jest
+5. `npm run build` — Next.js build
+6. `npm run e2e` — Playwright
 
 Always check the Markdown files inside `docs/` to identify task-specific instructions. Read and follow the relevant files when the task requires it. For example if user gave you test writing task, use the files inside `docs/testing`.
 

@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { useActionState } from "react";
-import { requestPasswordReset } from "../utils/apiCalls";
+import { requestPasswordReset } from "../utils/serverActions";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import Success from "@/components/Success";
@@ -25,7 +25,7 @@ export const forgotPasswordResetErrorId = "forgot-password-error";
 export const forgotPasswordResetSuccessId = "forgot-password-success";
 
 /**
- *
+ * Component to request password reset email
  */
 const ForgotPasswordComponent = () => {
   const [state, action, isPending] = useActionState(

@@ -5,11 +5,11 @@ import ContinueWithGoogleButton, {
   googleSignInErrorId,
   loadingText,
 } from "../ContinueWithGoogleButton";
-import { getLowercase } from "@/utils/test-utils";
+import { getInsensitiveExp } from "@/utils/test-utils";
 import { authClient } from "../../lib/authClient";
 import { unknownError } from "@/utils/constants";
 
-const name = getLowercase(buttonText);
+const name = getInsensitiveExp(buttonText);
 
 const noError = { error: "" };
 
@@ -88,7 +88,7 @@ describe("ContinueWithGoogle Button", () => {
     await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(loadingText),
+      name: getInsensitiveExp(loadingText),
     });
 
     expect(loadingButton).toBeDisabled();

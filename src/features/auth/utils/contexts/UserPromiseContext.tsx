@@ -7,7 +7,7 @@ type UserPromise = Promise<User | undefined> | null;
 const UserPromiseContext = createContext<UserPromise>(null);
 
 /**
- *
+ * Gets user promise context to pass into react's use func
  */
 export const useUserPromiseContext = () => {
   const userPromise = useContext(UserPromiseContext);
@@ -20,7 +20,7 @@ export const useUserPromiseContext = () => {
 };
 
 /**
- *
+ * Wraps and provides userPromiseContext
  */
 export const UserPromiseProvider = ({
   userPromise,

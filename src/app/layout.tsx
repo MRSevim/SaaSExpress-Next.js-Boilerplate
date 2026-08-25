@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
-import { getSession } from "@/features/auth/utils/apiCalls";
+import { getSession } from "@/features/auth/utils/serverActions";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
 
 const geistSans = Geist({

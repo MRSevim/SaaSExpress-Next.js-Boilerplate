@@ -34,7 +34,7 @@ const signInSchema = z.object({
 });
 
 /**
- *
+ * Signs user in with credentials
  */
 export const signInWithEmailAndPassword = async (formData: FormData) => {
   const email = formData.get("email") as string;
@@ -93,7 +93,7 @@ const signUpSchema = z
   });
 
 /**
- *
+ * Signs user up with their credentials
  */
 export const signUp = async (formData: FormData) => {
   const name = formData.get("name") as string;
@@ -140,7 +140,7 @@ export const signUp = async (formData: FormData) => {
 };
 
 /**
- *
+ * Signout/logout
  */
 export const signOut = async () => {
   try {
@@ -162,7 +162,7 @@ const requestPasswordResetSchema = z.object({
 });
 
 /**
- *
+ * Requests password reset email
  */
 export const requestPasswordReset = async (email: string) => {
   const parsed = requestPasswordResetSchema.safeParse({
@@ -205,7 +205,7 @@ const resetPasswordSchema = z
   });
 
 /**
- *
+ * Resets password with the new one
  */
 export const resetPassword = async (formData: FormData, token: string) => {
   const password = formData.get("password") as string;
@@ -240,7 +240,7 @@ export const resetPassword = async (formData: FormData, token: string) => {
 };
 
 /**
- *
+ * Checks if user's account has logged in with credentials provider (meaning it used email+password to login)
  */
 export const checkCredentialsProvider = async () => {
   try {
@@ -257,7 +257,7 @@ export const checkCredentialsProvider = async () => {
 };
 
 /**
- *
+ * Deletes user from db
  */
 export const deleteUser = async () => {
   try {

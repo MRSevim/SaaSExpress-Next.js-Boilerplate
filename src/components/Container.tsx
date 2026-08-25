@@ -1,7 +1,7 @@
 import { cn } from "@/utils/helpers";
 
 /**
- *
+ * Wraps and contains the content inside
  */
 const Container = ({
   children,

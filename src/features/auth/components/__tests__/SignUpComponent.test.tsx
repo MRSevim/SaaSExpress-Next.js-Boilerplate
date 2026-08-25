@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders, getLowercase } from "@/utils/test-utils";
+import { renderWithProviders, getInsensitiveExp } from "@/utils/test-utils";
 import SignUpComponent, {
   confirmPasswordErrorId,
   emailErrorId,
@@ -29,7 +29,7 @@ jest.mock(
 
 const mockedSignUp = auth.api.signUpEmail as unknown as jest.Mock;
 
-const name = getLowercase(signUpButtonText);
+const name = getInsensitiveExp(signUpButtonText);
 
 const password = "mypassword";
 
@@ -95,7 +95,7 @@ describe("Sign Up Component", () => {
     await user.click(submitButton);
 
     const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(signUpLoadingButtonText),
+      name: getInsensitiveExp(signUpLoadingButtonText),
     });
 
     expect(loadingButton).toBeDisabled();

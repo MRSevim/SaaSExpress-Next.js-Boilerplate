@@ -14,7 +14,7 @@ import Link from "next/link";
 import ContinueWithGoogleButton from "./ContinueWithGoogleButton";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { useActionState } from "react";
-import { signInWithEmailAndPassword } from "../utils/apiCalls";
+import { signInWithEmailAndPassword } from "../utils/serverActions";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import { Separator } from "@/components/ui/separator";
@@ -33,7 +33,7 @@ export const signInLoadingButtonText = "Signing in...";
 export const signInErrorId = "sign-in-error";
 
 /**
- *
+ * Sign in/login comp
  */
 const SignInComponent = () => {
   const [state, action, isPending] = useActionState(

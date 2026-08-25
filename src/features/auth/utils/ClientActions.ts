@@ -1,9 +1,8 @@
 import { authClient } from "../lib/authClient";
 import { unknownError } from "@/utils/constants";
 
-//this does not seem to work as a server action
 /**
- *
+ * Signs user in with google, does not work as a server action
  */
 export const signInWithGoogle = async () => {
   try {

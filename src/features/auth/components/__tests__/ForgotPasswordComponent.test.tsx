@@ -6,7 +6,7 @@ import ForgotPasswordComponent, {
   forgotPasswordResetErrorId,
   forgotPasswordResetSuccessId,
 } from "../ForgotPasswordComponent";
-import { getLowercase } from "@/utils/test-utils";
+import { getInsensitiveExp } from "@/utils/test-utils";
 import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
@@ -15,7 +15,7 @@ import {
   passwordResetSuccessMessage,
 } from "@/features/auth/utils/constants";
 
-const name = getLowercase(buttonText);
+const name = getInsensitiveExp(buttonText);
 
 const mockedRequestPasswordReset = auth.api
   .requestPasswordReset as unknown as jest.Mock;
@@ -56,7 +56,7 @@ describe("ForgotPassword Component", () => {
     await user.click(button);
 
     const loadingButton = await screen.findByRole("button", {
-      name: getLowercase(loadingText),
+      name: getInsensitiveExp(loadingText),
     });
 
     expect(loadingButton).toBeDisabled();

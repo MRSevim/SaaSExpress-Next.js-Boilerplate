@@ -16,9 +16,9 @@ import { cookies } from "next/headers";
 import { Skeleton } from "../ui/skeleton";
 
 /**
- *
+ * Header with links and menus
  */
-const Header = async () => {
+const Header = () => {
   return (
     <header className="p-3 border-b border-b-slate-200 dark:border-b-slate-700">
       <Container className="flex gap-2" isMain={false}>

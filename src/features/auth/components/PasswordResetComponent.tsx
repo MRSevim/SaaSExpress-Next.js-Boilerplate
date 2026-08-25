@@ -17,7 +17,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { useActionState } from "react";
-import { resetPassword } from "../utils/apiCalls";
+import { resetPassword } from "../utils/serverActions";
 import { ResetPasswordState } from "../utils/types";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
@@ -39,7 +39,7 @@ export const passwordResetSuccessId = "password-reset-success";
 export const passwordResetErrorId = "password-reset-error";
 
 /**
- *
+ * Resets password to the new one if token is valid
  */
 const PasswordResetComponent = () => {
   const searchParams = useSearchParams();

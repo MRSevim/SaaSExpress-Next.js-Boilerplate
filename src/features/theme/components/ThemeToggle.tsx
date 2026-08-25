@@ -8,7 +8,7 @@ export const switchToLightText = "Switch to light theme";
 export const switchToDarkText = "Switch to dark theme";
 
 /**
- *
+ * Component to toggle the theme
  */
 export default function ThemeToggle({
   initialTheme,

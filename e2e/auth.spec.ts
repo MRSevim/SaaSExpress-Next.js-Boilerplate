@@ -3,7 +3,7 @@ import { routes } from "@/utils/routes";
 import {
   clearE2eEmailFiles,
   createE2EMailfilename,
-  extractVerificationLink,
+  extractLink,
   getEmailContentFromFile,
 } from "@/utils/test-utils";
 import { test, expect } from "@playwright/test";
@@ -42,7 +42,7 @@ test.describe("auth flow", () => {
 
     //get the file created during email sending (only during tests)
     const rawVerificationEmailText = await getEmailContentFromFile(filePath);
-    const verificationUrl = extractVerificationLink(rawVerificationEmailText);
+    const verificationUrl = extractLink(rawVerificationEmailText);
 
     await page.goto(verificationUrl);
 

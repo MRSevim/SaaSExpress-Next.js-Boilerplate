@@ -1,12 +1,12 @@
 import { screen } from "@testing-library/react";
-import { getLowercase, renderWithProviders } from "@/utils/test-utils";
+import { getInsensitiveExp, renderWithProviders } from "@/utils/test-utils";
 import ThemeToggle, {
   switchToDarkText,
   switchToLightText,
 } from "../ThemeToggle";
 
-const switchToDarkName = getLowercase(switchToDarkText);
-const switchToLightName = getLowercase(switchToLightText);
+const switchToDarkName = getInsensitiveExp(switchToDarkText);
+const switchToLightName = getInsensitiveExp(switchToLightText);
 
 describe("ThemeToggle", () => {
   afterEach(() => {
