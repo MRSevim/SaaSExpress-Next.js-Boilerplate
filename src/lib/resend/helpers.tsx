@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { createE2EMailfilename } from "@/utils/test-utils/playwright-utils";
 import { EmailType } from "@/features/auth/utils/types";
+import { playwrightE2EEmailPath } from "@/utils/constants";
 
 /**
  * Sends email through provider (can do other things depending on the environment. Prod, test and dev all behaves differently)
@@ -30,8 +31,7 @@ export const sendEmail = async ({
     if (env.NODE_ENV === "test") {
       // Use the email to create a unique file for this specific signup
       const filePath = path.join(
-        process.cwd(),
-        ".e2e-emails",
+        playwrightE2EEmailPath,
         createE2EMailfilename(to, type),
       );
       fs.mkdirSync(path.dirname(filePath), { recursive: true });

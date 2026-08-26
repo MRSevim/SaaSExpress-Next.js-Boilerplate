@@ -24,12 +24,7 @@ import { User } from "@/features/auth/utils/types";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
-
-/**
- * Gets the UserMenuDropdown's aria label
- * @returns string of aria label with name param inserted
- */
-export const getUserMenuAriaLabel = (name: string) => `User menu for ${name}`;
+import { getUserMenuAriaLabel } from "./UserMenu.utils";
 
 /**
  * Logged in user's menu

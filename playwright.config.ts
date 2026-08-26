@@ -27,8 +27,13 @@ export default defineConfig({
   },
 
   projects: [
+    {
+      name: "setup",
+      testMatch: /global\.setup\.ts/,
+    },
     ...browserProjects.map((project) => ({
       ...project,
+      dependencies: ["setup"],
       testIgnore: /global\.(setup|teardown)\.ts/, // don't let default testMatch pick these up
     })),
 

@@ -1,4 +1,3 @@
-// e2e/helpers/global-teardown.ts
 import prisma from "@/lib/prisma";
 import { clearE2eEmailFiles } from "@/utils/test-utils/playwright-utils";
 import { test as teardown } from "@playwright/test";

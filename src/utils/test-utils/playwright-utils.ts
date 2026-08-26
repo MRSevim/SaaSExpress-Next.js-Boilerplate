@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import fs from "fs";
-import path from "path";
 import { EmailType } from "@/features/auth/utils/types";
+import { playwrightE2EEmailPath } from "../constants";
 
 /**
  * Polls the file system until an email file is created and written to,
@@ -62,8 +62,7 @@ export const extractLink = (text: string) => {
  * Clears all .e2e-link-*.txt files
  */
 export const clearE2eEmailFiles = () => {
-  const dir = path.join(process.cwd(), ".e2e-emails");
-  fs.rmSync(dir, { recursive: true, force: true });
+  fs.rmSync(playwrightE2EEmailPath, { recursive: true, force: true });
 };
 
 /**
