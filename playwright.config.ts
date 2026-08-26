@@ -13,7 +13,6 @@ const browserProjects = process.env.CI
 
 export default defineConfig({
   testDir: "./e2e",
-  globalTeardown: "./e2e/helpers/global-teardown.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -28,12 +27,9 @@ export default defineConfig({
   },
 
   projects: [
-    { name: "setup", testMatch: /global\.setup\.ts/ },
-
     ...browserProjects.map((project) => ({
       ...project,
       testIgnore: /global\.(setup|teardown)\.ts/, // don't let default testMatch pick these up
-      dependencies: ["setup"],
     })),
 
     {
