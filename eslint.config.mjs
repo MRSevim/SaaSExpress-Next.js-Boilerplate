@@ -60,7 +60,6 @@ const eslintConfig = defineConfig([
       "**/sitemap.{js,ts}",
       "**/proxy.{js,ts}",
       "**/instrumentation.{js,ts}",
-      "e2e/helpers/global-teardown.ts",
     ],
     rules: {
       "jsdoc/require-jsdoc": "off",

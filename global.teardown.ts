@@ -1,9 +1,9 @@
 // e2e/helpers/global-teardown.ts
 import prisma from "@/lib/prisma";
 import { clearE2eEmailFiles } from "@/utils/test-utils/playwright-utils";
+import { test as teardown } from "@playwright/test";
 
-export default async function globalTeardown() {
-  // Wipe all data, keep schema intact
+teardown("teardown", async () => {
   const tables = await prisma.$queryRaw<{ tablename: string }[]>`
     SELECT tablename FROM pg_tables WHERE schemaname='public'
   `;
@@ -22,4 +22,4 @@ export default async function globalTeardown() {
 
   // Clean up any leftover stubbed e2e email files, just in case
   clearE2eEmailFiles();
-}
+});

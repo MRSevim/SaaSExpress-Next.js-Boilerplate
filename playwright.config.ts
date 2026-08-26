@@ -3,6 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env.test" });
 
+const browserProjects = process.env.CI
+  ? [
+      { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+      { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+      { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    ]
+  : [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }];
+
 export default defineConfig({
   testDir: "./e2e",
   globalTeardown: "./e2e/helpers/global-teardown.ts",
@@ -19,13 +27,21 @@ export default defineConfig({
     video: "retain-on-failure",
   },
 
-  projects: process.env.CI
-    ? [
-        { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-        { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-        { name: "webkit", use: { ...devices["Desktop Safari"] } },
-      ]
-    : [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "setup", testMatch: /global\.setup\.ts/ },
+
+    ...browserProjects.map((project) => ({
+      ...project,
+      testIgnore: /global\.(setup|teardown)\.ts/, // don't let default testMatch pick these up
+      dependencies: ["setup"],
+    })),
+
+    {
+      name: "teardown",
+      testMatch: /global\.teardown\.ts/,
+      dependencies: browserProjects.map((p) => p.name),
+    },
+  ],
 
   webServer: {
     command: "npm run test-server",

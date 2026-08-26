@@ -1,3 +1,4 @@
+import { getUserMenuAriaLabel } from "@/components/header/UserMenu";
 import { signUpSuccessMessage } from "@/features/auth/utils/constants";
 import { routes } from "@/utils/routes";
 import {
@@ -47,7 +48,7 @@ test.describe("auth flow", () => {
     await page.goto(verificationUrl);
 
     await page
-      .getByRole("button", { name: `User menu for ${username}` })
+      .getByRole("button", { name: getUserMenuAriaLabel(username) })
       .click();
     await page.getByRole("menuitem", { name: "Logout" }).click();
 
@@ -58,7 +59,7 @@ test.describe("auth flow", () => {
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
 
     await page
-      .getByRole("button", { name: `User menu for ${username}` })
+      .getByRole("button", { name: getUserMenuAriaLabel(username) })
       .click();
     await page.getByRole("menuitem", { name: "Profile" }).click();
 

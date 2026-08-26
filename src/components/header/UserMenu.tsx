@@ -26,6 +26,12 @@ import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 
 /**
+ * Gets the UserMenuDropdown's aria label
+ * @returns string of aria label with name param inserted
+ */
+export const getUserMenuAriaLabel = (name: string) => `User menu for ${name}`;
+
+/**
  * Logged in user's menu
  */
 const UserMenu = () => {
@@ -71,7 +77,7 @@ const Dropdown = ({ user }: { user: User }) => {
         <Button
           variant="outline"
           className="rounded-md w-20"
-          aria-label={`User menu for ${user.name}`}
+          aria-label={getUserMenuAriaLabel(user.name)}
         >
           <Avatar>
             <AvatarImage
