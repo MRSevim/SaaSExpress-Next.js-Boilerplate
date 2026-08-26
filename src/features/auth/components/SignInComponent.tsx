@@ -78,15 +78,15 @@ const SignInComponent = () => {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">
-                  Password
+                <div className="flex items-center justify-between">
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
                     href={routes.forgotPassword}
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
                   </Link>
-                </FieldLabel>
+                </div>
                 <Input
                   id="password"
                   name="password"

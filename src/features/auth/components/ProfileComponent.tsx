@@ -11,14 +11,15 @@ import { use, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
-import { passwordResetSuccessMessage } from "../utils/constants";
+import {
+  passwordResetEmailSuccessMessage,
+  resetPasswordButtonText,
+} from "../utils/constants";
 
 export const deleteButtonText = "Delete Account";
 
 export const accountDeletionSuccessMessage =
   "Account deletion email has been sent to your email address";
-
-export const resetPasswordButtonText = "Reset password";
 
 /**
  * Registered user's profile page
@@ -94,7 +95,7 @@ const ResetButton = ({ email }: { email: string }) => {
             const { error } = await requestPasswordReset(email);
             if (error) {
               toast.error(error);
-            } else toast.success(passwordResetSuccessMessage);
+            } else toast.success(passwordResetEmailSuccessMessage);
             setLoading(false);
           }}
         >

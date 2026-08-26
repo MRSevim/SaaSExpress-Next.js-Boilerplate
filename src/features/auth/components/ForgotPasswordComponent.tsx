@@ -14,7 +14,7 @@ import { requestPasswordReset } from "../utils/serverActions";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import Success from "@/components/Success";
-import { passwordResetSuccessMessage } from "../utils/constants";
+import { passwordResetEmailSuccessMessage } from "../utils/constants";
 
 export const buttonText = "Request Password Reset Link";
 
@@ -39,7 +39,7 @@ const ForgotPasswordComponent = () => {
       return {
         email,
         error,
-        successMessage: !error ? passwordResetSuccessMessage : "",
+        successMessage: !error ? passwordResetEmailSuccessMessage : "",
       };
     },
     { error: "", successMessage: "", email: "" },

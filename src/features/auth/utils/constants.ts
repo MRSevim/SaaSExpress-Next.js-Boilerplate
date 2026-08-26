@@ -10,7 +10,9 @@ export const shortPassword = "Password must be at least 8 characters";
 
 export const notMatchingPassword = "Passwords do not match";
 
-export const passwordResetSuccessMessage =
+export const passwordResetEmailSuccessMessage =
   "Password reset email has been sent to your email address";
 
 export const shortName = "Name must be at least 2 characters";
+
+export const resetPasswordButtonText = "Reset password";

@@ -6,13 +6,15 @@ import {
 import ProfileComponent, {
   deleteButtonText,
   accountDeletionSuccessMessage,
-  resetPasswordButtonText,
 } from "../ProfileComponent";
 
 import { User } from "../../utils/types";
 import { toast } from "sonner";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
-import { passwordResetSuccessMessage } from "../../utils/constants";
+import {
+  passwordResetEmailSuccessMessage,
+  resetPasswordButtonText,
+} from "../../utils/constants";
 import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { routes } from "@/utils/routes";
@@ -200,7 +202,9 @@ describe("Profile Component", () => {
           redirectTo: env.BASE_URL + routes.passwordReset,
         },
       });
-      expect(toast.success).toHaveBeenCalledWith(passwordResetSuccessMessage);
+      expect(toast.success).toHaveBeenCalledWith(
+        passwordResetEmailSuccessMessage,
+      );
       expect(toast.error).not.toHaveBeenCalled();
     });
   });
