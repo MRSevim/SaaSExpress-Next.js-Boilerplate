@@ -3,22 +3,17 @@ import { clearE2eEmailFiles } from "@/utils/test-utils/playwright-utils";
 import { test as teardown } from "@playwright/test";
 
 teardown("teardown", async () => {
-  const tables = await prisma.$queryRaw<{ tablename: string }[]>`
-    SELECT tablename FROM pg_tables WHERE schemaname='public'
-  `;
-
-  const tableNames = tables
-    .map(({ tablename }) => tablename)
-    .filter((name) => name !== "_prisma_migrations")
-    .map((name) => `"public"."${name}"`)
-    .join(", ");
-
-  if (tableNames.length > 0) {
-    await prisma.$executeRawUnsafe(
-      `TRUNCATE TABLE ${tableNames} RESTART IDENTITY CASCADE;`,
-    );
-  }
+  if (process.env.NODE_ENV !== "test" || process.env.CLEAR_TEST_DB !== "true")
+    return;
 
   // Clean up any leftover stubbed e2e email files, just in case
   clearE2eEmailFiles();
+
+  // Delete only users created by the test suite matching the generated pattern
+  await prisma.user.deleteMany({
+    where: {
+      name: { startsWith: "user_" },
+      email: { startsWith: "testuser+" },
+    },
+  });
 });
