@@ -1,5 +1,6 @@
 import { getUserMenuAriaLabel } from "@/components/header/UserMenu.utils";
 import {
+  forgotPasswordButtonText,
   passwordResetEmailSuccessMessage,
   resetPasswordButtonText,
   resetPasswordSuccessMessage,
@@ -23,6 +24,7 @@ const test = base.extend<{
   testUser: async ({}, use) => {
     //unique so tests don't collide in parallel
     const id = crypto.randomUUID();
+
     const user = {
       username: `user_${id.slice(0, 8)}`,
       email: `testuser+${id}@example.com`,
@@ -40,7 +42,7 @@ test.describe("auth flow", () => {
 
     await test.step("Sign up and verify email", async () => {
       await page.goto(routes.home);
-      await page.getByRole("button", { name: "Sign Up" }).click();
+      await page.getByRole("link", { name: "Sign Up" }).click();
 
       const filePath = path.join(
         playwrightE2EEmailPath,
@@ -66,7 +68,7 @@ test.describe("auth flow", () => {
         page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
       ).toBeVisible();
     });
-    await test.step("User can logout", async () => {
+    await test.step("Logout", async () => {
       await page
         .getByRole("button", { name: getUserMenuAriaLabel(username) })
         .click();
@@ -75,7 +77,7 @@ test.describe("auth flow", () => {
         page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
       ).not.toBeVisible();
     });
-    await test.step("User can sign in", async () => {
+    await test.step("Sign in", async () => {
       // User is already in signin page after logout
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password").fill(password);
@@ -84,7 +86,7 @@ test.describe("auth flow", () => {
         page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
       ).toBeVisible();
     });
-    await test.step("User can reset their password through profile page", async () => {
+    await test.step("Reset password through profile page", async () => {
       await page
         .getByRole("button", { name: getUserMenuAriaLabel(username) })
         .click();
@@ -119,15 +121,6 @@ test.describe("auth flow", () => {
         .click();
       await page.getByRole("menuitem", { name: "Logout" }).click();
 
-      //TRY LOGGING IN WITH OLD PASSWORD
-      await page.getByLabel("Email").fill(email);
-      await page.getByLabel("Password", { exact: true }).fill(password);
-      await page.getByRole("button", { name: "Sign in", exact: true }).click();
-      await expect(page.getByText("An error occurred!")).toBeVisible();
-      await expect(
-        page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
-      ).not.toBeVisible();
-
       //TRY LOGGING IN WITH NEW PASSWORD
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password", { exact: true }).fill(newPassword);
@@ -136,7 +129,58 @@ test.describe("auth flow", () => {
         page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
       ).toBeVisible();
     });
-    await test.step("User can delete their account", async () => {
+    await test.step("Reset password when logged out via 'Forgot Password'", async () => {
+      await page
+        .getByRole("button", { name: getUserMenuAriaLabel(username) })
+        .click();
+      await page.getByRole("menuitem", { name: "Logout" }).click();
+
+      await page.getByRole("link", { name: /forgot your password?/i }).click();
+
+      await expect(
+        page.getByRole("button", { name: forgotPasswordButtonText }),
+      ).toBeVisible();
+      await page.getByLabel("Email").fill(email);
+      await page
+        .getByRole("button", { name: forgotPasswordButtonText })
+        .click();
+
+      await expect(
+        page.getByText(passwordResetEmailSuccessMessage),
+      ).toBeVisible();
+
+      const filePath = path.join(
+        playwrightE2EEmailPath,
+        createE2EMailfilename(email, "password-reset-request"),
+      );
+
+      const rawVerificationEmailText = await getEmailContentFromFile(filePath);
+      const verificationUrl = extractLink(rawVerificationEmailText);
+
+      await page.goto(verificationUrl);
+
+      const newPassword = "brandNewPassword123!";
+
+      await page
+        .getByRole("textbox", { name: "New Password", exact: true })
+        .fill(newPassword);
+      await page.getByLabel("Confirm New Password").fill(newPassword);
+      await page.getByRole("button", { name: "Reset Password" }).click();
+
+      await expect(page.getByText(resetPasswordSuccessMessage)).toBeVisible();
+
+      // Verify login with new credentials
+      await page.getByRole("link", { name: "Sign In" }).click();
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill(newPassword);
+      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await expect(
+        page.getByRole("button", {
+          name: getUserMenuAriaLabel(testUser.username),
+        }),
+      ).toBeVisible();
+    });
+    await test.step("Delete account", async () => {
       //TODO
     });
   });

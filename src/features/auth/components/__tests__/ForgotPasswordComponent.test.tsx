@@ -1,7 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils/jest-utils";
 import ForgotPasswordComponent, {
-  buttonText,
   loadingText,
   forgotPasswordResetErrorId,
   forgotPasswordResetSuccessId,
@@ -11,11 +10,12 @@ import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import {
+  forgotPasswordButtonText,
   invalidEmail,
   passwordResetEmailSuccessMessage,
 } from "@/features/auth/utils/constants";
 
-const name = getInsensitiveExp(buttonText);
+const name = getInsensitiveExp(forgotPasswordButtonText);
 
 const mockedRequestPasswordReset = auth.api
   .requestPasswordReset as unknown as jest.Mock;

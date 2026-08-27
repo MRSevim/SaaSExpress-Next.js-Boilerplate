@@ -14,9 +14,10 @@ import { requestPasswordReset } from "../utils/serverActions";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import Success from "@/components/Success";
-import { passwordResetEmailSuccessMessage } from "../utils/constants";
-
-export const buttonText = "Request Password Reset Link";
+import {
+  forgotPasswordButtonText,
+  passwordResetEmailSuccessMessage,
+} from "../utils/constants";
 
 export const loadingText = "Requesting...";
 
@@ -77,7 +78,7 @@ const ForgotPasswordComponent = () => {
                 {loadingText}
               </>
             ) : (
-              <>{buttonText}</>
+              <>{forgotPasswordButtonText}</>
             )}
           </Button>
           <Error text={state.error} id={forgotPasswordResetErrorId} />

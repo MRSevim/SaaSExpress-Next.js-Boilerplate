@@ -16,3 +16,5 @@ export const passwordResetEmailSuccessMessage =
 export const shortName = "Name must be at least 2 characters";
 
 export const resetPasswordButtonText = "Reset password";
+
+export const forgotPasswordButtonText = "Request Password Reset Link";
