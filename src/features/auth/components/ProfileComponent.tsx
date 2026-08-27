@@ -13,13 +13,10 @@ import Error from "@/components/Error";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
   passwordResetEmailSuccessMessage,
-  resetPasswordButtonText,
+  requestPasswordResetButtonText,
+  accountDeletionEmailSuccessMessage,
+  deleteAccountButtonText,
 } from "../utils/constants";
-
-export const deleteButtonText = "Delete Account";
-
-export const accountDeletionSuccessMessage =
-  "Account deletion email has been sent to your email address";
 
 /**
  * Registered user's profile page
@@ -57,11 +54,11 @@ const DeleteButton = () => {
         const { error } = await deleteUser();
         if (error) {
           toast.error(error);
-        } else toast.success(accountDeletionSuccessMessage);
+        } else toast.success(accountDeletionEmailSuccessMessage);
         setLoading(false);
       }}
     >
-      {deleteButtonText}
+      {deleteAccountButtonText}
     </Button>
   );
 };
@@ -99,7 +96,7 @@ const ResetButton = ({ email }: { email: string }) => {
             setLoading(false);
           }}
         >
-          {resetPasswordButtonText}
+          {requestPasswordResetButtonText}
         </Button>
       )}
     </>

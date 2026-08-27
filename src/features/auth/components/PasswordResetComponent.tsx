@@ -23,10 +23,9 @@ import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import { useSearchParams } from "next/navigation";
 import Success from "@/components/Success";
+import { resetPasswordButtonText } from "../utils/constants";
 
 export const invalidText = "Please use a valid link to reset your password";
-
-export const buttonText = "Reset Password";
 
 export const loadingText = "Resetting...";
 
@@ -114,7 +113,7 @@ const PasswordResetComponent = () => {
                 {loadingText}
               </>
             ) : (
-              <>{buttonText}</>
+              <>{resetPasswordButtonText}</>
             )}
           </Button>
           <Success

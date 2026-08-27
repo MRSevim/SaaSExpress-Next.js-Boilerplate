@@ -3,17 +3,16 @@ import {
   renderWithProviders,
   getInsensitiveExp,
 } from "@/utils/test-utils/jest-utils";
-import ProfileComponent, {
-  deleteButtonText,
-  accountDeletionSuccessMessage,
-} from "../ProfileComponent";
+import ProfileComponent from "../ProfileComponent";
 
 import { User } from "../../utils/types";
 import { toast } from "sonner";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
+  accountDeletionEmailSuccessMessage,
   passwordResetEmailSuccessMessage,
-  resetPasswordButtonText,
+  requestPasswordResetButtonText,
+  deleteAccountButtonText,
 } from "../../utils/constants";
 import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
@@ -46,8 +45,8 @@ const fulfilledUser = {
   then: () => {},
 } as unknown as Promise<User | undefined>;
 
-const deleteName = getInsensitiveExp(deleteButtonText);
-const resetPasswordName = getInsensitiveExp(resetPasswordButtonText);
+const deleteName = getInsensitiveExp(deleteAccountButtonText);
+const resetPasswordName = getInsensitiveExp(requestPasswordResetButtonText);
 
 describe("Profile Component", () => {
   beforeEach(() => {
@@ -146,7 +145,9 @@ describe("Profile Component", () => {
     resolveDeleteUser!();
 
     await waitFor(async () => {
-      expect(toast.success).toHaveBeenCalledWith(accountDeletionSuccessMessage);
+      expect(toast.success).toHaveBeenCalledWith(
+        accountDeletionEmailSuccessMessage,
+      );
       expect(toast.error).not.toHaveBeenCalled();
       expect(loadingButton).not.toBeDisabled();
       expect(mockedDeleteUser).toHaveBeenCalledTimes(1);

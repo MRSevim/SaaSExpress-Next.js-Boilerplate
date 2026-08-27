@@ -5,7 +5,6 @@ import {
 } from "@/utils/test-utils/jest-utils";
 import PasswordResetComponent, {
   invalidText,
-  buttonText,
   loadingText,
   passwordErrorId,
   confirmPasswordErrorId,
@@ -16,6 +15,7 @@ import {
   notMatchingPassword,
   resetPasswordSuccessMessage,
   shortPassword,
+  resetPasswordButtonText,
 } from "@/features/auth/utils/constants";
 import { useSearchParams } from "next/navigation";
 import { auth } from "../../lib/auth";
@@ -30,7 +30,7 @@ const mockGet = jest.fn();
 
 const mockedResetPassword = auth.api.resetPassword as unknown as jest.Mock;
 
-const name = getInsensitiveExp(buttonText);
+const name = getInsensitiveExp(resetPasswordButtonText);
 
 const password = "newpassword123";
 const token = "mytoken";

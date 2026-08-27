@@ -15,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
 import Success from "@/components/Success";
 import {
-  forgotPasswordButtonText,
+  requestPasswordResetButtonText,
   passwordResetEmailSuccessMessage,
 } from "../utils/constants";
 
@@ -78,7 +78,7 @@ const ForgotPasswordComponent = () => {
                 {loadingText}
               </>
             ) : (
-              <>{forgotPasswordButtonText}</>
+              <>{requestPasswordResetButtonText}</>
             )}
           </Button>
           <Error text={state.error} id={forgotPasswordResetErrorId} />

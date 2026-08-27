@@ -1,10 +1,12 @@
 import { getUserMenuAriaLabel } from "@/components/header/UserMenu.utils";
 import {
-  forgotPasswordButtonText,
+  accountDeletionEmailSuccessMessage,
+  requestPasswordResetButtonText,
   passwordResetEmailSuccessMessage,
   resetPasswordButtonText,
   resetPasswordSuccessMessage,
   signUpSuccessMessage,
+  deleteAccountButtonText,
 } from "@/features/auth/utils/constants";
 import { routes } from "@/utils/routes";
 import {
@@ -39,7 +41,7 @@ const test = base.extend<{
 test.describe("auth flow", () => {
   test("Complete user lifecycle", async ({ page, testUser }) => {
     const { username, email, password } = testUser;
-
+    const deletedPassword = "brandNewPassword123!";
     await test.step("Sign up and verify email", async () => {
       await page.goto(routes.home);
       await page.getByRole("link", { name: "Sign Up" }).click();
@@ -91,7 +93,9 @@ test.describe("auth flow", () => {
         .getByRole("button", { name: getUserMenuAriaLabel(username) })
         .click();
       await page.getByRole("menuitem", { name: "Profile" }).click();
-      await page.getByRole("button", { name: resetPasswordButtonText }).click();
+      await page
+        .getByRole("button", { name: requestPasswordResetButtonText })
+        .click();
       const filePath = path.join(
         playwrightE2EEmailPath,
         createE2EMailfilename(email, "password-reset-request"),
@@ -100,10 +104,10 @@ test.describe("auth flow", () => {
         page.getByText(passwordResetEmailSuccessMessage),
       ).toBeVisible();
 
-      const rawVerificationEmailText = await getEmailContentFromFile(filePath);
-      const verificationUrl = extractLink(rawVerificationEmailText);
+      const rawEmailText = await getEmailContentFromFile(filePath);
+      const url = extractLink(rawEmailText);
 
-      await page.goto(verificationUrl);
+      await page.goto(url);
 
       const newPassword = "newSecurePassword123";
 
@@ -112,7 +116,7 @@ test.describe("auth flow", () => {
         .fill(newPassword);
       await page.getByLabel("Confirm New Password").fill(newPassword);
 
-      await page.getByRole("button", { name: "Reset Password" }).click();
+      await page.getByRole("button", { name: resetPasswordButtonText }).click();
 
       await expect(page.getByText(resetPasswordSuccessMessage)).toBeVisible();
 
@@ -138,11 +142,11 @@ test.describe("auth flow", () => {
       await page.getByRole("link", { name: /forgot your password?/i }).click();
 
       await expect(
-        page.getByRole("button", { name: forgotPasswordButtonText }),
+        page.getByRole("button", { name: requestPasswordResetButtonText }),
       ).toBeVisible();
       await page.getByLabel("Email").fill(email);
       await page
-        .getByRole("button", { name: forgotPasswordButtonText })
+        .getByRole("button", { name: requestPasswordResetButtonText })
         .click();
 
       await expect(
@@ -154,25 +158,23 @@ test.describe("auth flow", () => {
         createE2EMailfilename(email, "password-reset-request"),
       );
 
-      const rawVerificationEmailText = await getEmailContentFromFile(filePath);
-      const verificationUrl = extractLink(rawVerificationEmailText);
+      const rawEmailText = await getEmailContentFromFile(filePath);
+      const url = extractLink(rawEmailText);
 
-      await page.goto(verificationUrl);
-
-      const newPassword = "brandNewPassword123!";
+      await page.goto(url);
 
       await page
         .getByRole("textbox", { name: "New Password", exact: true })
-        .fill(newPassword);
-      await page.getByLabel("Confirm New Password").fill(newPassword);
-      await page.getByRole("button", { name: "Reset Password" }).click();
+        .fill(deletedPassword);
+      await page.getByLabel("Confirm New Password").fill(deletedPassword);
+      await page.getByRole("button", { name: resetPasswordButtonText }).click();
 
       await expect(page.getByText(resetPasswordSuccessMessage)).toBeVisible();
 
       // Verify login with new credentials
       await page.getByRole("link", { name: "Sign In" }).click();
       await page.getByLabel("Email").fill(email);
-      await page.getByLabel("Password", { exact: true }).fill(newPassword);
+      await page.getByLabel("Password", { exact: true }).fill(deletedPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
       await expect(
         page.getByRole("button", {
@@ -181,7 +183,33 @@ test.describe("auth flow", () => {
       ).toBeVisible();
     });
     await test.step("Delete account", async () => {
-      //TODO
+      await page
+        .getByRole("button", { name: getUserMenuAriaLabel(username) })
+        .click();
+      await page.getByRole("menuitem", { name: "Profile" }).click();
+
+      await page.getByRole("button", { name: deleteAccountButtonText }).click();
+      const filePath = path.join(
+        playwrightE2EEmailPath,
+        createE2EMailfilename(email, "account-deletion"),
+      );
+      await expect(
+        page.getByText(accountDeletionEmailSuccessMessage),
+      ).toBeVisible();
+
+      const rawEmailText = await getEmailContentFromFile(filePath);
+      const Url = extractLink(rawEmailText);
+
+      await page.goto(Url);
+
+      await expect(
+        page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
+      ).not.toBeVisible();
+      await page.getByRole("link", { name: "Sign In" }).click();
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill(deletedPassword);
+      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await expect(page.getByText("An error occurred")).toBeVisible();
     });
   });
 });

@@ -17,4 +17,9 @@ export const shortName = "Name must be at least 2 characters";
 
 export const resetPasswordButtonText = "Reset password";
 
-export const forgotPasswordButtonText = "Request Password Reset Link";
+export const requestPasswordResetButtonText = "Request Password Reset Link";
+
+export const accountDeletionEmailSuccessMessage =
+  "Account deletion email has been sent to your email address";
+
+export const deleteAccountButtonText = "Delete Account";

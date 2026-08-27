@@ -10,12 +10,12 @@ import { auth } from "../../lib/auth";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
 import {
-  forgotPasswordButtonText,
+  requestPasswordResetButtonText,
   invalidEmail,
   passwordResetEmailSuccessMessage,
 } from "@/features/auth/utils/constants";
 
-const name = getInsensitiveExp(forgotPasswordButtonText);
+const name = getInsensitiveExp(requestPasswordResetButtonText);
 
 const mockedRequestPasswordReset = auth.api
   .requestPasswordReset as unknown as jest.Mock;
