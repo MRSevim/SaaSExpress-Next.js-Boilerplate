@@ -55,8 +55,9 @@ test.describe("auth flow", () => {
     test.setTimeout(80000);
 
     const { username, email, password } = testUser;
-    const deletedPassword = "brandNewPassword123!";
     const newPassword = "newSecurePassword123";
+    const finalPassword = "brandNewPassword123!";
+    const invalidCredentials = /invalid email or password/i;
 
     await test.step("Sign up and verify email", async () => {
       await page.goto(routes.home);
@@ -143,7 +144,7 @@ test.describe("auth flow", () => {
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password", { exact: true }).fill(password);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
-      await expect(page.getByText("An error occurred")).toBeVisible();
+      await expect(page.getByText(invalidCredentials)).toBeVisible();
 
       // TRY LOGGING IN WITH NEW PASSWORD
       await page.getByLabel("Email").fill(email);
@@ -185,8 +186,8 @@ test.describe("auth flow", () => {
 
       await page
         .getByRole("textbox", { name: "New Password", exact: true })
-        .fill(deletedPassword);
-      await page.getByLabel("Confirm New Password").fill(deletedPassword);
+        .fill(finalPassword);
+      await page.getByLabel("Confirm New Password").fill(finalPassword);
       await page.getByRole("button", { name: resetPasswordButtonText }).click();
 
       await expect(page.getByText(resetPasswordSuccessMessage)).toBeVisible();
@@ -197,11 +198,11 @@ test.describe("auth flow", () => {
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password", { exact: true }).fill(newPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
-      await expect(page.getByText("An error occurred")).toBeVisible();
+      await expect(page.getByText(invalidCredentials)).toBeVisible();
 
       // Verify login with new credentials
       await page.getByLabel("Email").fill(email);
-      await page.getByLabel("Password", { exact: true }).fill(deletedPassword);
+      await page.getByLabel("Password", { exact: true }).fill(finalPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
       await expect(
         page.getByRole("button", {
@@ -234,9 +235,9 @@ test.describe("auth flow", () => {
       ).not.toBeVisible();
       await page.getByRole("link", { name: "Sign In" }).click();
       await page.getByLabel("Email").fill(email);
-      await page.getByLabel("Password", { exact: true }).fill(deletedPassword);
+      await page.getByLabel("Password", { exact: true }).fill(finalPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
-      await expect(page.getByText("An error occurred")).toBeVisible();
+      await expect(page.getByText(invalidCredentials)).toBeVisible();
     });
   });
 });
