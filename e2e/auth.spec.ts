@@ -52,9 +52,12 @@ const test = base.extend<{
 
 test.describe("auth flow", () => {
   test("Complete user lifecycle", async ({ page, testUser }) => {
-    test.setTimeout(60000);
+    test.setTimeout(80000);
+
     const { username, email, password } = testUser;
     const deletedPassword = "brandNewPassword123!";
+    const newPassword = "newSecurePassword123";
+
     await test.step("Sign up and verify email", async () => {
       await page.goto(routes.home);
       await page.getByRole("link", { name: "Sign Up" }).click();
@@ -122,8 +125,6 @@ test.describe("auth flow", () => {
 
       await page.goto(url);
 
-      const newPassword = "newSecurePassword123";
-
       await page
         .getByRole("textbox", { name: "New Password", exact: true })
         .fill(newPassword);
@@ -138,7 +139,13 @@ test.describe("auth flow", () => {
         .click();
       await page.getByRole("menuitem", { name: "Logout" }).click();
 
-      //TRY LOGGING IN WITH NEW PASSWORD
+      // login with old cred
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill(password);
+      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await expect(page.getByText("An error occurred")).toBeVisible();
+
+      // TRY LOGGING IN WITH NEW PASSWORD
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password", { exact: true }).fill(newPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -184,8 +191,15 @@ test.describe("auth flow", () => {
 
       await expect(page.getByText(resetPasswordSuccessMessage)).toBeVisible();
 
-      // Verify login with new credentials
       await page.getByRole("link", { name: "Sign In" }).click();
+
+      // login with old cred
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill(newPassword);
+      await page.getByRole("button", { name: "Sign in", exact: true }).click();
+      await expect(page.getByText("An error occurred")).toBeVisible();
+
+      // Verify login with new credentials
       await page.getByLabel("Email").fill(email);
       await page.getByLabel("Password", { exact: true }).fill(deletedPassword);
       await page.getByRole("button", { name: "Sign in", exact: true }).click();
