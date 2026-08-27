@@ -19,11 +19,12 @@ import { test as base } from "@playwright/test";
 import path from "path";
 import crypto from "crypto";
 import { playwrightE2EEmailPath } from "@/utils/constants";
+import prisma from "@/lib/prisma";
 
 const test = base.extend<{
   testUser: { email: string; username: string; password: string };
 }>({
-  testUser: async ({}, use) => {
+  testUser: async ({}, use, testInfo) => {
     //unique so tests don't collide in parallel
     const id = crypto.randomUUID();
 
@@ -35,11 +36,23 @@ const test = base.extend<{
 
     //eslint-disable-next-line
     await use(user);
+
+    const testFailed = testInfo.status !== testInfo.expectedStatus;
+
+    if (testFailed) {
+      try {
+        await prisma.user.deleteMany({ where: { email: user.email } });
+      } catch (error) {
+        //eslint-disable-next-line
+        console.error(`Failed to clean up test user ${user.email}:`, error);
+      }
+    }
   },
 });
 
 test.describe("auth flow", () => {
   test("Complete user lifecycle", async ({ page, testUser }) => {
+    test.setTimeout(60000);
     const { username, email, password } = testUser;
     const deletedPassword = "brandNewPassword123!";
     await test.step("Sign up and verify email", async () => {
