@@ -37,7 +37,6 @@ const UserMenu = () => {
     <>
       {user ? (
         <div className="flex gap-2">
-          <div className="rounded-md w-20" />
           <Dropdown user={user} />
         </div>
       ) : (

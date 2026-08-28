@@ -19,6 +19,7 @@ import path from "path";
 import { playwrightE2EEmailPath } from "@/utils/constants";
 import test from "../playwright/fixtures/authUserFixture";
 import prisma from "@/lib/prisma";
+import { env } from "@/utils/env";
 
 test.beforeEach(async ({ page }) => {
   await page.goto(routes.home);
@@ -30,7 +31,7 @@ const newPassword = "newSecurePassword123";
 test.describe("auth tests that starts out unauthenticated", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("Sign up and verify emai", async ({ page }) => {
+  test("Signs up and verify emai", async ({ page }) => {
     const id = crypto.randomUUID();
 
     const username = `user_${id.slice(0, 8)}`;
@@ -67,7 +68,7 @@ test.describe("auth tests that starts out unauthenticated", () => {
       await prisma.user.deleteMany({ where: { email } });
     }
   });
-  test("Sign in", async ({
+  test("Signs in and redirects", async ({
     page,
     auth: {
       userInfo: { username, password, email },
@@ -81,8 +82,14 @@ test.describe("auth tests that starts out unauthenticated", () => {
     await expect(
       page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
     ).toBeVisible();
+    //check if redirected to homepage
+    await expect(page).toHaveURL(env.BASE_URL);
   });
-  test("Reset password when logged out via 'Forgot Password'", async ({
+  test("Redirects from profile to signin", async ({ page }) => {
+    await page.goto(routes.profile);
+    await expect(page).toHaveURL(env.BASE_URL + routes.signIn);
+  });
+  test("Resets password when logged out via 'Forgot Password'", async ({
     page,
     auth: {
       userInfo: { username, email, password },
@@ -143,7 +150,7 @@ test.describe("auth tests that starts out unauthenticated", () => {
 });
 
 test.describe("auth tests that starts out authenticated", () => {
-  test("Logout", async ({
+  test("Logs out", async ({
     page,
     auth: {
       userInfo: { username },
@@ -157,7 +164,13 @@ test.describe("auth tests that starts out authenticated", () => {
       page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
     ).not.toBeVisible();
   });
-  test("Reset password through profile page", async ({
+  test("Redirects from signin/signup to home", async ({ page }) => {
+    await page.goto(routes.signIn);
+    await expect(page).toHaveURL(env.BASE_URL);
+    await page.goto(routes.signUp);
+    await expect(page).toHaveURL(env.BASE_URL);
+  });
+  test("Resets password through profile page", async ({
     page,
     auth: {
       userInfo: { username, email, password },
@@ -211,7 +224,7 @@ test.describe("auth tests that starts out authenticated", () => {
       page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
     ).toBeVisible();
   });
-  test("Delete account", async ({
+  test("Deletes account", async ({
     page,
     auth: {
       userInfo: { username, email, password },
