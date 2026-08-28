@@ -19,6 +19,8 @@ export const resetPasswordButtonText = "Reset password";
 
 export const requestPasswordResetButtonText = "Request Password Reset Link";
 
+export const googleSignInButtonText = "Sign in With Google";
+
 export const accountDeletionEmailSuccessMessage =
   "Account deletion email has been sent to your email address";
 
