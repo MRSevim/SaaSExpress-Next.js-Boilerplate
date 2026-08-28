@@ -4,6 +4,6 @@ export const unknownError = "Unknown error occurred!";
 
 export const playwrightE2EEmailPath = path.join(
   process.cwd(),
-  "playwright",
+  "test-results",
   ".e2e-emails",
 );
