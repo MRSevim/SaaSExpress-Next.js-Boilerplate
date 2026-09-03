@@ -62,7 +62,12 @@ export const extractLink = (text: string) => {
  * Clears all .e2e-link-*.txt files
  */
 export const clearE2eEmailFiles = () => {
-  fs.rmSync(playwrightE2EEmailPath, { recursive: true, force: true });
+  try {
+    fs.rmSync(playwrightE2EEmailPath, { recursive: true, force: true });
+  } catch (error) {
+    //eslint-disable-next-line no-console
+    console.error(`Error clearing e2e email files: ${error}`);
+  }
 };
 
 /**
