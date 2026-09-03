@@ -31,7 +31,7 @@ const newPassword = "newSecurePassword123";
 test.describe("auth tests that starts out unauthenticated", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("Signs up and verify emai", async ({ page }) => {
+  test("Signs up and verifies email", async ({ page }) => {
     const id = crypto.randomUUID();
 
     const username = `user_${id.slice(0, 8)}`;
