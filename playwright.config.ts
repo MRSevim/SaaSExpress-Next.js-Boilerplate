@@ -33,11 +33,4 @@ export default defineConfig({
       testIgnore: /global\.(setup|teardown)\.ts/,
     })),
   ],
-
-  webServer: {
-    command: "npm run test-server",
-    url: process.env.BASE_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
 });

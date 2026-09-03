@@ -28,7 +28,7 @@ test.beforeEach(async ({ page }) => {
 const invalidCredentials = /invalid email or password/i;
 const newPassword = "newSecurePassword123";
 
-test.describe("auth tests that starts out unauthenticated", () => {
+test.describe("auth tests that start out unauthenticated", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test("Signs up and verifies email", async ({ page }) => {
@@ -149,7 +149,7 @@ test.describe("auth tests that starts out unauthenticated", () => {
   });
 });
 
-test.describe("auth tests that starts out authenticated", () => {
+test.describe("auth tests that start out authenticated", () => {
   test("Logs out", async ({
     page,
     auth: {
