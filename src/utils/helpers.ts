@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { isAPIError } from "better-auth/api";
 import { unknownError } from "./constants";
+import { EmailType } from "@/features/auth/utils/types";
 
 /**
  * Merges inputs with clsx
@@ -37,4 +38,15 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
  */
 export const getRandomNumber = () => {
   return (Math.random() * 100).toFixed(2);
+};
+
+/**
+ * Creates e2e-link-*.txt filepaths with users' emails.
+ *
+ * @param email - email to be inserted
+ * @param type - type of email to be sent
+ * @returns - created file path
+ */
+export const createE2EMailfilename = (email: string, type: EmailType) => {
+  return `${email}-${type}.txt`;
 };

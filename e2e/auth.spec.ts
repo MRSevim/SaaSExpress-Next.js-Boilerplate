@@ -10,7 +10,6 @@ import {
 } from "@/features/auth/utils/constants";
 import { routes } from "@/utils/routes";
 import {
-  createE2EMailfilename,
   extractLink,
   getEmailContentFromFile,
 } from "@/utils/test-utils/playwright-utils";
@@ -20,6 +19,7 @@ import { playwrightE2EEmailPath } from "@/utils/constants";
 import test from "../playwright/fixtures/authUserFixture";
 import prisma from "@/lib/prisma";
 import { env } from "@/utils/env";
+import { createE2EMailfilename } from "@/utils/helpers";
 
 test.beforeEach(async ({ page }) => {
   await page.goto(routes.home);

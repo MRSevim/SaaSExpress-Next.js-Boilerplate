@@ -1,6 +1,5 @@
 import { expect } from "@playwright/test";
 import fs from "fs";
-import { EmailType } from "@/features/auth/utils/types";
 import { playwrightE2EEmailPath } from "../constants";
 
 /**
@@ -68,15 +67,4 @@ export const clearE2eEmailFiles = () => {
     //eslint-disable-next-line no-console
     console.error(`Error clearing e2e email files: ${error}`);
   }
-};
-
-/**
- * Creates e2e-link-*.txt filepaths with users' emails.
- *
- * @param email - email to be inserted
- * @param type - type of email to be sent
- * @returns - created file path
- */
-export const createE2EMailfilename = (email: string, type: EmailType) => {
-  return `${email}-${type}.txt`;
 };

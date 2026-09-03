@@ -4,11 +4,11 @@ import path from "path";
 import { auth } from "@/features/auth/lib/auth";
 import { playwrightE2EEmailPath } from "@/utils/constants";
 import {
-  createE2EMailfilename,
   extractLink,
   getEmailContentFromFile,
 } from "@/utils/test-utils/playwright-utils";
 import { getUserMenuAriaLabel } from "@/components/header/UserMenu.utils";
+import { createE2EMailfilename } from "@/utils/helpers";
 
 const test = base.extend<{
   auth: {
