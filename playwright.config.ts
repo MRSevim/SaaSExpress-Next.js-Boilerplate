@@ -30,7 +30,7 @@ export default defineConfig({
   projects: [
     ...browserProjects.map((project) => ({
       ...project,
-      testIgnore: /global\.(setup|teardown)\.ts/, // don't let default testMatch pick these up
+      testIgnore: /global\.(setup|teardown)\.ts/,
     })),
   ],
 
