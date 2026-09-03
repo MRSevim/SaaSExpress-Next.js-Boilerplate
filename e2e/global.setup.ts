@@ -23,14 +23,15 @@ async function globalSetup() {
     "sslmode=require",
     "sslmode=verify-full",
   );
-
-  clearE2eEmailFiles();
-
-  //teardown
-  return async () => {
-    await neon.branches.delete(process.env.NEON_PROJECT_ID!, branch.id);
+  try {
     clearE2eEmailFiles();
-  };
+  } finally {
+    //teardown
+    return async () => {
+      await neon.branches.delete(process.env.NEON_PROJECT_ID!, branch.id);
+      clearE2eEmailFiles();
+    };
+  }
 }
 
 export default globalSetup;
