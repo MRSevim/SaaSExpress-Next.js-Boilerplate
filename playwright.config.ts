@@ -18,6 +18,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  globalSetup: "./e2e/global.setup",
 
   use: {
     baseURL: process.env.BASE_URL,
@@ -27,21 +28,10 @@ export default defineConfig({
   },
 
   projects: [
-    {
-      name: "setup",
-      testMatch: /global\.setup\.ts/,
-    },
     ...browserProjects.map((project) => ({
       ...project,
-      dependencies: ["setup"],
       testIgnore: /global\.(setup|teardown)\.ts/, // don't let default testMatch pick these up
     })),
-
-    {
-      name: "teardown",
-      testMatch: /global\.teardown\.ts/,
-      dependencies: browserProjects.map((p) => p.name),
-    },
   ],
 
   webServer: {
