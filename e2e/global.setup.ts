@@ -5,14 +5,16 @@ import { createNeonClient } from "@neon/sdk";
  * Sets up the global test environment for end-to-end tests.
  */
 async function globalSetup() {
+  if (!process.env.NEON_PROJECT_ID || !process.env.NEON_API_KEY) {
+    throw new Error(
+      "NEON_PROJECT_ID or NEON_API_KEY is not set in the environment variables.",
+    );
+  }
+
   const neon = createNeonClient({
-    apiKey: process.env.NEON_API_KEY!,
+    apiKey: process.env.NEON_API_KEY,
     throwOnError: true,
   });
-
-  if (!process.env.NEON_PROJECT_ID) {
-    throw new Error("NEON_PROJECT_ID is not set in the environment variables.");
-  }
 
   const { branch, connectionString } = await neon.branches.createAndConnect(
     process.env.NEON_PROJECT_ID!,
@@ -26,8 +28,8 @@ async function globalSetup() {
 
   //teardown
   return async () => {
-    clearE2eEmailFiles();
     await neon.branches.delete(process.env.NEON_PROJECT_ID!, branch.id);
+    clearE2eEmailFiles();
   };
 }
 
