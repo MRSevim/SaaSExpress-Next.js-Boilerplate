@@ -1,5 +1,7 @@
-import { clearE2eEmailFiles } from "@/utils/test-utils/playwright-utils";
-import { createNeonClient } from "@neon/sdk";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { spawn, type ChildProcess } from "child_process";
 
 const PORT = 3001;
@@ -23,7 +25,9 @@ function runCommand(command: string, args: string[], env: NodeJS.ProcessEnv) {
       }
 
       reject(
-        new Error(`${command} failed with code ${code}, signal ${signal}`),
+        new Error(
+          `${command} ${args.join(" ")} failed with code ${code}, signal ${signal}`,
+        ),
       );
     });
   });
@@ -53,29 +57,15 @@ async function waitForServer(url: string, timeoutMs = STARTUP_TIMEOUT_MS) {
  * Sets up the global test environment for end-to-end tests.
  */
 async function globalSetup() {
-  clearE2eEmailFiles();
+  const container: StartedPostgreSqlContainer = await new PostgreSqlContainer(
+    "postgres:16-alpine",
+  )
+    .withDatabase("test_db")
+    .withUsername("test_user")
+    .withPassword("test_pass")
+    .start();
 
-  const projectId = process.env.NEON_PROJECT_ID;
-  const apiKey = process.env.NEON_API_KEY;
-
-  if (!projectId || !apiKey) {
-    throw new Error(
-      "NEON_PROJECT_ID or NEON_API_KEY is not set in the environment variables.",
-    );
-  }
-
-  const neon = createNeonClient({
-    apiKey,
-    throwOnError: true,
-  });
-
-  const { branch, connectionString } =
-    await neon.branches.createAndConnect(projectId);
-
-  const databaseUrl = connectionString.replace(
-    "sslmode=require",
-    "sslmode=verify-full",
-  );
+  const databaseUrl = container.getConnectionUri();
 
   // Playwright tests access DATABASE_URL from this process,
   // while Next.js receives it explicitly through `env`.
@@ -92,11 +82,7 @@ async function globalSetup() {
     try {
       server?.kill();
     } finally {
-      try {
-        await neon.branches.delete(projectId, branch.id);
-      } finally {
-        clearE2eEmailFiles();
-      }
+      await container.stop();
     }
   };
 
@@ -106,6 +92,14 @@ async function globalSetup() {
         ? "node_modules/.bin/next.cmd"
         : "node_modules/.bin/next";
 
+    const prismaBin =
+      process.platform === "win32"
+        ? "node_modules/.bin/prisma.cmd"
+        : "node_modules/.bin/prisma";
+
+    // Push schema to the dynamic container DB
+    await runCommand(prismaBin, ["db", "push"], env);
+
     await runCommand(nextBin, ["build"], env);
 
     server = spawn(nextBin, ["start", "-p", String(PORT)], {
@@ -114,7 +108,6 @@ async function globalSetup() {
     });
 
     await waitForServer(SERVER_URL);
-
     return cleanup;
   } catch (error) {
     try {
