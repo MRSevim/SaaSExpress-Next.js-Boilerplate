@@ -17,7 +17,6 @@ import { expect } from "@playwright/test";
 import path from "path";
 import { playwrightE2EEmailPath } from "@/utils/constants";
 import test from "../playwright/fixtures/authUserFixture";
-import prisma from "@/lib/prisma";
 import { env } from "@/utils/env";
 import { createE2EMailfilename } from "@/utils/helpers";
 
@@ -38,35 +37,31 @@ test.describe("auth tests that start out unauthenticated", () => {
     const email = `testuser+${id}@example.com`;
     const password = "securepassword123";
 
-    try {
-      await page.getByRole("link", { name: "Sign Up" }).click();
+    await page.getByRole("link", { name: "Sign Up" }).click();
 
-      const filePath = path.join(
-        playwrightE2EEmailPath,
-        createE2EMailfilename(email, "verification"),
-      );
+    const filePath = path.join(
+      playwrightE2EEmailPath,
+      createE2EMailfilename(email, "verification"),
+    );
 
-      await page.getByLabel("Username").fill(username);
-      await page.getByLabel("Email").fill(email);
-      await page
-        .getByRole("textbox", { name: "Password", exact: true })
-        .fill(password);
-      await page.getByLabel("Confirm password").fill(password);
-      await page.getByRole("button", { name: "Sign up", exact: true }).click();
+    await page.getByLabel("Username").fill(username);
+    await page.getByLabel("Email").fill(email);
+    await page
+      .getByRole("textbox", { name: "Password", exact: true })
+      .fill(password);
+    await page.getByLabel("Confirm password").fill(password);
+    await page.getByRole("button", { name: "Sign up", exact: true }).click();
 
-      await expect(page.getByText(signUpSuccessMessage)).toBeVisible();
+    await expect(page.getByText(signUpSuccessMessage)).toBeVisible();
 
-      const rawVerificationEmailText = await getEmailContentFromFile(filePath);
-      const verificationUrl = extractLink(rawVerificationEmailText);
+    const rawVerificationEmailText = await getEmailContentFromFile(filePath);
+    const verificationUrl = extractLink(rawVerificationEmailText);
 
-      await page.goto(verificationUrl);
+    await page.goto(verificationUrl);
 
-      await expect(
-        page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
-      ).toBeVisible();
-    } finally {
-      await prisma.user.deleteMany({ where: { email } });
-    }
+    await expect(
+      page.getByRole("button", { name: getUserMenuAriaLabel(username) }),
+    ).toBeVisible();
   });
   test("Signs in and redirects", async ({
     page,

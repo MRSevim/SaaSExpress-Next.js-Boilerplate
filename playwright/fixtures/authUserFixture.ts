@@ -1,5 +1,4 @@
 import { test as base, expect } from "@playwright/test";
-import prisma from "@/lib/prisma";
 import path from "path";
 import { auth } from "@/features/auth/lib/auth";
 import { playwrightE2EEmailPath } from "@/utils/constants";
@@ -62,8 +61,6 @@ const test = base.extend<{
 
     //eslint-disable-next-line
     await use({ userInfo: user, pathname: storageStateFileName });
-
-    await prisma.user.deleteMany({ where: { email: user.email } });
   },
 });
 
