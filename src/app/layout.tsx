@@ -56,8 +56,8 @@ export default async function RootLayout({
       className={cn(
         jetbrainsMono.variable,
         merriweatherHeading.variable,
-        "font-sans",
         inter.variable,
+        "font-sans",
       )}
     >
       <head>

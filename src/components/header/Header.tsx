@@ -27,7 +27,7 @@ const Header = () => {
           <NavigationMenuList className="flex-col sm:flex-row justify-between gap-2">
             {" "}
             <NavigationMenuItem className="flex flex-col sm:flex-row items-center gap-2">
-              <h1 className="px-4 py-2">{env.APP_NAME}</h1>
+              <h1 className="px-4 py-2 font-heading">{env.APP_NAME}</h1>
               <NavigationMenuLink
                 asChild
                 className={navigationMenuTriggerStyle()}
