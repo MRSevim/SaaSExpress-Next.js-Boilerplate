@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono, Merriweather, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/utils/env";
 import { getSession } from "@/features/auth/utils/serverActions";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { cn } from "cn";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+
+const merriweatherHeading = Merriweather({
   subsets: ["latin"],
+  variable: "--font-heading",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 const title = "Next.js SaaSExpress Starter Kit";
@@ -47,7 +50,16 @@ export default async function RootLayout({
 }>) {
   const userPromise = getSession();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(
+        jetbrainsMono.variable,
+        merriweatherHeading.variable,
+        "font-sans",
+        inter.variable,
+      )}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -70,7 +82,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.className} antialiased min-h-screen flex flex-col justify-between`}
+        className={`antialiased min-h-screen flex flex-col justify-between`}
       >
         <UserPromiseProvider userPromise={userPromise}>
           <Header />

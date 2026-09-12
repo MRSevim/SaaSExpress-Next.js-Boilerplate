@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 export default function Loading() {
   return (
     <Container>
-      <Item variant="muted">
+      <Item variant="muted" className="w-auto">
         <ItemMedia>
           <Spinner className="size-10" />
         </ItemMedia>

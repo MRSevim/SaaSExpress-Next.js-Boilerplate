@@ -6,7 +6,11 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
  */
 const Success = ({ text, id }: { id?: string; text: string }) => {
   return (
-    <div aria-live="polite" id={id} className="w-full">
+    <div
+      aria-live="polite"
+      id={id}
+      className={`w-full ${text ? "block" : "hidden"}`}
+    >
       {text && (
         <Alert>
           <CheckCircle2Icon />

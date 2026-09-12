@@ -36,7 +36,7 @@ const UserMenu = () => {
   return (
     <>
       {user ? (
-        <div className="flex gap-2">
+        <div className="flex gap-2 align-self-stretch">
           <Dropdown user={user} />
         </div>
       ) : (
@@ -70,7 +70,7 @@ const Dropdown = ({ user }: { user: User }) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-md w-20"
+          className="rounded-md w-20 h-full"
           aria-label={getUserMenuAriaLabel(user.name)}
         >
           <Avatar>
@@ -83,7 +83,7 @@ const Dropdown = ({ user }: { user: User }) => {
           {open ? <ChevronUp /> : <ChevronDown />}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="end">
         <DropdownMenuLabel className="text-center">
           {" "}
           Account of <p>{user.name}</p>

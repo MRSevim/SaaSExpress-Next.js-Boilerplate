@@ -16,10 +16,10 @@ export default function NotFound() {
     <Container className="text-center">
       <Item
         variant="muted"
-        className="max-w-md flex flex-col gap-6 p-4 text-center border-2 border-orange-500"
+        className="max-w-md flex flex-col gap-6 p-4 text-center border-2"
       >
         <ItemMedia>
-          <CircleIcon className="size-12 text-orange-500" />
+          <CircleIcon className="size-12" />
         </ItemMedia>
         <ItemContent>
           <ItemTitle className="flex flex-col gap-2">

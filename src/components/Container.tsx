@@ -1,4 +1,4 @@
-import { cn } from "@/utils/helpers";
+import { cn } from "cn";
 
 /**
  * Wraps and contains the content inside

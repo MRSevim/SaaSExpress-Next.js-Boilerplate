@@ -1,6 +1,5 @@
 import { expect } from "@playwright/test";
 import fs from "fs";
-import { playwrightE2EEmailPath } from "../constants";
 
 /**
  * Polls the file system until an email file is created and written to,
@@ -55,16 +54,4 @@ export const extractLink = (text: string) => {
   }
 
   return match[0].replace(/&amp;/gi, "&");
-};
-
-/**
- * Clears all .e2e-link-*.txt files
- */
-export const clearE2eEmailFiles = () => {
-  try {
-    fs.rmSync(playwrightE2EEmailPath, { recursive: true, force: true });
-  } catch (error) {
-    //eslint-disable-next-line no-console
-    console.error(`Error clearing e2e email files: ${error}`);
-  }
 };

@@ -1,15 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { isAPIError } from "better-auth/api";
 import { unknownError } from "./constants";
 import { EmailType } from "@/features/auth/utils/types";
-
-/**
- * Merges inputs with clsx
- */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 /**
  * Returns user facing error message
