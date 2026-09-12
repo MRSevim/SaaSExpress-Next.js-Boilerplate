@@ -68,7 +68,7 @@ export default async function RootLayout({
           { var m=document.cookie.match(/(?:^|; )theme=([^;]*)/);
             if(m&&decodeURIComponent(m[1])==="dark"){
             // Use cookie theme
-             document.documentElement.classList.add(decodeURIComponent(m[1]));
+             document.documentElement.classList.add("dark");
             }
             else if(!m){
             // Auto-detect dark system preference on first load
