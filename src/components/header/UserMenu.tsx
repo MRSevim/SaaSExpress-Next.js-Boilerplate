@@ -77,7 +77,7 @@ const Dropdown = ({ user }: { user: User }) => {
         render={
           <Button
             variant="outline"
-            className="rounded-md w-20 h-full"
+            className="rounded-md w-20 h-9"
             aria-label={getUserMenuAriaLabel(user.name)}
           >
             <Avatar>
@@ -98,11 +98,13 @@ const Dropdown = ({ user }: { user: User }) => {
             Account of <p>{user.name}</p>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href={routes.profile} className="w-full">
-              Profile
-            </Link>
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={
+              <Link href={routes.profile} className="w-full cursor-pointer">
+                Profile
+              </Link>
+            }
+          ></DropdownMenuItem>
 
           <LogoutButton />
         </DropdownMenuGroup>
