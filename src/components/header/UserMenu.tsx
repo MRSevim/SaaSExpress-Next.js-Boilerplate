@@ -1,11 +1,12 @@
 "use client";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "../ui/dropdown-menu";
 import {
   NavigationMenuItem,
@@ -17,7 +18,7 @@ import { routes } from "@/utils/routes";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { signOut } from "@/features/auth/utils/serverActions";
 import { use, useState } from "react";
 import { User } from "@/features/auth/utils/types";
@@ -43,18 +44,18 @@ const UserMenu = () => {
         <>
           <NavigationMenuItem>
             <NavigationMenuLink
-              asChild
+              render={<Link href={routes.signIn}>Sign In</Link>}
               className={navigationMenuTriggerStyle()}
-            >
-              <Link href={routes.signIn}>Sign In</Link>
-            </NavigationMenuLink>
+            />
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild>
-              <Button variant="outline">
-                <Link href={routes.signUp}>Sign Up</Link>
-              </Button>
-            </NavigationMenuLink>
+            <NavigationMenuLink
+              render={
+                <Button variant="outline">
+                  <Link href={routes.signUp}>Sign Up</Link>
+                </Button>
+              }
+            />
           </NavigationMenuItem>
         </>
       )}
@@ -67,33 +68,37 @@ const Dropdown = ({ user }: { user: User }) => {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="rounded-md w-20 h-full"
-          aria-label={getUserMenuAriaLabel(user.name)}
-        >
-          <Avatar>
-            <AvatarImage
-              src={user.image || undefined}
-              alt={`${user.name}'s avatar`}
-            />
-            <AvatarFallback>{user.name[0]}</AvatarFallback>
-          </Avatar>
-          {open ? <ChevronUp /> : <ChevronDown />}
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            className="rounded-md w-20 h-full"
+            aria-label={getUserMenuAriaLabel(user.name)}
+          >
+            <Avatar>
+              <AvatarImage
+                src={user.image || undefined}
+                alt={`${user.name}'s avatar`}
+              />
+              <AvatarFallback>{user.name[0]}</AvatarFallback>
+            </Avatar>
+            {open ? <ChevronUp /> : <ChevronDown />}
+          </Button>
+        }
+      />
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="text-center">
-          {" "}
-          Account of <p>{user.name}</p>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <Link href={routes.profile}>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-        </Link>
-        <DropdownMenuSeparator />
-        <LogoutButton />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-center">
+            {" "}
+            Account of <p>{user.name}</p>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <Link href={routes.profile}>
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+          </Link>
+          <DropdownMenuSeparator />
+          <LogoutButton />
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -106,7 +111,10 @@ const LogoutButton = () => {
       onClick={async () => {
         const { error } = await signOut();
         if (error) {
-          toast.error(error);
+          toast.add({
+            type: "error",
+            description: error,
+          });
         }
       }}
     >

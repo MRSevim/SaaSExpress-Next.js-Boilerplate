@@ -48,7 +48,6 @@ const SignUpComponent = () => {
       const email = formData.get("email") as string;
       const defaultValues = { name, email };
       const result = await signUp(formData);
-
       const hasFieldErrors = Object.values(result.errors ?? {}).some(Boolean);
 
       if (result.error || hasFieldErrors) {
@@ -64,9 +63,12 @@ const SignUpComponent = () => {
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardAction className="leading-none">
-            <Button className="p-0 h-0" variant="link" asChild>
-              <Link href={routes.signIn}>Sign In</Link>
-            </Button>
+            <Button
+              nativeButton={false}
+              className="p-0 h-0"
+              variant="link"
+              render={<Link href={routes.signIn}>Sign In</Link>}
+            />
           </CardAction>
         </CardHeader>
 

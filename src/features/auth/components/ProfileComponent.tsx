@@ -6,7 +6,7 @@ import {
   deleteUser,
   requestPasswordReset,
 } from "../utils/serverActions";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { use, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
@@ -53,8 +53,12 @@ const DeleteButton = () => {
         setLoading(true);
         const { error } = await deleteUser();
         if (error) {
-          toast.error(error);
-        } else toast.success(accountDeletionEmailSuccessMessage);
+          toast.add({ type: "error", description: error });
+        } else
+          toast.add({
+            type: "success",
+            description: accountDeletionEmailSuccessMessage,
+          });
         setLoading(false);
       }}
     >
@@ -91,8 +95,12 @@ const ResetButton = ({ email }: { email: string }) => {
             setLoading(true);
             const { error } = await requestPasswordReset(email);
             if (error) {
-              toast.error(error);
-            } else toast.success(passwordResetEmailSuccessMessage);
+              toast.add({ type: "error", description: error });
+            } else
+              toast.add({
+                type: "success",
+                description: passwordResetEmailSuccessMessage,
+              });
             setLoading(false);
           }}
         >

@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Merriweather, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header/Header";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toast";
 import { env } from "@/utils/env";
 import { getSession } from "@/features/auth/utils/serverActions";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
-import { cn } from "cn";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -50,16 +49,7 @@ export default async function RootLayout({
 }>) {
   const userPromise = getSession();
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn(
-        jetbrainsMono.variable,
-        merriweatherHeading.variable,
-        inter.variable,
-        "font-sans",
-      )}
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -82,7 +72,9 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`antialiased min-h-screen flex flex-col justify-between`}
+        className={`${jetbrainsMono.variable} ${merriweatherHeading.variable} ${
+          inter.variable
+        } font-sans antialiased min-h-screen flex flex-col justify-between`}
       >
         <UserPromiseProvider userPromise={userPromise}>
           <Header />

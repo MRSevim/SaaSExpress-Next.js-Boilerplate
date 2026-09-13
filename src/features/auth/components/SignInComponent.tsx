@@ -57,9 +57,12 @@ const SignInComponent = () => {
         <CardHeader>
           <CardTitle>Sign in to your account</CardTitle>
           <CardAction className="leading-none">
-            <Button className="p-0 h-0" variant="link" asChild>
-              <Link href={routes.signUp}>Sign Up</Link>
-            </Button>
+            <Button
+              nativeButton={false}
+              className="p-0 h-0"
+              variant="link"
+              render={<Link href={routes.signUp}>Sign Up</Link>}
+            />
           </CardAction>
         </CardHeader>
         <CardContent>

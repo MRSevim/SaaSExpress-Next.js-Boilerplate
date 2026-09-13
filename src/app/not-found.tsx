@@ -31,9 +31,11 @@ export default function NotFound() {
           </ItemTitle>
         </ItemContent>
         <ItemActions>
-          <Button asChild className="rounded-full">
-            <Link href={routes.home}>Back to Home</Link>
-          </Button>
+          <Button
+            nativeButton={false}
+            render={<Link href={routes.home}>Back to Home</Link>}
+            className="rounded-full"
+          />
         </ItemActions>
       </Item>
     </Container>

@@ -4,9 +4,7 @@ import {
   getInsensitiveExp,
 } from "@/utils/test-utils/jest-utils";
 import ProfileComponent from "../ProfileComponent";
-
 import { User } from "../../utils/types";
-import { toast } from "sonner";
 import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
   accountDeletionEmailSuccessMessage,
@@ -145,10 +143,10 @@ describe("Profile Component", () => {
     resolveDeleteUser!();
 
     await waitFor(async () => {
-      expect(toast.success).toHaveBeenCalledWith(
-        accountDeletionEmailSuccessMessage,
-      );
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(
+        screen.queryByText(accountDeletionEmailSuccessMessage),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
       expect(loadingButton).not.toBeDisabled();
       expect(mockedDeleteUser).toHaveBeenCalledTimes(1);
       expect(mockedDeleteUser).toHaveBeenCalledWith({
@@ -168,8 +166,9 @@ describe("Profile Component", () => {
     await user.click(deleteAccountButton);
 
     await waitFor(() => {
-      expect(toast.success).not.toHaveBeenCalled();
-      expect(toast.error).toHaveBeenCalledWith(errorMessage);
+      expect(screen.queryByText(errorMessage)).toBeInTheDocument();
+
+      expect(screen.queryByText(/successful/i)).not.toBeInTheDocument();
     });
   });
 
@@ -203,10 +202,11 @@ describe("Profile Component", () => {
           redirectTo: env.BASE_URL + routes.passwordReset,
         },
       });
-      expect(toast.success).toHaveBeenCalledWith(
-        passwordResetEmailSuccessMessage,
-      );
-      expect(toast.error).not.toHaveBeenCalled();
+      expect(
+        screen.queryByText(passwordResetEmailSuccessMessage),
+      ).toBeInTheDocument();
+
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
     });
   });
 
@@ -222,7 +222,8 @@ describe("Profile Component", () => {
     );
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(errorMessage);
+      expect(screen.queryByText(errorMessage)).toBeInTheDocument();
+      expect(screen.queryByText(/successful/i)).not.toBeInTheDocument();
     });
   });
 });
