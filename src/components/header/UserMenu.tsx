@@ -37,23 +37,28 @@ const UserMenu = () => {
   return (
     <>
       {user ? (
-        <div className="flex gap-2 self-stretch">
-          <Dropdown user={user} />
-        </div>
+        <Dropdown user={user} />
       ) : (
         <>
           <NavigationMenuItem>
             <NavigationMenuLink
-              render={<Link href={routes.signIn}>Sign In</Link>}
+              render={
+                <Link className="h-9" href={routes.signIn}>
+                  Sign In
+                </Link>
+              }
               className={navigationMenuTriggerStyle()}
             />
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
               render={
-                <Button variant="outline">
-                  <Link href={routes.signUp}>Sign Up</Link>
-                </Button>
+                <Button
+                  className="h-9"
+                  nativeButton={false}
+                  variant="outline"
+                  render={<Link href={routes.signUp}>Sign Up</Link>}
+                />
               }
             />
           </NavigationMenuItem>

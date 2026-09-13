@@ -16,6 +16,7 @@ import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { routes } from "@/utils/routes";
 import { env } from "@/utils/env";
+import { Toaster } from "@/components/ui/toast";
 
 const mockedListUserAccounts = auth.api
   .listUserAccounts as unknown as jest.Mock;
@@ -53,7 +54,11 @@ describe("Profile Component", () => {
   });
 
   const renderProfile = () => {
-    const { user, container } = renderWithProviders(<ProfileComponent />);
+    const { user, container } = renderWithProviders(
+      <Toaster>
+        <ProfileComponent />
+      </Toaster>,
+    );
     return {
       container,
       user,

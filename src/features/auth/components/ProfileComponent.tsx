@@ -76,6 +76,7 @@ const ResetButton = ({ email }: { email: string }) => {
   useEffect(() => {
     const check = async () => {
       const { error, isTrue } = await checkCredentialsProvider();
+
       setCheckProviderLoading(false);
       if (error) {
         setCheckError(error);

@@ -81,7 +81,7 @@ const SignInComponent = () => {
               </Field>
 
               <Field>
-                <div className="flex items-center justify-between">
+                <div className="flex gap-2 items-center justify-between">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
                     href={routes.forgotPassword}
