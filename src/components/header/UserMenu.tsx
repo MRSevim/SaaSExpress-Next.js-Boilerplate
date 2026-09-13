@@ -15,7 +15,7 @@ import {
 } from "../ui/navigation-menu";
 import Link from "next/link";
 import { routes } from "@/utils/routes";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "@/components/ui/toast";
@@ -53,12 +53,12 @@ const UserMenu = () => {
           <NavigationMenuItem>
             <NavigationMenuLink
               render={
-                <Button
-                  className="h-9"
-                  nativeButton={false}
-                  variant="outline"
-                  render={<Link href={routes.signUp}>Sign Up</Link>}
-                />
+                <Link
+                  href={routes.signUp}
+                  className={`${buttonVariants({ variant: "outline" })} h-9`}
+                >
+                  Sign Up
+                </Link>
               }
             />
           </NavigationMenuItem>
@@ -98,9 +98,9 @@ const Dropdown = ({ user }: { user: User }) => {
             Account of <p>{user.name}</p>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <Link href={routes.profile}>
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-          </Link>
+          <DropdownMenuItem>
+            <Link href={routes.profile}>Profile</Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <LogoutButton />
         </DropdownMenuGroup>

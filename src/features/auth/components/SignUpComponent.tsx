@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -63,12 +63,12 @@ const SignUpComponent = () => {
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardAction className="leading-none">
-            <Button
-              nativeButton={false}
-              className="p-0 h-0"
-              variant="link"
-              render={<Link href={routes.signIn}>Sign In</Link>}
-            />
+            <Link
+              href={routes.signIn}
+              className={`${buttonVariants({ variant: "link" })}`}
+            >
+              Sign In
+            </Link>
           </CardAction>
         </CardHeader>
 

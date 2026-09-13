@@ -9,7 +9,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { routes } from "@/utils/routes";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -31,11 +31,12 @@ export default function NotFound() {
           </ItemTitle>
         </ItemContent>
         <ItemActions>
-          <Button
-            nativeButton={false}
-            render={<Link href={routes.home}>Back to Home</Link>}
-            className="rounded-full"
-          />
+          <Link
+            href={routes.home}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Back to Home
+          </Link>
         </ItemActions>
       </Item>
     </Container>
