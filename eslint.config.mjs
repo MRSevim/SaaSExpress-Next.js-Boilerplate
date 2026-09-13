@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
     },
     rules: {
       "prefer-template": "error",
-      "no-console": "warn",
+      "no-console": "error",
 
       // TSDoc Syntax Validation (catches tag typos)
       "tsdoc/syntax": "error",

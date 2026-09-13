@@ -48,7 +48,7 @@ const deleteName = getInsensitiveExp(deleteAccountButtonText);
 const resetPasswordName = getInsensitiveExp(requestPasswordResetButtonText);
 
 describe("Profile Component", () => {
-  beforeEach(() => {
+  beforeAll(() => {
     mockedUseUserPromiseContext.mockReturnValue(fulfilledUser);
     mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
   });
@@ -73,15 +73,15 @@ describe("Profile Component", () => {
 
     expect(deleteAccountButton).toBeInTheDocument();
 
-    // Reset password only appears once checkCredentialsProvider resolves
-    expect(
-      await screen.findByRole("button", { name: resetPasswordName }),
-    ).toBeInTheDocument();
-
     expect(mockedListUserAccounts).toHaveBeenCalledTimes(1);
     expect(mockedListUserAccounts).toHaveBeenCalledWith({
       headers: await headers(),
     });
+
+    // Reset password only appears once checkCredentialsProvider resolves
+    expect(
+      await screen.findByRole("button", { name: resetPasswordName }),
+    ).toBeInTheDocument();
   });
 
   it("renders nothing if user is not there", () => {
@@ -96,7 +96,7 @@ describe("Profile Component", () => {
   });
 
   it("hides reset button for non-credential providers", async () => {
-    mockedListUserAccounts.mockResolvedValue([{ providerId: "google" }]);
+    mockedListUserAccounts.mockResolvedValueOnce([{ providerId: "google" }]);
 
     renderProfile();
 
@@ -115,7 +115,7 @@ describe("Profile Component", () => {
   it("shows check error", async () => {
     const errorMessage = "Something went wrong";
 
-    mockedListUserAccounts.mockRejectedValue(new Error(errorMessage));
+    mockedListUserAccounts.mockRejectedValueOnce(new Error(errorMessage));
 
     renderProfile();
 
