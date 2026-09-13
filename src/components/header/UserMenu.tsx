@@ -99,9 +99,11 @@ const Dropdown = ({ user }: { user: User }) => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link href={routes.profile}>Profile</Link>
+            <Link href={routes.profile} className="w-full">
+              Profile
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+
           <LogoutButton />
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -112,7 +114,7 @@ const Dropdown = ({ user }: { user: User }) => {
 const LogoutButton = () => {
   return (
     <DropdownMenuItem
-      className="text-red-800 dark:text-red-400"
+      className="text-red-800 dark:text-red-400 cursor-pointer"
       onClick={async () => {
         const { error } = await signOut();
         if (error) {

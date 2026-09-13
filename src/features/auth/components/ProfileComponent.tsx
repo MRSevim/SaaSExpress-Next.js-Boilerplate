@@ -45,6 +45,7 @@ export default ProfilePage;
 
 const DeleteButton = () => {
   const [loading, setLoading] = useState(false);
+
   return (
     <Button
       disabled={loading}
@@ -78,12 +79,14 @@ const ResetButton = ({ email }: { email: string }) => {
       const { error, isTrue } = await checkCredentialsProvider();
 
       setCheckProviderLoading(false);
+
       if (error) {
         setCheckError(error);
       } else setIsCredentialsProvider(isTrue);
     };
     check();
   }, []);
+
   return (
     <>
       {checkProviderLoading && <Spinner className="size-8" />}
