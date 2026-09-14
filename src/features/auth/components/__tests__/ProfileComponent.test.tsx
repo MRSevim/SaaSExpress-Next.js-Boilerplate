@@ -16,7 +16,6 @@ import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { routes } from "@/utils/routes";
 import { env } from "@/utils/env";
-import { Toaster } from "@/components/ui/toast";
 
 const mockedListUserAccounts = auth.api
   .listUserAccounts as unknown as jest.Mock;
@@ -54,11 +53,7 @@ describe("Profile Component", () => {
   });
 
   const renderProfile = () => {
-    const { user, container } = renderWithProviders(
-      <Toaster>
-        <ProfileComponent />
-      </Toaster>,
-    );
+    const { user, container } = renderWithProviders(<ProfileComponent />);
     return {
       container,
       user,
@@ -77,7 +72,6 @@ describe("Profile Component", () => {
     expect(mockedListUserAccounts).toHaveBeenCalledWith({
       headers: await headers(),
     });
-
     // Reset password only appears once checkCredentialsProvider resolves
     expect(
       await screen.findByRole("button", { name: resetPasswordName }),

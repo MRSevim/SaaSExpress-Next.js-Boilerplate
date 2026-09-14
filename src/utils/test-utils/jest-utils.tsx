@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from "react";
 import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { Toaster } from "@/components/ui/toast";
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as store.
@@ -14,7 +15,9 @@ export function renderWithProviders(
   ui: React.ReactElement,
   extendedRenderOptions: ExtendedRenderOptions = {},
 ) {
-  const Wrapper = ({ children }: PropsWithChildren) => <>{children}</>;
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <Toaster>{children}</Toaster>
+  );
 
   // Return an object with the user, and all of RTL's query functions
   return {
