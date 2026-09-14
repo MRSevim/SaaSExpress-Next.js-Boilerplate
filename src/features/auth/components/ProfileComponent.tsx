@@ -29,10 +29,9 @@ const ProfilePage = () => {
   return (
     <div className="flex flex-col gap-3 items-center">
       <Avatar size="lg">
-        <AvatarImage
-          src={user.image || undefined}
-          alt={`${user.name}'s avatar`}
-        />
+        {user.image && (
+          <AvatarImage src={user.image} alt={`${user.name}'s avatar`} />
+        )}
         <AvatarFallback>{user.name[0]}</AvatarFallback>
       </Avatar>
       <DeleteButton />
