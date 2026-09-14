@@ -63,8 +63,11 @@ export default async function RootLayout({
             else if(!m){
             // Auto-detect dark system preference on first load
              const prefersDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-             document.documentElement.classList.add("dark")
-             document.cookie = "theme=${encodeURIComponent("dark")}; path=/; max-age=${365 * 24 * 60 * 60}"
+      
+             if(prefersDarkTheme){
+              document.documentElement.classList.add("dark")
+              document.cookie = "theme=${encodeURIComponent("dark")}; path=/; max-age=${365 * 24 * 60 * 60}"
+             }
             }
           }
           catch(e){console.error(e)}})()`,

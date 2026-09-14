@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button";
 import { setCookie } from "@/utils/helpers";
 import { Sun, Moon } from "lucide-react";
 import { useState } from "react";
-
-export const switchToLightText = "Switch to light theme";
-export const switchToDarkText = "Switch to dark theme";
+import { switchToDarkText, switchToLightText } from "../utils/constants";
 
 /**
  * Component to toggle the theme

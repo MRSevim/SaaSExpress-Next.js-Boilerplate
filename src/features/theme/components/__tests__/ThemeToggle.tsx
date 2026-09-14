@@ -3,10 +3,8 @@ import {
   getInsensitiveExp,
   renderWithProviders,
 } from "@/utils/test-utils/jest-utils";
-import ThemeToggle, {
-  switchToDarkText,
-  switchToLightText,
-} from "../ThemeToggle";
+import { switchToDarkText, switchToLightText } from "../../utils/constants";
+import ThemeToggle from "../ThemeToggle";
 
 const switchToDarkName = getInsensitiveExp(switchToDarkText);
 const switchToLightName = getInsensitiveExp(switchToLightText);
