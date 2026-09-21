@@ -21,7 +21,7 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <body
         className={`${
           inter.variable
