@@ -1,0 +1,54 @@
+"use client"; // Error boundaries must be Client Components
+import { Inter } from "next/font/google";
+import Container from "@/components/Container";
+import { Button } from "@/components/ui/button";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { CircleAlert } from "lucide-react";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+
+export default function ErrorBoundary({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${
+          inter.variable
+        } font-sans antialiased min-h-screen flex flex-col justify-between`}
+      >
+        <Container className="text-center">
+          <Item
+            variant="muted"
+            className="max-w-md flex flex-col gap-6 p-6 border-2 border-red-500"
+          >
+            <ItemMedia>
+              <CircleAlert className="size-12 text-red-500" />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle className="flex flex-col gap-2">
+                <p className="text-4xl font-bold">Something went wrong!</p>
+                <p className="text-base text-muted-foreground">
+                  {error.message || "Unknown error occurred!"}
+                </p>
+              </ItemTitle>
+            </ItemContent>
+            <ItemActions>
+              <Button onClick={() => reset()}>Try Again.</Button>
+            </ItemActions>
+          </Item>
+        </Container>
+      </body>
+    </html>
+  );
+}

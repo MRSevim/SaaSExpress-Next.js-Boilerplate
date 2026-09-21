@@ -52,6 +52,7 @@ const eslintConfig = defineConfig([
       "**/layout.{js,jsx,ts,tsx}",
       "**/loading.{js,jsx,ts,tsx}",
       "**/error.{js,jsx,ts,tsx}",
+      "**/global-error.{js,jsx,ts,tsx}",
       "**/not-found.{js,jsx,ts,tsx}",
       "**/template.{js,jsx,ts,tsx}",
       "**/default.{js,jsx,ts,tsx}",
