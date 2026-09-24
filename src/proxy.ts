@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { routes } from "./utils/routes";
-import { auth } from "./features/auth/lib/auth";
+import { getSessionCookie } from "better-auth/cookies";
 
 export default async function proxy(request: NextRequest) {
   /*
@@ -12,9 +11,7 @@ export default async function proxy(request: NextRequest) {
   const requiresAuth = [routes.profile].some((route) =>
     request.nextUrl.pathname.startsWith(route),
   );
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = getSessionCookie(request);
 
   if (!session && requiresAuth) {
     return NextResponse.redirect(new URL(routes.signIn, request.url));
