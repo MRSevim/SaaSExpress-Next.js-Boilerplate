@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/toast";
 import { env } from "@/utils/env";
-import { getUser } from "@/features/auth/utils/serverActions";
+import { getUser } from "@/features/auth/utils/serverHelpers";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });

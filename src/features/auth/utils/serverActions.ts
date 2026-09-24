@@ -5,7 +5,6 @@ import { returnErrorFromUnknown } from "@/utils/helpers";
 import { z } from "zod";
 import { env } from "@/utils/env";
 import { routes } from "@/utils/routes";
-import { cache } from "react";
 import { redirect } from "next/navigation";
 import {
   signUpSuccessMessage,
@@ -15,16 +14,6 @@ import {
   notMatchingPassword,
   shortName,
 } from "./constants";
-
-export const getUser = cache(async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  const user = session?.user;
-
-  return user ? { name: user.name, image: user.image } : undefined;
-});
 
 const signInSchema = z.object({
   email: z
