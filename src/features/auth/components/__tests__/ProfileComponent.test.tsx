@@ -4,8 +4,7 @@ import {
   getInsensitiveExp,
 } from "@/utils/test-utils/jest-utils";
 import ProfileComponent from "../ProfileComponent";
-import { User } from "../../utils/types";
-import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
   accountDeletionEmailSuccessMessage,
   passwordResetEmailSuccessMessage,
@@ -27,28 +26,19 @@ const mockedRequestPasswordReset = auth.api
 
 const mockedGetSession = auth.api.getSession as unknown as jest.Mock;
 
-const mockedUseUserPromiseContext =
-  useUserPromiseContext as jest.MockedFunction<typeof useUserPromiseContext>;
+const mockedUseUser = useUser as jest.MockedFunction<typeof useUser>;
 
 const user: { email: string; name: string } = {
   email: "myemail@gmail.com",
   name: "Myname",
 };
 
-// React's `use()` reads a pre-settled thenable's `status`/`value` synchronously
-// instead of suspending, so the profile renders without a Suspense boundary.
-const fulfilledUser = {
-  status: "fulfilled" as const,
-  value: user,
-  then: () => {},
-} as unknown as Promise<User | undefined>;
-
 const deleteName = getInsensitiveExp(deleteAccountButtonText);
 const resetPasswordName = getInsensitiveExp(requestPasswordResetButtonText);
 
 describe("Profile Component", () => {
   beforeAll(() => {
-    mockedUseUserPromiseContext.mockReturnValue(fulfilledUser);
+    mockedUseUser.mockReturnValue(user);
     mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
     mockedGetSession.mockResolvedValue({
       user: { name: user.name, email: user.email },
@@ -82,11 +72,7 @@ describe("Profile Component", () => {
   });
 
   it("renders nothing if user is not there", () => {
-    mockedUseUserPromiseContext.mockReturnValueOnce({
-      status: "fulfilled" as const,
-      value: undefined,
-      then: () => {},
-    } as unknown as Promise<User | undefined>);
+    mockedUseUser.mockReturnValueOnce(undefined);
 
     const { container } = renderWithProviders(<ProfileComponent />);
     expect(container).toBeEmptyDOMElement();

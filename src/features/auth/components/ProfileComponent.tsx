@@ -7,10 +7,10 @@ import {
   requestPasswordReset,
 } from "../utils/serverActions";
 import { toast } from "@/components/ui/toast";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
-import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
   passwordResetEmailSuccessMessage,
   requestPasswordResetButtonText,
@@ -22,8 +22,7 @@ import {
  * Registered user's profile page
  */
 const ProfilePage = () => {
-  const userPromise = useUserPromiseContext();
-  const user = use(userPromise);
+  const user = useUser();
 
   if (!user) return;
   return (

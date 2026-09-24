@@ -20,9 +20,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import { signOut } from "@/features/auth/utils/serverActions";
-import { use, useState } from "react";
+import { useState } from "react";
 import { User } from "@/features/auth/utils/types";
-import { useUserPromiseContext } from "@/features/auth/utils/contexts/UserPromiseContext";
+import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
 import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 import { getUserMenuAriaLabel } from "./UserMenu.utils";
@@ -31,8 +31,7 @@ import { getUserMenuAriaLabel } from "./UserMenu.utils";
  * Logged in user's menu
  */
 const UserMenu = () => {
-  const userPromise = useUserPromiseContext();
-  const user = use(userPromise);
+  const user = useUser();
 
   return (
     <>

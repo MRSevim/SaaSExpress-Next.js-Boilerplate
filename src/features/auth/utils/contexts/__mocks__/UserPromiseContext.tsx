@@ -1,1 +1,1 @@
-export const useUserPromiseContext = jest.fn();
+export const useUser = jest.fn();

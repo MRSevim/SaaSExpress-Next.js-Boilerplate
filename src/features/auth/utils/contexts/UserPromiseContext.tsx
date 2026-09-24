@@ -1,6 +1,6 @@
 "use client";
 import { User } from "@/features/auth/utils/types";
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 
 type UserPromise = Promise<User | undefined> | null;
 
@@ -9,14 +9,12 @@ const UserPromiseContext = createContext<UserPromise>(null);
 /**
  * Gets user promise context to pass into react's use func
  */
-export const useUserPromiseContext = () => {
-  const userPromise = useContext(UserPromiseContext);
+export const useUser = () => {
+  const userPromise = use(UserPromiseContext);
   if (!userPromise) {
-    throw new Error(
-      "useUserPromiseContext must be used within a UserPromiseProvider",
-    );
+    throw new Error("useUser must be used within a UserPromiseProvider");
   }
-  return userPromise;
+  return use(userPromise);
 };
 
 /**
