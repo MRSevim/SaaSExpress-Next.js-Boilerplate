@@ -8,65 +8,23 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from "../ui/dropdown-menu";
-import {
-  NavigationMenuItem,
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
-} from "../ui/navigation-menu";
+
 import Link from "next/link";
 import { routes } from "@/utils/routes";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import { signOut } from "@/features/auth/utils/serverActions";
 import { useState } from "react";
 import { User } from "@/features/auth/utils/types";
-import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
 import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 import { getUserMenuAriaLabel } from "./UserMenu.utils";
 
 /**
- * Logged in user's menu
+ * Logged in user's dropdown
  */
-const UserMenu = () => {
-  const user = useUser();
-
-  return (
-    <>
-      {user ? (
-        <Dropdown user={user} />
-      ) : (
-        <>
-          <NavigationMenuItem>
-            <NavigationMenuLink
-              render={
-                <Link className="h-9" href={routes.signIn}>
-                  Sign In
-                </Link>
-              }
-              className={navigationMenuTriggerStyle()}
-            />
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink
-              render={
-                <Link
-                  href={routes.signUp}
-                  className={`${buttonVariants({ variant: "outline" })} h-9`}
-                >
-                  Sign Up
-                </Link>
-              }
-            />
-          </NavigationMenuItem>
-        </>
-      )}
-    </>
-  );
-};
-
 const Dropdown = ({ user }: { user: User }) => {
   const [open, setOpen] = useState(false);
 
@@ -141,4 +99,4 @@ export const HeaderButtonError = catchError((_props, { retry }: ErrorInfo) => {
   );
 });
 
-export default UserMenu;
+export default Dropdown;

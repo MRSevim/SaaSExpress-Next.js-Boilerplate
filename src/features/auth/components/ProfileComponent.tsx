@@ -1,5 +1,4 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   checkCredentialsProvider,
@@ -10,20 +9,19 @@ import { toast } from "@/components/ui/toast";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Error from "@/components/Error";
-import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
 import {
   passwordResetEmailSuccessMessage,
   requestPasswordResetButtonText,
   accountDeletionEmailSuccessMessage,
   deleteAccountButtonText,
 } from "../utils/constants";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "../utils/types";
 
 /**
- * Registered user's profile page
+ * Profile of the logged in user
  */
-const ProfilePage = () => {
-  const user = useUser();
-
+const Profile = ({ user }: { user?: User }) => {
   if (!user) return;
   return (
     <div className="flex flex-col gap-3 items-center">
@@ -38,8 +36,6 @@ const ProfilePage = () => {
     </div>
   );
 };
-
-export default ProfilePage;
 
 const DeleteButton = () => {
   const [loading, setLoading] = useState(false);
@@ -112,3 +108,5 @@ const ResetButton = () => {
     </>
   );
 };
+
+export default Profile;

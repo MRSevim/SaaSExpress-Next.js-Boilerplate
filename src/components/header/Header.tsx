@@ -9,11 +9,13 @@ import {
 } from "../ui/navigation-menu";
 import Link from "next/link";
 import { routes } from "@/utils/routes";
-import UserMenu, { HeaderButtonError } from "./UserMenu";
 import { env } from "@/utils/env";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { Skeleton } from "../ui/skeleton";
+import { getUser } from "@/features/auth/utils/serverHelpers";
+import { buttonVariants } from "../ui/button";
+import Dropdown, { HeaderButtonError } from "./Dropdown";
 
 /**
  * Header with links and menus
@@ -64,6 +66,43 @@ const ThemeWrapper = async () => {
 
   const initialTheme = cookieStore.get("theme")?.value;
   return <ThemeToggle initialTheme={initialTheme} />;
+};
+
+const UserMenu = async () => {
+  const user = await getUser();
+
+  return (
+    <>
+      {user ? (
+        <Dropdown user={user} />
+      ) : (
+        <>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              render={
+                <Link className="h-9" href={routes.signIn}>
+                  Sign In
+                </Link>
+              }
+              className={navigationMenuTriggerStyle()}
+            />
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              render={
+                <Link
+                  href={routes.signUp}
+                  className={`${buttonVariants({ variant: "outline" })} h-9`}
+                >
+                  Sign Up
+                </Link>
+              }
+            />
+          </NavigationMenuItem>
+        </>
+      )}
+    </>
+  );
 };
 
 const SmallSkeleton = () => <Skeleton className="h-9 rounded-md w-20" />;

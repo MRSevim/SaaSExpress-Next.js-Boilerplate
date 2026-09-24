@@ -3,8 +3,7 @@ import {
   renderWithProviders,
   getInsensitiveExp,
 } from "@/utils/test-utils/jest-utils";
-import ProfileComponent from "../ProfileComponent";
-import { useUser } from "@/features/auth/utils/contexts/UserPromiseContext";
+import Profile from "../ProfileComponent";
 import {
   accountDeletionEmailSuccessMessage,
   passwordResetEmailSuccessMessage,
@@ -26,9 +25,7 @@ const mockedRequestPasswordReset = auth.api
 
 const mockedGetSession = auth.api.getSession as unknown as jest.Mock;
 
-const mockedUseUser = useUser as jest.MockedFunction<typeof useUser>;
-
-const user: { email: string; name: string } = {
+const userLoggedIn: { email: string; name: string } = {
   email: "myemail@gmail.com",
   name: "Myname",
 };
@@ -38,17 +35,15 @@ const resetPasswordName = getInsensitiveExp(requestPasswordResetButtonText);
 
 describe("Profile Component", () => {
   beforeAll(() => {
-    mockedUseUser.mockReturnValue(user);
     mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
     mockedGetSession.mockResolvedValue({
-      user: { name: user.name, email: user.email },
+      user: { name: userLoggedIn.name, email: userLoggedIn.email },
     });
   });
 
   const renderProfile = () => {
-    const { user, container } = renderWithProviders(<ProfileComponent />);
+    const { user } = renderWithProviders(<Profile user={userLoggedIn} />);
     return {
-      container,
       user,
       deleteAccountButton: screen.getByRole("button", { name: deleteName }),
     };
@@ -57,7 +52,7 @@ describe("Profile Component", () => {
   it("renders profile and credential actions", async () => {
     const { deleteAccountButton } = renderProfile();
 
-    expect(await screen.findByText(user.name[0])).toBeInTheDocument();
+    expect(await screen.findByText(userLoggedIn.name[0])).toBeInTheDocument();
 
     expect(deleteAccountButton).toBeInTheDocument();
 
@@ -70,11 +65,8 @@ describe("Profile Component", () => {
       await screen.findByRole("button", { name: resetPasswordName }),
     ).toBeInTheDocument();
   });
-
   it("renders nothing if user is not there", () => {
-    mockedUseUser.mockReturnValueOnce(undefined);
-
-    const { container } = renderWithProviders(<ProfileComponent />);
+    const { container } = renderWithProviders(<Profile user={undefined} />);
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -186,7 +178,7 @@ describe("Profile Component", () => {
       expect(mockedRequestPasswordReset).toHaveBeenCalledTimes(1);
       expect(mockedRequestPasswordReset).toHaveBeenCalledWith({
         body: {
-          email: user.email,
+          email: userLoggedIn.email,
           redirectTo: env.BASE_URL + routes.passwordReset,
         },
       });
