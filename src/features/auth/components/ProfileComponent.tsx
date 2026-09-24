@@ -21,8 +21,7 @@ import { User } from "../utils/types";
 /**
  * Profile of the logged in user
  */
-const Profile = ({ user }: { user?: User }) => {
-  if (!user) return;
+const Profile = ({ user }: { user: User }) => {
   return (
     <div className="flex flex-col gap-3 items-center">
       <Avatar size="lg">

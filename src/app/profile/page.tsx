@@ -2,10 +2,13 @@ import Container from "@/components/Container";
 import { Skeleton } from "@/components/ui/skeleton";
 import Profile from "@/features/auth/components/ProfileComponent";
 import { getUser } from "@/features/auth/utils/serverHelpers";
+import { routes } from "@/utils/routes";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 const PageInner = async () => {
   const user = await getUser();
+  if (!user) redirect(routes.signIn);
   return (
     <Container>
       <Profile user={user} />

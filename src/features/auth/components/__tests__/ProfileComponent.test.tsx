@@ -65,10 +65,6 @@ describe("Profile Component", () => {
       await screen.findByRole("button", { name: resetPasswordName }),
     ).toBeInTheDocument();
   });
-  it("renders nothing if user is not there", () => {
-    const { container } = renderWithProviders(<Profile user={undefined} />);
-    expect(container).toBeEmptyDOMElement();
-  });
 
   it("hides reset button for non-credential providers", async () => {
     mockedListUserAccounts.mockResolvedValueOnce([{ providerId: "google" }]);
