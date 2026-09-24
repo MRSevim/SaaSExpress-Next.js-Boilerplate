@@ -16,12 +16,14 @@ import {
   shortName,
 } from "./constants";
 
-export const getSession = cache(async () => {
+export const getUser = cache(async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  return session?.user;
+  const user = session?.user;
+
+  return user ? { name: user.name, image: user.image } : undefined;
 });
 
 const signInSchema = z.object({
@@ -164,23 +166,42 @@ const requestPasswordResetSchema = z.object({
 /**
  * Requests password reset email
  */
-export const requestPasswordReset = async (email: string) => {
-  const parsed = requestPasswordResetSchema.safeParse({
-    email,
-  });
-
-  if (!parsed.success) {
-    const errorMessages = z.flattenError(parsed.error).fieldErrors;
-
-    return {
+export const requestPasswordReset = async (email?: string) => {
+  let finalEmail: string;
+  if (email !== undefined) {
+    const parsed = requestPasswordResetSchema.safeParse({
       email,
-      error: errorMessages.email?.[0] || "Email parsing error",
-    };
+    });
+
+    if (!parsed.success) {
+      const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+      return {
+        email,
+        error: errorMessages.email?.[0] || "Email parsing error",
+      };
+    }
+    finalEmail = parsed.data.email;
+  } else {
+    try {
+      const session = await auth.api.getSession({
+        headers: await headers(),
+      });
+      const user = session?.user;
+
+      if (!user) {
+        return { email: "", error: "Please authenticate First!" };
+      }
+      finalEmail = user.email;
+    } catch (error) {
+      return { email: "", ...returnErrorFromUnknown(error) };
+    }
   }
+
   try {
     await auth.api.requestPasswordReset({
       body: {
-        email: parsed.data.email,
+        email: finalEmail,
         redirectTo: env.BASE_URL + routes.passwordReset,
       },
     });
@@ -257,7 +278,7 @@ export const checkCredentialsProvider = async () => {
 };
 
 /**
- * Deletes user from db
+ * Deletes authenticated user from db
  */
 export const deleteUser = async () => {
   try {

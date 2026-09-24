@@ -34,6 +34,12 @@ const ForgotPasswordComponent = () => {
       _prevState: { error: string; successMessage: string },
       formData: FormData,
     ) => {
+      if (!formData.get("email"))
+        return {
+          error: "Please provide an email",
+          email: "",
+          successMessage: "",
+        };
       const { error, email } = await requestPasswordReset(
         formData.get("email") as string,
       );

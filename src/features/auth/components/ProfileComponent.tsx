@@ -35,7 +35,7 @@ const ProfilePage = () => {
         <AvatarFallback>{user.name[0]}</AvatarFallback>
       </Avatar>
       <DeleteButton />
-      <ResetButton email={user.email} />
+      <ResetButton />
     </div>
   );
 };
@@ -67,7 +67,7 @@ const DeleteButton = () => {
   );
 };
 
-const ResetButton = ({ email }: { email: string }) => {
+const ResetButton = () => {
   const [loading, setLoading] = useState(false);
   const [checkProviderLoading, setCheckProviderLoading] = useState(true);
   const [isCredentialsProvider, setIsCredentialsProvider] = useState(false);
@@ -96,7 +96,7 @@ const ResetButton = ({ email }: { email: string }) => {
           variant="secondary"
           onClick={async () => {
             setLoading(true);
-            const { error } = await requestPasswordReset(email);
+            const { error } = await requestPasswordReset();
             if (error) {
               toast.add({ type: "error", description: error });
             } else

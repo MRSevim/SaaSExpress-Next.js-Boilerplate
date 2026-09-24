@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { signInWithGoogle } from "@/features/auth/utils/ClientActions";
+import { signInWithGoogle } from "@/features/auth/utils/clientActions";
 import Error from "@/components/Error";
 import { googleSignInButtonText } from "../utils/constants";
 

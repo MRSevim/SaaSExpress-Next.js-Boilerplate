@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/header/Header";
 import { Toaster } from "@/components/ui/toast";
 import { env } from "@/utils/env";
-import { getSession } from "@/features/auth/utils/serverActions";
+import { getUser } from "@/features/auth/utils/serverActions";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -47,7 +47,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const userPromise = getSession();
+  const userPromise = getUser();
 
   return (
     <html lang="en" suppressHydrationWarning>

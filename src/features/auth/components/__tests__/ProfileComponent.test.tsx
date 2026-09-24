@@ -25,13 +25,13 @@ const mockedDeleteUser = auth.api.deleteUser as unknown as jest.Mock;
 const mockedRequestPasswordReset = auth.api
   .requestPasswordReset as unknown as jest.Mock;
 
+const mockedGetSession = auth.api.getSession as unknown as jest.Mock;
+
 const mockedUseUserPromiseContext =
   useUserPromiseContext as jest.MockedFunction<typeof useUserPromiseContext>;
 
-const user: User = {
-  id: "123",
+const user: { email: string; name: string } = {
   email: "myemail@gmail.com",
-  emailVerified: true,
   name: "Myname",
 };
 
@@ -50,6 +50,9 @@ describe("Profile Component", () => {
   beforeAll(() => {
     mockedUseUserPromiseContext.mockReturnValue(fulfilledUser);
     mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
+    mockedGetSession.mockResolvedValue({
+      user: { name: user.name, email: user.email },
+    });
   });
 
   const renderProfile = () => {
