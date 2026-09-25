@@ -1,13 +1,12 @@
 import "server-only";
 import { auth } from "../lib/auth";
 import { headers } from "next/headers";
+import { cache } from "react";
 
 /**
  * Gets currently logged in user
  */
-export const getUser = async () => {
-  "use cache: private";
-
+export const getUser = cache(async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -15,4 +14,4 @@ export const getUser = async () => {
   const user = session?.user;
 
   return user ? { name: user.name, image: user.image } : undefined;
-};
+});
