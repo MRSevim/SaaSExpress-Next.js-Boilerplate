@@ -2,7 +2,8 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.associations": {
-    "*.css": "tailwindcss"
+    "*.css": "tailwindcss",
+    "*.{yml,yaml}": "yaml"
   },
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "js/ts.tsdk.path": "node_modules/typescript/lib",
