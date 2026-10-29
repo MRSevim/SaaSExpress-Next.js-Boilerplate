@@ -9,7 +9,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import { captureException } from "@sentry/nextjs";
 import { CircleAlert } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ErrorBoundary({
   error,
@@ -18,6 +20,10 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    captureException(error, { extra: { digest: error.digest } });
+  }, [error]);
+
   return (
     <Container className="text-center">
       <Item

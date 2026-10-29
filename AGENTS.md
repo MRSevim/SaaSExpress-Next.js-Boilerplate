@@ -7,6 +7,8 @@ This is Next.js boilerplate that includes placeholder todo app, auth, billing/su
 5. `npm run build` — Next.js build
 6. `npm run e2e` — Playwright
 
+to check all at once, run `npm run check-all`
+
 Always check the Markdown files inside `docs/` to identify task-specific instructions. Read and follow the relevant files when the task requires it. For example if user gave you test writing task, use the files inside `docs/testing`.
 
 <!-- BEGIN:nextjs-agent-rules -->

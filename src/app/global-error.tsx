@@ -10,6 +10,8 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { CircleAlert } from "lucide-react";
+import { useEffect } from "react";
+import { captureException } from "@sentry/nextjs";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -20,6 +22,10 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    captureException(error, { extra: { digest: error.digest } });
+  }, [error]);
+
   return (
     <html lang="en" className="dark">
       <body

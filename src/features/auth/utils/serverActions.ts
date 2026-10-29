@@ -14,6 +14,11 @@ import {
   notMatchingPassword,
   shortName,
 } from "./constants";
+import {
+  captureException,
+  logger,
+  withServerActionInstrumentation,
+} from "@sentry/nextjs";
 
 const signInSchema = z.object({
   email: z
@@ -28,36 +33,48 @@ const signInSchema = z.object({
  * Signs user in with credentials
  */
 export const signInWithEmailAndPassword = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  return withServerActionInstrumentation(
+    "signInWithEmailAndPassword",
+    {
+      headers: await headers(), // Connect client and server traces
+      formData, // Attach form data to events
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
 
-  const parsed = signInSchema.safeParse({
-    email,
-    password,
-  });
-
-  if (!parsed.success) {
-    const errorMessages = z.flattenError(parsed.error).fieldErrors;
-
-    return {
-      error:
-        errorMessages.email?.[0] ||
-        errorMessages.password?.[0] ||
-        "Parsing error",
-    };
-  }
-
-  try {
-    await auth.api.signInEmail({
-      body: {
-        email: parsed.data.email,
+      const parsed = signInSchema.safeParse({
+        email,
         password,
-      },
-    });
-  } catch (error) {
-    return { ...returnErrorFromUnknown(error) };
-  }
-  redirect(routes.home);
+      });
+
+      if (!parsed.success) {
+        const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+        return {
+          error:
+            errorMessages.email?.[0] ||
+            errorMessages.password?.[0] ||
+            "Parsing error",
+        };
+      }
+
+      try {
+        logger.trace("signInWithEmailAndPassword called");
+        await auth.api.signInEmail({
+          body: {
+            email: parsed.data.email,
+            password,
+          },
+        });
+      } catch (error) {
+        captureException(error);
+        return { ...returnErrorFromUnknown(error) };
+      }
+      redirect(routes.home);
+    },
+  );
 };
 
 const signUpSchema = z
@@ -87,61 +104,84 @@ const signUpSchema = z
  * Signs user up with their credentials
  */
 export const signUp = async (formData: FormData) => {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirm-password") as string;
+  return withServerActionInstrumentation(
+    "signUp",
+    {
+      headers: await headers(), // Connect client and server traces
+      formData, // Attach form data to events
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      const name = formData.get("name") as string;
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirm-password") as string;
 
-  const parsed = signUpSchema.safeParse({
-    name,
-    email,
-    password,
-    confirmPassword,
-  });
-
-  if (!parsed.success) {
-    const errorMessages = z.flattenError(parsed.error).fieldErrors;
-
-    return {
-      error: "",
-      errors: {
-        name: errorMessages.name?.[0],
-        email: errorMessages.email?.[0],
-        password: errorMessages.password?.[0],
-        confirmPassword: errorMessages.confirmPassword?.[0],
-      },
-      successMessage: "",
-    };
-  }
-  try {
-    await auth.api.signUpEmail({
-      body: {
-        name: parsed.data.name,
-        email: parsed.data.email,
+      const parsed = signUpSchema.safeParse({
+        name,
+        email,
         password,
-      },
-    });
-    return {
-      error: "",
-      successMessage: signUpSuccessMessage,
-    };
-  } catch (error) {
-    return { ...returnErrorFromUnknown(error) };
-  }
+        confirmPassword,
+      });
+
+      if (!parsed.success) {
+        const errorMessages = z.flattenError(parsed.error).fieldErrors;
+
+        return {
+          error: "",
+          errors: {
+            name: errorMessages.name?.[0],
+            email: errorMessages.email?.[0],
+            password: errorMessages.password?.[0],
+            confirmPassword: errorMessages.confirmPassword?.[0],
+          },
+          successMessage: "",
+        };
+      }
+      try {
+        logger.trace("signUp called");
+        await auth.api.signUpEmail({
+          body: {
+            name: parsed.data.name,
+            email: parsed.data.email,
+            password,
+          },
+        });
+        return {
+          error: "",
+          successMessage: signUpSuccessMessage,
+        };
+      } catch (error) {
+        captureException(error);
+        return { ...returnErrorFromUnknown(error) };
+      }
+    },
+  );
 };
 
 /**
  * Signout/logout
  */
 export const signOut = async () => {
-  try {
-    await auth.api.signOut({
-      headers: await headers(),
-    });
-  } catch (error) {
-    return returnErrorFromUnknown(error);
-  }
-  redirect(routes.signIn);
+  return withServerActionInstrumentation(
+    "signOut",
+    {
+      headers: await headers(), // Connect client and server traces
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      try {
+        logger.trace("signOut called");
+        await auth.api.signOut({
+          headers: await headers(),
+        });
+      } catch (error) {
+        captureException(error);
+        return returnErrorFromUnknown(error);
+      }
+      redirect(routes.signIn);
+    },
+  );
 };
 
 const requestPasswordResetSchema = z.object({
@@ -156,49 +196,62 @@ const requestPasswordResetSchema = z.object({
  * Requests password reset email
  */
 export const requestPasswordReset = async (email?: string) => {
-  let finalEmail: string;
-  if (email !== undefined) {
-    const parsed = requestPasswordResetSchema.safeParse({
-      email,
-    });
+  return withServerActionInstrumentation(
+    "requestPasswordReset",
+    {
+      headers: await headers(), // Connect client and server traces
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      let finalEmail: string;
+      if (email !== undefined) {
+        const parsed = requestPasswordResetSchema.safeParse({
+          email,
+        });
 
-    if (!parsed.success) {
-      const errorMessages = z.flattenError(parsed.error).fieldErrors;
+        if (!parsed.success) {
+          const errorMessages = z.flattenError(parsed.error).fieldErrors;
 
-      return {
-        email,
-        error: errorMessages.email?.[0] || "Email parsing error",
-      };
-    }
-    finalEmail = parsed.data.email;
-  } else {
-    try {
-      const session = await auth.api.getSession({
-        headers: await headers(),
-      });
-      const user = session?.user;
+          return {
+            email,
+            error: errorMessages.email?.[0] || "Email parsing error",
+          };
+        }
+        finalEmail = parsed.data.email;
+      } else {
+        try {
+          const session = await auth.api.getSession({
+            headers: await headers(),
+          });
+          const user = session?.user;
 
-      if (!user) {
-        return { email: "", error: "Please authenticate First!" };
+          if (!user) {
+            logger.trace("User not found during requestPasswordReset");
+            return { email: "", error: "Please authenticate First!" };
+          }
+          finalEmail = user.email;
+        } catch (error) {
+          captureException(error);
+          return { email: "", ...returnErrorFromUnknown(error) };
+        }
       }
-      finalEmail = user.email;
-    } catch (error) {
-      return { email: "", ...returnErrorFromUnknown(error) };
-    }
-  }
 
-  try {
-    await auth.api.requestPasswordReset({
-      body: {
-        email: finalEmail,
-        redirectTo: env.BASE_URL + routes.passwordReset,
-      },
-    });
+      try {
+        logger.trace("requestPasswordReset called");
+        await auth.api.requestPasswordReset({
+          body: {
+            email: finalEmail,
+            redirectTo: env.BASE_URL + routes.passwordReset,
+          },
+        });
 
-    return { error: "", email: "" };
-  } catch (error) {
-    return { email, ...returnErrorFromUnknown(error) };
-  }
+        return { error: "", email: "" };
+      } catch (error) {
+        captureException(error);
+        return { email, ...returnErrorFromUnknown(error) };
+      }
+    },
+  );
 };
 
 const resetPasswordSchema = z
@@ -218,65 +271,101 @@ const resetPasswordSchema = z
  * Resets password with the new one
  */
 export const resetPassword = async (formData: FormData, token: string) => {
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirm-password") as string;
+  return withServerActionInstrumentation(
+    "resetPassword",
+    {
+      headers: await headers(), // Connect client and server traces
+      formData, // Attach form data to events
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirm-password") as string;
 
-  const parsed = resetPasswordSchema.safeParse({
-    password,
-    confirmPassword,
-  });
+      const parsed = resetPasswordSchema.safeParse({
+        password,
+        confirmPassword,
+      });
 
-  if (!parsed.success) {
-    const errorMessages = z.flattenError(parsed.error).fieldErrors;
+      if (!parsed.success) {
+        const errorMessages = z.flattenError(parsed.error).fieldErrors;
 
-    return {
-      error: "",
-      errors: {
-        password: errorMessages.password?.[0],
-        confirmPassword: errorMessages.confirmPassword?.[0],
-      },
-      successMessage: "",
-    };
-  }
-  try {
-    await auth.api.resetPassword({ body: { newPassword: password, token } });
-    return {
-      error: "",
-      successMessage: resetPasswordSuccessMessage,
-    };
-  } catch (error) {
-    return { ...returnErrorFromUnknown(error), successMessage: "" };
-  }
+        return {
+          error: "",
+          errors: {
+            password: errorMessages.password?.[0],
+            confirmPassword: errorMessages.confirmPassword?.[0],
+          },
+          successMessage: "",
+        };
+      }
+      try {
+        logger.trace("resetPassword called");
+        await auth.api.resetPassword({
+          body: { newPassword: password, token },
+        });
+        return {
+          error: "",
+          successMessage: resetPasswordSuccessMessage,
+        };
+      } catch (error) {
+        captureException(error);
+        return { ...returnErrorFromUnknown(error), successMessage: "" };
+      }
+    },
+  );
 };
 
 /**
  * Checks if user's account has logged in with credentials provider (meaning it used email+password to login)
  */
 export const checkCredentialsProvider = async () => {
-  try {
-    const accounts = await auth.api.listUserAccounts({
-      headers: await headers(),
-    });
-    const isTrue = !!accounts.find(
-      (account) => account.providerId === "credential",
-    );
-    return { isTrue, error: "" };
-  } catch (error) {
-    return { isTrue: false, ...returnErrorFromUnknown(error) };
-  }
+  return withServerActionInstrumentation(
+    "checkCredentialsProvider",
+    {
+      headers: await headers(), // Connect client and server traces
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      try {
+        logger.trace("checkCredentialsProvider called");
+        const accounts = await auth.api.listUserAccounts({
+          headers: await headers(),
+        });
+        const isTrue = !!accounts.find(
+          (account) => account.providerId === "credential",
+        );
+        return { isTrue, error: "" };
+      } catch (error) {
+        captureException(error);
+        return { isTrue: false, ...returnErrorFromUnknown(error) };
+      }
+    },
+  );
 };
 
 /**
  * Deletes authenticated user from db
  */
 export const deleteUser = async () => {
-  try {
-    await auth.api.deleteUser({
-      headers: await headers(),
-      body: { callbackURL: routes.home },
-    });
-    return { error: "" };
-  } catch (error) {
-    return returnErrorFromUnknown(error);
-  }
+  return withServerActionInstrumentation(
+    "deleteUser",
+    {
+      headers: await headers(), // Connect client and server traces
+      recordResponse: true, // Include response data
+    },
+    async () => {
+      try {
+        logger.trace("deleteUser called");
+        await auth.api.deleteUser({
+          headers: await headers(),
+          body: { callbackURL: routes.home },
+        });
+        return { error: "" };
+      } catch (error) {
+        captureException(error);
+        return returnErrorFromUnknown(error);
+      }
+    },
+  );
 };
