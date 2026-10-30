@@ -7,6 +7,8 @@ import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 const Error = ({ text, id }: { text: string; id?: string }) => {
   return (
     <div
+      data-sentry-unmask
+      data-sentry-component="Error"
       aria-live="polite"
       id={id}
       className={`w-full ${text ? "block" : "hidden"}`}
