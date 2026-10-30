@@ -29,13 +29,6 @@ export const setCookie = (name: string, value: string, days: number = 365) => {
 };
 
 /**
- * gets random number between 0-100
- */
-export const getRandomNumber = () => {
-  return (Math.random() * 100).toFixed(2);
-};
-
-/**
  * Creates e2e-link-*.txt filepaths with users' emails.
  *
  * @param email - email to be inserted

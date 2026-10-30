@@ -54,5 +54,3 @@ node_modules/
 /playwright/.auth/
 /playwright/.e2e-emails/
 
-# Sentry Config File
-.env.sentry-build-plugin
