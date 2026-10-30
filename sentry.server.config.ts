@@ -18,4 +18,6 @@ Sentry.init({
     // userInfo: false,
     // httpBodies: [],
   },
+
+  enabled: process.env.NODE_ENV !== "test",
 });
