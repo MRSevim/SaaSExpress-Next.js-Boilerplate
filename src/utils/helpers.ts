@@ -1,6 +1,7 @@
 import { isAPIError } from "better-auth/api";
 import { unknownError } from "./constants";
 import { EmailType } from "@/features/auth/utils/types";
+import { captureException } from "@sentry/nextjs";
 
 /**
  * Returns user facing error message
@@ -9,6 +10,9 @@ export const returnErrorFromUnknown = (
   error: unknown,
   fallback: string = unknownError,
 ) => {
+  if (!isAPIError(error)) {
+    captureException(error);
+  }
   if (isAPIError(error)) return { error: error.message || fallback };
 
   return { error: fallback };

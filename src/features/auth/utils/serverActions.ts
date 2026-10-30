@@ -14,11 +14,7 @@ import {
   notMatchingPassword,
   shortName,
 } from "./constants";
-import {
-  captureException,
-  logger,
-  withServerActionInstrumentation,
-} from "@sentry/nextjs";
+import { logger, withServerActionInstrumentation } from "@sentry/nextjs";
 
 const signInSchema = z.object({
   email: z
@@ -69,7 +65,6 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
           },
         });
       } catch (error) {
-        captureException(error);
         return { ...returnErrorFromUnknown(error) };
       }
       redirect(routes.home);
@@ -152,7 +147,6 @@ export const signUp = async (formData: FormData) => {
           successMessage: signUpSuccessMessage,
         };
       } catch (error) {
-        captureException(error);
         return { ...returnErrorFromUnknown(error) };
       }
     },
@@ -176,7 +170,6 @@ export const signOut = async () => {
           headers: await headers(),
         });
       } catch (error) {
-        captureException(error);
         return returnErrorFromUnknown(error);
       }
       redirect(routes.signIn);
@@ -231,7 +224,6 @@ export const requestPasswordReset = async (email?: string) => {
           }
           finalEmail = user.email;
         } catch (error) {
-          captureException(error);
           return { email: "", ...returnErrorFromUnknown(error) };
         }
       }
@@ -247,7 +239,6 @@ export const requestPasswordReset = async (email?: string) => {
 
         return { error: "", email: "" };
       } catch (error) {
-        captureException(error);
         return { email, ...returnErrorFromUnknown(error) };
       }
     },
@@ -309,7 +300,6 @@ export const resetPassword = async (formData: FormData, token: string) => {
           successMessage: resetPasswordSuccessMessage,
         };
       } catch (error) {
-        captureException(error);
         return { ...returnErrorFromUnknown(error), successMessage: "" };
       }
     },
@@ -337,7 +327,6 @@ export const checkCredentialsProvider = async () => {
         );
         return { isTrue, error: "" };
       } catch (error) {
-        captureException(error);
         return { isTrue: false, ...returnErrorFromUnknown(error) };
       }
     },
@@ -363,7 +352,6 @@ export const deleteUser = async () => {
         });
         return { error: "" };
       } catch (error) {
-        captureException(error);
         return returnErrorFromUnknown(error);
       }
     },
