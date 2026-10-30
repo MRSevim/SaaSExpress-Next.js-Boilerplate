@@ -9,7 +9,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import { captureException } from "@sentry/nextjs";
 import { CircleAlert } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ErrorBoundary({
   error,
@@ -18,8 +20,16 @@ export default function ErrorBoundary({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    captureException(error, { extra: { digest: error.digest } });
+  }, [error]);
+
   return (
-    <Container className="text-center">
+    <Container
+      className="text-center"
+      data-sentry-unmask
+      data-sentry-component="Rendering-Error-Boundary"
+    >
       <Item
         variant="muted"
         className="max-w-md flex flex-col gap-6 p-6 border-2 border-red-500"

@@ -6,6 +6,7 @@ import path from "path";
 import { createE2EMailfilename } from "@/utils/helpers";
 import { EmailType } from "@/features/auth/utils/types";
 import { playwrightE2EEmailPath } from "@/utils/constants";
+import { captureException, logger } from "@sentry/nextjs";
 
 /**
  * Sends email through provider (can do other things depending on the environment. Prod, test and dev all behaves differently)
@@ -43,7 +44,7 @@ export const sendEmail = async ({
 
     return;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
+    logger.error("Error sending email through resend");
+    captureException(error);
   }
 };
