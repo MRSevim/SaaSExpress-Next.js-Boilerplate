@@ -25,7 +25,11 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <Container className="text-center">
+    <Container
+      className="text-center"
+      data-sentry-unmask
+      data-sentry-component="Rendering-Error-Boundary"
+    >
       <Item
         variant="muted"
         className="max-w-md flex flex-col gap-6 p-6 border-2 border-red-500"

@@ -27,7 +27,12 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <html lang="en" className="dark">
+    <html
+      lang="en"
+      className="dark"
+      data-sentry-unmask
+      data-sentry-component="Global-Error-Boundary"
+    >
       <body
         className={`${
           inter.variable

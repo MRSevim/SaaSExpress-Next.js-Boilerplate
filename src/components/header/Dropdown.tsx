@@ -16,11 +16,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChevronDown, ChevronUp, LogOut } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import { signOut } from "@/features/auth/utils/serverActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@/features/auth/utils/types";
 import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 import { getUserMenuAriaLabel } from "./UserMenu.utils";
+import { captureException } from "@sentry/nextjs";
 
 /**
  * Logged in user's dropdown
@@ -90,13 +91,24 @@ const LogoutButton = () => {
   );
 };
 
-export const HeaderButtonError = catchError((_props, { retry }: ErrorInfo) => {
-  return (
-    <Button variant="destructive" onClick={() => retry()}>
-      <IterationCw />
-      Try again
-    </Button>
-  );
-});
+export const HeaderButtonError = catchError(
+  (_props, { retry, error }: ErrorInfo) => {
+    useEffect(() => {
+      captureException(error);
+    }, [error]);
+
+    return (
+      <Button
+        data-sentry-unmask
+        data-sentry-component="Header-Error"
+        variant="destructive"
+        onClick={() => retry()}
+      >
+        <IterationCw />
+        Try again
+      </Button>
+    );
+  },
+);
 
 export default Dropdown;
