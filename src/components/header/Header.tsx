@@ -34,6 +34,14 @@ const Header = () => {
                 render={<Link href={routes.home}>Home</Link>}
                 className={navigationMenuTriggerStyle()}
               />
+              <NavigationMenuLink
+                render={<Link href={routes.features}>Features</Link>}
+                className={navigationMenuTriggerStyle()}
+              />
+              <NavigationMenuLink
+                render={<Link href={routes.pricing}>Pricing</Link>}
+                className={navigationMenuTriggerStyle()}
+              />
             </NavigationMenuItem>
             <div className="flex items-center gap-2">
               <HeaderButtonError>
