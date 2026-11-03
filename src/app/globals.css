@@ -135,7 +135,3 @@
     display: contents;
   }
 }
-
-html {
-  scroll-behavior: smooth;
-}

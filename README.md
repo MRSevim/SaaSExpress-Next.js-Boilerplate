@@ -1,6 +1,6 @@
 # SaaSExpress
 
-This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing, error tracking and more. It is ready to go, clone the repo and start adding to it.
+This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (coming soon), error tracking and more. It is ready to go, clone the repo and start adding to it.
 
 ## Features
 
@@ -19,7 +19,7 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing, 
   - [x] Sourcemap uploads
   - [x] Replay on errors and sessions
 - [ ] To do app
-  - [ ] Basic to do app replacable by your real app logic
+  - [ ] Basic to do app replaceable by your real app logic
 - [ ] SEO features
   - [ ] Sitemap and robots.txt
   - [ ] Basic pagewise metadata
@@ -40,7 +40,7 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing, 
   - [x] Auth related emails
   - [ ] Welcome emails
   - [ ] Invoice and billing emails
-- [ ] Dynamic, user friendly flows
+- [ ] Dynamic flows
   - [ ] User friendly error messages
   - [ ] Loading indicators
   - [ ] Not found and error pages
