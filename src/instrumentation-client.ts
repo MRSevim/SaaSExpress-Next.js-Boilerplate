@@ -7,7 +7,7 @@ import * as Sentry from "@sentry/nextjs";
 const isDev = process.env.NODE_ENV === "development";
 
 Sentry.init({
-  dsn: "https://9b5074abc892a2a50f38898a34d9319d@o4512340467122176.ingest.de.sentry.io/4512340498186320",
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Add optional integrations for additional features
   integrations: [
