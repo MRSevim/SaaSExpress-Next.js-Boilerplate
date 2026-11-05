@@ -30,18 +30,24 @@ const Header = () => {
             {" "}
             <NavigationMenuItem className="flex flex-col sm:flex-row items-center gap-2">
               <h1 className="px-4 py-2 font-heading">{env.APP_NAME}</h1>
-              <NavigationMenuLink
-                render={<Link href={routes.home}>Home</Link>}
-                className={navigationMenuTriggerStyle()}
-              />
-              <NavigationMenuLink
-                render={<Link href={routes.features}>Features</Link>}
-                className={navigationMenuTriggerStyle()}
-              />
-              <NavigationMenuLink
-                render={<Link href={routes.pricing}>Pricing</Link>}
-                className={navigationMenuTriggerStyle()}
-              />
+              <div>
+                <NavigationMenuLink
+                  render={<Link href={routes.home}>Home</Link>}
+                  className={navigationMenuTriggerStyle()}
+                />
+                <NavigationMenuLink
+                  render={<Link href={routes.features}>Features</Link>}
+                  className={navigationMenuTriggerStyle()}
+                />
+                <NavigationMenuLink
+                  render={<Link href={routes.pricing}>Pricing</Link>}
+                  className={navigationMenuTriggerStyle()}
+                />
+                <NavigationMenuLink
+                  render={<Link href={routes.contact}>Contact</Link>}
+                  className={navigationMenuTriggerStyle()}
+                />
+              </div>
             </NavigationMenuItem>
             <div className="flex items-center gap-2">
               <HeaderButtonError>

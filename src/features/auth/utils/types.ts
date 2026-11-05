@@ -3,7 +3,7 @@ export type User = {
   image?: string | null | undefined;
 };
 
-export type SignUpReturn = {
+export type SignUpState = {
   error?: string;
   errors?: {
     name?: string;
@@ -12,10 +12,8 @@ export type SignUpReturn = {
     confirmPassword?: string;
   };
   successMessage?: string;
-};
-
-export type SignUpState =
-  (SignUpReturn & { defaultValues: { name: string; email: string } }) | null;
+  defaultValues: { name: string; email: string };
+} | null;
 
 export type ResetPasswordState = {
   error?: string;
@@ -27,4 +25,7 @@ export type ResetPasswordState = {
 } | null;
 
 export type EmailType =
-  "verification" | "account-deletion" | "password-reset-request";
+  | "verification"
+  | "account-deletion"
+  | "password-reset-request"
+  | "contact-form-submission";
