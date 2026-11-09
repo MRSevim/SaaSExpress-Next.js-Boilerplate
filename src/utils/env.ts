@@ -17,4 +17,7 @@ export const env = {
   GOOGLE_CLIENT_SECRET: requiredEnv("GOOGLE_CLIENT_SECRET"),
   RESEND_API_KEY: requiredEnv("RESEND_API_KEY"),
   RESEND_FROM: requiredEnv("RESEND_FROM"),
+  SENTRY_AUTH_TOKEN: requiredEnv("SENTRY_AUTH_TOKEN"),
+  SENTRY_DSN: requiredEnv("NEXT_PUBLIC_SENTRY_DSN"),
+  CONTACT_EMAIL: requiredEnv("CONTACT_EMAIL"),
 };

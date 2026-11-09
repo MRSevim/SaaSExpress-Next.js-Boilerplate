@@ -7,4 +7,6 @@ export const routes = {
   profile: "/profile",
   passwordReset: "/password-reset",
   forgotPassword: "/forgot-password",
+  contact: "/contact",
+  terms: "/terms",
 };

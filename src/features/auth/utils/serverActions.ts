@@ -33,8 +33,6 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
     "signInWithEmailAndPassword",
     {
       headers: await headers(), // Connect client and server traces
-      formData, // Attach form data to events
-      recordResponse: true, // Include response data
     },
     async () => {
       const email = formData.get("email") as string;
@@ -103,8 +101,6 @@ export const signUp = async (formData: FormData) => {
     "signUp",
     {
       headers: await headers(), // Connect client and server traces
-      formData, // Attach form data to events
-      recordResponse: true, // Include response data
     },
     async () => {
       const name = formData.get("name") as string;
@@ -161,7 +157,6 @@ export const signOut = async () => {
     "signOut",
     {
       headers: await headers(), // Connect client and server traces
-      recordResponse: true, // Include response data
     },
     async () => {
       try {
@@ -193,7 +188,6 @@ export const requestPasswordReset = async (email?: string) => {
     "requestPasswordReset",
     {
       headers: await headers(), // Connect client and server traces
-      recordResponse: true, // Include response data
     },
     async () => {
       let finalEmail: string;
@@ -266,8 +260,6 @@ export const resetPassword = async (formData: FormData, token: string) => {
     "resetPassword",
     {
       headers: await headers(), // Connect client and server traces
-      formData, // Attach form data to events
-      recordResponse: true, // Include response data
     },
     async () => {
       const password = formData.get("password") as string;
@@ -314,7 +306,6 @@ export const checkCredentialsProvider = async () => {
     "checkCredentialsProvider",
     {
       headers: await headers(), // Connect client and server traces
-      recordResponse: true, // Include response data
     },
     async () => {
       try {
@@ -341,7 +332,6 @@ export const deleteUser = async () => {
     "deleteUser",
     {
       headers: await headers(), // Connect client and server traces
-      recordResponse: true, // Include response data
     },
     async () => {
       try {

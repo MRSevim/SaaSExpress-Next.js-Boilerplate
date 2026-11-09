@@ -34,8 +34,8 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
   - [ ] Basic notifications
 - [ ] User facing pages
   - [x] Homepage with features, pricing and call to action sections
-  - [ ] Contact page
-  - [ ] Terms and Conditions and Privacy Policy pages
+  - [x] Contact page
+  - [x] Terms and Conditions and Privacy Policy pages
 - [ ] Email System
   - [x] Auth related emails
   - [ ] Welcome emails
