@@ -71,3 +71,4 @@ Libraries and technologies mentioned below are utilized to implement the feature
 - Sentry SaaS
 - Stripe (not implemented yet)
 - Github actions
+- Vercel
