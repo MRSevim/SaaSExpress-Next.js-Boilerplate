@@ -32,7 +32,7 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
 - [ ] User dashboard
   - [ ] Profile page
   - [ ] Basic notifications
-- [ ] User facing pages
+- [x] User facing pages
   - [x] Homepage with features, pricing and call to action sections
   - [x] Contact page
   - [x] Terms and Conditions and Privacy Policy pages
