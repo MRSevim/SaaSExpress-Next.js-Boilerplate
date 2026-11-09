@@ -4,7 +4,6 @@ import {
 } from "@/utils/test-utils/jest-utils";
 import {
   ContactForm,
-  contactButtonText,
   contactErrorId,
   contactLoadingButtonText,
   contactSuccessId,
@@ -16,6 +15,7 @@ import { screen, waitFor } from "@testing-library/react";
 import {
   contactFormShortMessageError,
   contactFormSuccessMessage,
+  contactButtonText,
 } from "../../utils/constants";
 import { sendEmail } from "@/lib/resend/helpers";
 import { invalidEmail, shortName } from "@/features/auth/utils/constants";

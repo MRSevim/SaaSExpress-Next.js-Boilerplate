@@ -39,8 +39,6 @@ export const contactUs = async (
     "contactUs",
     {
       headers: await headers(), // Connect client and server traces
-      formData, // Attach form data to events
-      recordResponse: true, // Include response data
     },
     async () => {
       const name = formData.get("name") as string;

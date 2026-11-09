@@ -23,12 +23,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { contactUs } from "../utils/serverActions";
 import Success from "@/components/Success";
+import { contactButtonText } from "../utils/constants";
 
 export const contactErrorId = "contact-error";
 
 export const contactSuccessId = "contact-success";
-
-export const contactButtonText = "Submit";
 
 export const contactLoadingButtonText = "Submitting...";
 

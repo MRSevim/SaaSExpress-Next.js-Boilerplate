@@ -3,3 +3,5 @@ export const contactFormSuccessMessage =
 
 export const contactFormShortMessageError =
   "Message is required (min 20 characters)";
+
+export const contactButtonText = "Submit";

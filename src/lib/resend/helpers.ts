@@ -40,7 +40,10 @@ export const sendEmail = async ({
     } else if (env.NODE_ENV === "development") {
       // eslint-disable-next-line no-console
       console.log(obj);
-    } else await resend.emails.send(obj);
+    } else {
+      const { error } = await resend.emails.send(obj);
+      if (error) throw Error(error.message);
+    }
 
     return;
   } catch (error) {
