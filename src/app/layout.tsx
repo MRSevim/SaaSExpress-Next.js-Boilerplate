@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toast";
 import { env } from "@/utils/env";
 import { getUser } from "@/features/auth/utils/serverHelpers";
 import { UserPromiseProvider } from "@/features/auth/utils/contexts/UserPromiseContext";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -84,6 +85,7 @@ export default async function RootLayout({
           <Header />
           {children}
           <Toaster />
+          <Footer />
         </UserPromiseProvider>
       </body>
     </html>

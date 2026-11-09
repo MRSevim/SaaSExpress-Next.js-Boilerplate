@@ -8,4 +8,5 @@ export const routes = {
   passwordReset: "/password-reset",
   forgotPassword: "/forgot-password",
   contact: "/contact",
+  terms: "/terms",
 };
