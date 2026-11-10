@@ -55,6 +55,8 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
 - [x] CI/CD
   - [x] Formatting, linting, type-checking and testing as continuous integration
   - [x] Automatic database schema update on relevant file changes
+- [x] Other
+  - [x] Basic rate limiting
 
 ## Libraries/Technologies used
 
@@ -72,3 +74,4 @@ Libraries and technologies mentioned below are utilized to implement the feature
 - Stripe (not implemented yet)
 - Github actions
 - Vercel
+- Upstash

@@ -20,7 +20,7 @@ import {
 import { sendEmail } from "@/lib/resend/helpers";
 import { invalidEmail, shortName } from "@/features/auth/utils/constants";
 import { env } from "@/utils/env";
-
+jest.mock("@/lib/rate-limiter");
 jest.mock("@/lib/resend/helpers");
 
 const mockedSendEmail = sendEmail as unknown as jest.Mock;

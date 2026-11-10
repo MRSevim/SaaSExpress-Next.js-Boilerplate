@@ -14,6 +14,7 @@ import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { routes } from "@/utils/routes";
 import { env } from "@/utils/env";
+jest.mock("@/lib/rate-limiter");
 
 const mockedListUserAccounts = auth.api
   .listUserAccounts as unknown as jest.Mock;

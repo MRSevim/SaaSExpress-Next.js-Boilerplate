@@ -11,6 +11,7 @@ import {
   contactFormShortMessageError,
   contactFormSuccessMessage,
 } from "./constants";
+import { rateLimit } from "@/utils/server-helpers";
 
 const contactSchema = z.object({
   name: z
@@ -30,7 +31,7 @@ const contactSchema = z.object({
     .max(2000, { message: "Message must be less than 2001 characters" }),
 });
 
-/** Sends contact form to SaaS owner's email */
+/** Sends contact form to contact email */
 export const contactUs = async (
   _prevState: ContactFormState,
   formData: FormData,
@@ -41,9 +42,17 @@ export const contactUs = async (
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+
       const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const message = formData.get("message") as string;
+      if (error) {
+        return {
+          error,
+          defaultValues: { email, name, message },
+        };
+      }
       const parsed = contactSchema.safeParse({
         name,
         email,

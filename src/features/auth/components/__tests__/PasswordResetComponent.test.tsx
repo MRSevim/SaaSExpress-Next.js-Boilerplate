@@ -19,6 +19,7 @@ import {
 } from "@/features/auth/utils/constants";
 import { useSearchParams } from "next/navigation";
 import { auth } from "../../lib/auth";
+jest.mock("@/lib/rate-limiter");
 
 const mockGet = jest.fn();
 

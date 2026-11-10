@@ -15,6 +15,7 @@ import {
   shortName,
 } from "./constants";
 import { logger, withServerActionInstrumentation } from "@sentry/nextjs";
+import { rateLimit } from "@/utils/server-helpers";
 
 const signInSchema = z.object({
   email: z
@@ -35,6 +36,13 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+      if (error) {
+        return {
+          error,
+        };
+      }
+
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
@@ -103,6 +111,12 @@ export const signUp = async (formData: FormData) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+      if (error) {
+        return {
+          error,
+        };
+      }
       const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
@@ -159,6 +173,12 @@ export const signOut = async () => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+      if (error) {
+        return {
+          error,
+        };
+      }
       try {
         logger.trace("signOut called");
         await auth.api.signOut({
@@ -190,6 +210,13 @@ export const requestPasswordReset = async (email?: string) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+      if (error) {
+        return {
+          error,
+          email: email || "",
+        };
+      }
       let finalEmail: string;
       if (email !== undefined) {
         const parsed = requestPasswordResetSchema.safeParse({
@@ -262,6 +289,12 @@ export const resetPassword = async (formData: FormData, token: string) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
+      const { error } = await rateLimit();
+      if (error) {
+        return {
+          error,
+        };
+      }
       const password = formData.get("password") as string;
       const confirmPassword = formData.get("confirm-password") as string;
 
@@ -309,6 +342,13 @@ export const checkCredentialsProvider = async () => {
     },
     async () => {
       try {
+        const { error } = await rateLimit();
+        if (error) {
+          return {
+            error,
+            isTrue: false,
+          };
+        }
         logger.trace("checkCredentialsProvider called");
         const accounts = await auth.api.listUserAccounts({
           headers: await headers(),
@@ -335,6 +375,13 @@ export const deleteUser = async () => {
     },
     async () => {
       try {
+        const { error } = await rateLimit();
+        if (error) {
+          return {
+            error,
+          };
+        }
+
         logger.trace("deleteUser called");
         await auth.api.deleteUser({
           headers: await headers(),

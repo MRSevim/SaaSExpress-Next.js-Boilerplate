@@ -44,7 +44,7 @@ model Session {
 
 model Account {
   id                    String    @id
-  issuer                String
+  issuer                String?
   accountId             String
   providerId            String
   userId                String
@@ -74,4 +74,14 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model RateLimit {
+  id          String @id
+  key         String
+  count       Int
+  lastRequest BigInt
+
+  @@unique([key])
+  @@map("rateLimit")
 }
