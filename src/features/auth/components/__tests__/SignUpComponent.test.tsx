@@ -21,6 +21,7 @@ import {
   signUpSuccessMessage,
 } from "@/features/auth/utils/constants";
 import { auth } from "../../lib/auth";
+jest.mock("@/lib/rate-limiter");
 
 jest.mock(
   "@/features/auth/components/ContinueWithGoogleButton",

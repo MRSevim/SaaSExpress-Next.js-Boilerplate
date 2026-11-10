@@ -32,7 +32,7 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
 - [ ] User dashboard
   - [ ] Profile page
   - [ ] Basic notifications
-- [ ] User facing pages
+- [x] User facing pages
   - [x] Homepage with features, pricing and call to action sections
   - [x] Contact page
   - [x] Terms and Conditions and Privacy Policy pages
@@ -55,6 +55,8 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
 - [x] CI/CD
   - [x] Formatting, linting, type-checking and testing as continuous integration
   - [x] Automatic database schema update on relevant file changes
+- [x] Other
+  - [x] Basic rate limiting
 
 ## Libraries/Technologies used
 
@@ -71,3 +73,5 @@ Libraries and technologies mentioned below are utilized to implement the feature
 - Sentry SaaS
 - Stripe (not implemented yet)
 - Github actions
+- Vercel
+- Upstash

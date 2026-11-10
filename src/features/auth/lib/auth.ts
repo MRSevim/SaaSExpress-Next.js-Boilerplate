@@ -78,6 +78,19 @@ const authOptions = {
     database: {
       joins: true,
     },
+    ipAddress: {
+      // Deployed on Vercel, which overwrites these headers with the real client IP.
+      ipAddressHeaders: ["x-forwarded-for", "x-real-ip"],
+    },
+  },
+  rateLimit: {
+    storage: "database" as const,
+    customRules: {
+      "/sign-in/social": {
+        window: 10,
+        max: 3,
+      },
+    },
   },
 };
 

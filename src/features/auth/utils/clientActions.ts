@@ -12,6 +12,7 @@ export const signInWithGoogle = async () => {
     const { error } = await authClient.signIn.social({
       provider: "google",
     });
+
     if (error) throw new Error(error.message);
     return { error: "" };
   } catch (error) {
