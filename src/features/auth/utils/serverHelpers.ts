@@ -13,5 +13,7 @@ export const getUser = cache(async () => {
 
   const user = session?.user;
 
-  return user ? { name: user.name, image: user.image } : undefined;
+  return user
+    ? { name: user.name, image: user.image, role: user.role }
+    : undefined;
 });

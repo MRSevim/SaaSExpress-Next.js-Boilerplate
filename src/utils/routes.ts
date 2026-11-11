@@ -9,4 +9,5 @@ export const routes = {
   forgotPassword: "/forgot-password",
   contact: "/contact",
   terms: "/terms",
+  dashboard: "/dashboard",
 };

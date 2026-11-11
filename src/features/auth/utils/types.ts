@@ -1,6 +1,7 @@
 export type User = {
   name: string;
   image?: string | null | undefined;
+  role?: string | null;
 };
 
 export type SignUpState = {

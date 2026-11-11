@@ -22,6 +22,7 @@ import { IterationCw } from "lucide-react";
 import { catchError, type ErrorInfo } from "next/error";
 import { getUserMenuAriaLabel } from "./UserMenu.utils";
 import { captureException } from "@sentry/nextjs";
+import { checkAdmin } from "@/features/admin/utils/helpers";
 
 /**
  * Logged in user's dropdown
@@ -63,6 +64,16 @@ const Dropdown = ({ user }: { user: User }) => {
               </Link>
             }
           ></DropdownMenuItem>
+
+          {checkAdmin(user) && (
+            <DropdownMenuItem
+              render={
+                <Link href={routes.dashboard} className="w-full cursor-pointer">
+                  Dashboard
+                </Link>
+              }
+            ></DropdownMenuItem>
+          )}
 
           <LogoutButton />
         </DropdownMenuGroup>
