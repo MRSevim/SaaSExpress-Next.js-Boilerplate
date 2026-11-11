@@ -31,11 +31,10 @@ const UserListPagination = ({
   total: number;
   currentPage: number;
 }) => {
-  const [totalUsers] = useState(total);
   const [current, setCurrent] = useState(currentPage);
   const pathname = usePathname();
   const { replace } = useRouter();
-  const maxPage = Math.ceil(totalUsers / pageSize);
+  const maxPage = Math.ceil(total / pageSize);
   const isLastPage = current === maxPage;
   const isFirstPage = current === 1;
   const allPages = Array.from({ length: maxPage }, (v, i) => {
