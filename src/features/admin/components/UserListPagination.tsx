@@ -78,6 +78,8 @@ const UserListPagination = ({
     setCurrent(maxPage);
   };
 
+  if (maxPage <= 1) return;
+
   return (
     <Pagination>
       <PaginationContent>
