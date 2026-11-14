@@ -1,1 +1,1 @@
-export const userListPageSize = 1;
+export const userListPageSize = 20;
