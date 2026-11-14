@@ -1,6 +1,5 @@
 import { test as base, expect } from "@playwright/test";
 import path from "path";
-import { auth } from "@/features/auth/lib/auth";
 import { playwrightE2EEmailPath } from "@/utils/constants";
 import {
   extractLink,
@@ -8,6 +7,7 @@ import {
 } from "@/utils/test-utils/playwright-utils";
 import { getUserMenuAriaLabel } from "@/components/header/UserMenu.utils";
 import { createE2EMailfilename } from "@/utils/helpers";
+import { env } from "@/utils/env";
 
 const test = base.extend<{
   auth: {
@@ -17,7 +17,7 @@ const test = base.extend<{
 }>({
   //eslint-disable-next-line
   storageState: ({ auth }, use) => use(auth.pathname),
-  auth: async ({ browser }, use) => {
+  auth: async ({ browser, request }, use) => {
     //unique so tests don't collide in parallel
     const id = crypto.randomUUID();
 
@@ -33,13 +33,12 @@ const test = base.extend<{
       `.auth/${id}.json`,
     );
 
-    await auth.api.signUpEmail({
-      body: {
-        name,
-        email,
-        password,
-      },
+    // Hit the running app instead of importing auth.ts
+    const res = await request.post(`${env.BASE_URL}/api/auth/sign-up/email`, {
+      data: { name, email, password },
+      headers: { Origin: env.BASE_URL }, // better-auth checks origin
     });
+    expect(res.ok()).toBeTruthy();
 
     const emailFilePath = path.join(
       playwrightE2EEmailPath,
