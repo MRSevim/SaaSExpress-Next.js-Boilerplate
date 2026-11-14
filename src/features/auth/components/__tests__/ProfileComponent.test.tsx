@@ -14,10 +14,6 @@ import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { routes } from "@/utils/routes";
 import { env } from "@/utils/env";
-jest.mock("@/lib/rate-limiter");
-
-const mockedListUserAccounts = auth.api
-  .listUserAccounts as unknown as jest.Mock;
 
 const mockedDeleteUser = auth.api.deleteUser as unknown as jest.Mock;
 
@@ -36,63 +32,39 @@ const resetPasswordName = getInsensitiveExp(requestPasswordResetButtonText);
 
 describe("Profile Component", () => {
   beforeAll(() => {
-    mockedListUserAccounts.mockResolvedValue([{ providerId: "credential" }]);
     mockedGetSession.mockResolvedValue({
       user: { name: userLoggedIn.name, email: userLoggedIn.email },
     });
   });
 
   const renderProfile = () => {
-    const { user } = renderWithProviders(<Profile user={userLoggedIn} />);
+    const { user } = renderWithProviders(
+      <Profile user={userLoggedIn} isCredentialsProvider={true} />,
+    );
     return {
       user,
       deleteAccountButton: screen.getByRole("button", { name: deleteName }),
+      resetPasswordButton: screen.getByRole("button", {
+        name: resetPasswordName,
+      }),
     };
   };
 
   it("renders profile and credential actions", async () => {
-    const { deleteAccountButton } = renderProfile();
+    const { deleteAccountButton, resetPasswordButton } = renderProfile();
 
     expect(await screen.findByText(userLoggedIn.name[0])).toBeInTheDocument();
 
     expect(deleteAccountButton).toBeInTheDocument();
-
-    expect(mockedListUserAccounts).toHaveBeenCalledTimes(1);
-    expect(mockedListUserAccounts).toHaveBeenCalledWith({
-      headers: await headers(),
-    });
-    // Reset password only appears once checkCredentialsProvider resolves
-    expect(
-      await screen.findByRole("button", { name: resetPasswordName }),
-    ).toBeInTheDocument();
+    expect(resetPasswordButton).toBeInTheDocument();
   });
 
   it("hides reset button for non-credential providers", async () => {
-    mockedListUserAccounts.mockResolvedValueOnce([{ providerId: "google" }]);
+    renderWithProviders(
+      <Profile user={userLoggedIn} isCredentialsProvider={false} />,
+    );
 
-    renderProfile();
-
-    // Wait for the provider check to finish (spinner unmounts), then assert
-    // the reset button never rendered
-    await waitFor(() => {
-      expect(screen.queryByRole("status")).not.toBeInTheDocument();
-      expect(mockedListUserAccounts).toHaveBeenCalledTimes(1);
-    });
-
-    expect(
-      screen.queryByRole("button", { name: resetPasswordName }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows check error", async () => {
-    const errorMessage = "Something went wrong";
-
-    mockedListUserAccounts.mockRejectedValueOnce(new Error(errorMessage));
-
-    renderProfile();
-
-    expect(await screen.findByText(errorMessage)).toBeInTheDocument();
-
+    //Assert the reset button never rendered
     expect(
       screen.queryByRole("button", { name: resetPasswordName }),
     ).not.toBeInTheDocument();
@@ -150,7 +122,6 @@ describe("Profile Component", () => {
   });
 
   it("requests password reset and toasts success", async () => {
-    const name = resetPasswordName;
     let resolveRequestPasswordReset;
 
     mockedRequestPasswordReset.mockImplementationOnce(async () => {
@@ -159,12 +130,12 @@ describe("Profile Component", () => {
       });
     });
 
-    const { user: userEvent } = renderProfile();
+    const { user: userEvent, resetPasswordButton } = renderProfile();
 
-    await userEvent.click(await screen.findByRole("button", { name }));
+    await userEvent.click(resetPasswordButton);
 
     const loadingButton = await screen.findByRole("button", {
-      name,
+      name: resetPasswordName,
     });
     expect(loadingButton).toBeDisabled();
 
@@ -192,11 +163,9 @@ describe("Profile Component", () => {
 
     mockedRequestPasswordReset.mockRejectedValueOnce(new Error(errorMessage));
 
-    const { user: userEvent } = renderProfile();
+    const { user: userEvent, resetPasswordButton } = renderProfile();
 
-    await userEvent.click(
-      await screen.findByRole("button", { name: resetPasswordName }),
-    );
+    await userEvent.click(resetPasswordButton);
 
     await waitFor(() => {
       expect(screen.queryByText(errorMessage)).toBeInTheDocument();

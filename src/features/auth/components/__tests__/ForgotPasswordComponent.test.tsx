@@ -14,7 +14,6 @@ import {
   invalidEmail,
   passwordResetEmailSuccessMessage,
 } from "@/features/auth/utils/constants";
-jest.mock("@/lib/rate-limiter");
 
 const name = getInsensitiveExp(requestPasswordResetButtonText);
 

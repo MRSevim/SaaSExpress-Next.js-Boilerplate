@@ -12,7 +12,6 @@ import { auth } from "../../lib/auth";
 import { invalidEmail } from "../../utils/constants";
 import { routes } from "@/utils/routes";
 import { redirect } from "next/navigation";
-jest.mock("@/lib/rate-limiter");
 
 const mockedSignInWithEmailAndPassword = auth.api
   .signInEmail as unknown as jest.Mock;
