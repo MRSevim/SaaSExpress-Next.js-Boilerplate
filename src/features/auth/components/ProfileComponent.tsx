@@ -1,14 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  checkCredentialsProvider,
-  deleteUser,
-  requestPasswordReset,
-} from "../utils/serverActions";
+import { deleteUser, requestPasswordReset } from "../utils/serverActions";
 import { toast } from "@/components/ui/toast";
-import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
-import Error from "@/components/Error";
+import { useState } from "react";
 import {
   passwordResetEmailSuccessMessage,
   requestPasswordResetButtonText,
@@ -21,7 +15,13 @@ import { User } from "../utils/types";
 /**
  * Profile of the logged in user
  */
-const Profile = ({ user }: { user: User }) => {
+const Profile = ({
+  user,
+  isCredentialsProvider,
+}: {
+  user: User;
+  isCredentialsProvider: boolean;
+}) => {
   return (
     <div className="flex flex-col gap-3 items-center">
       <Avatar size="lg">
@@ -31,7 +31,7 @@ const Profile = ({ user }: { user: User }) => {
         <AvatarFallback>{user.name[0]}</AvatarFallback>
       </Avatar>
       <DeleteButton />
-      <ResetButton />
+      <ResetButton isCredentialsProvider={isCredentialsProvider} />
     </div>
   );
 };
@@ -61,30 +61,16 @@ const DeleteButton = () => {
   );
 };
 
-const ResetButton = () => {
+const ResetButton = ({
+  isCredentialsProvider,
+}: {
+  isCredentialsProvider: boolean;
+}) => {
   const [loading, setLoading] = useState(false);
-  const [checkProviderLoading, setCheckProviderLoading] = useState(true);
-  const [isCredentialsProvider, setIsCredentialsProvider] = useState(false);
-  const [checkError, setCheckError] = useState("");
-
-  useEffect(() => {
-    const check = async () => {
-      const { error, isTrue } = await checkCredentialsProvider();
-
-      setCheckProviderLoading(false);
-
-      if (error) {
-        setCheckError(error);
-      } else setIsCredentialsProvider(isTrue);
-    };
-    check();
-  }, []);
 
   return (
     <>
-      {checkProviderLoading && <Spinner className="size-8" />}
-      <Error text={checkError} />
-      {isCredentialsProvider && !checkError && (
+      {isCredentialsProvider && (
         <Button
           disabled={loading}
           variant="secondary"

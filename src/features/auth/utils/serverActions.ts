@@ -16,6 +16,8 @@ import {
 } from "./constants";
 import { logger, withServerActionInstrumentation } from "@sentry/nextjs";
 import { rateLimit } from "@/utils/server-helpers";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const signInSchema = z.object({
   email: z
@@ -24,6 +26,16 @@ const signInSchema = z.object({
     .toLowerCase()
     .pipe(z.email({ message: invalidEmail })),
   password: z.string().min(1, { message: "Password is required" }),
+});
+
+const redis = Redis.fromEnv();
+
+const signInRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "10 m"),
+  prefix: "rl-sign-in",
+  analytics: true,
+  timeout: 2000,
 });
 
 /**
@@ -36,13 +48,6 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-      if (error) {
-        return {
-          error,
-        };
-      }
-
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
@@ -61,7 +66,12 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
             "Parsing error",
         };
       }
-
+      const { error } = await rateLimit(signInRateLimiter);
+      if (error) {
+        return {
+          error,
+        };
+      }
       try {
         logger.trace("signInWithEmailAndPassword called");
         await auth.api.signInEmail({
@@ -101,6 +111,14 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
+const signUpRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 d"),
+  prefix: "rl-sign-up",
+  analytics: true,
+  timeout: 2000,
+});
+
 /**
  * Signs user up with their credentials
  */
@@ -111,12 +129,6 @@ export const signUp = async (formData: FormData) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-      if (error) {
-        return {
-          error,
-        };
-      }
       const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
@@ -143,6 +155,14 @@ export const signUp = async (formData: FormData) => {
           successMessage: "",
         };
       }
+
+      const { error } = await rateLimit(signUpRateLimiter);
+      if (error) {
+        return {
+          error,
+        };
+      }
+
       try {
         logger.trace("signUp called");
         await auth.api.signUpEmail({
@@ -173,12 +193,6 @@ export const signOut = async () => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-      if (error) {
-        return {
-          error,
-        };
-      }
       try {
         logger.trace("signOut called");
         await auth.api.signOut({
@@ -200,6 +214,14 @@ const requestPasswordResetSchema = z.object({
     .pipe(z.email({ message: invalidEmail })),
 });
 
+const requestPasswordResetRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  prefix: "rl-request-reset-password",
+  analytics: true,
+  timeout: 2000,
+});
+
 /**
  * Requests password reset email
  */
@@ -210,13 +232,6 @@ export const requestPasswordReset = async (email?: string) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-      if (error) {
-        return {
-          error,
-          email: email || "",
-        };
-      }
       let finalEmail: string;
       if (email !== undefined) {
         const parsed = requestPasswordResetSchema.safeParse({
@@ -248,7 +263,13 @@ export const requestPasswordReset = async (email?: string) => {
           return { email: "", ...returnErrorFromUnknown(error) };
         }
       }
-
+      const { error } = await rateLimit(requestPasswordResetRateLimiter);
+      if (error) {
+        return {
+          error,
+          email: email || "",
+        };
+      }
       try {
         logger.trace("requestPasswordReset called");
         await auth.api.requestPasswordReset({
@@ -279,6 +300,14 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+const resetPasswordRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 d"),
+  prefix: "rl-reset-password",
+  analytics: true,
+  timeout: 2000,
+});
+
 /**
  * Resets password with the new one
  */
@@ -289,12 +318,6 @@ export const resetPassword = async (formData: FormData, token: string) => {
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-      if (error) {
-        return {
-          error,
-        };
-      }
       const password = formData.get("password") as string;
       const confirmPassword = formData.get("confirm-password") as string;
 
@@ -315,6 +338,12 @@ export const resetPassword = async (formData: FormData, token: string) => {
           successMessage: "",
         };
       }
+      const { error } = await rateLimit(resetPasswordRateLimiter);
+      if (error) {
+        return {
+          error,
+        };
+      }
       try {
         logger.trace("resetPassword called");
         await auth.api.resetPassword({
@@ -331,38 +360,13 @@ export const resetPassword = async (formData: FormData, token: string) => {
   );
 };
 
-/**
- * Checks if user's account has logged in with credentials provider (meaning it used email+password to login)
- */
-export const checkCredentialsProvider = async () => {
-  return withServerActionInstrumentation(
-    "checkCredentialsProvider",
-    {
-      headers: await headers(), // Connect client and server traces
-    },
-    async () => {
-      try {
-        const { error } = await rateLimit();
-        if (error) {
-          return {
-            error,
-            isTrue: false,
-          };
-        }
-        logger.trace("checkCredentialsProvider called");
-        const accounts = await auth.api.listUserAccounts({
-          headers: await headers(),
-        });
-        const isTrue = !!accounts.find(
-          (account) => account.providerId === "credential",
-        );
-        return { isTrue, error: "" };
-      } catch (error) {
-        return { isTrue: false, ...returnErrorFromUnknown(error) };
-      }
-    },
-  );
-};
+const deleteUserRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 d"),
+  prefix: "rl-delete-user",
+  analytics: true,
+  timeout: 2000,
+});
 
 /**
  * Deletes authenticated user from db
@@ -375,7 +379,7 @@ export const deleteUser = async () => {
     },
     async () => {
       try {
-        const { error } = await rateLimit();
+        const { error } = await rateLimit(deleteUserRateLimiter);
         if (error) {
           return {
             error,

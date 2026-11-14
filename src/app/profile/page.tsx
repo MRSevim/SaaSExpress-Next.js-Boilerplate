@@ -1,17 +1,30 @@
 import Container from "@/components/Container";
 import { Skeleton } from "@/components/ui/skeleton";
 import Profile from "@/features/auth/components/ProfileComponent";
-import { getUser } from "@/features/auth/utils/serverHelpers";
+import {
+  checkCredentialsProvider,
+  getUser,
+} from "@/features/auth/utils/serverHelpers";
 import { routes } from "@/utils/routes";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 const PageInner = async () => {
-  const user = await getUser();
+  const [user, isCredentialsResponse] = await Promise.all([
+    getUser(),
+    checkCredentialsProvider(),
+  ]);
+  const error = isCredentialsResponse.error;
   if (!user) redirect(routes.signIn);
+  if (error) {
+    throw Error(error);
+  }
   return (
     <Container>
-      <Profile user={user} />
+      <Profile
+        user={user}
+        isCredentialsProvider={isCredentialsResponse.isTrue}
+      />
     </Container>
   );
 };

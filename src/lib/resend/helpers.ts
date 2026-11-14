@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { env } from "@/utils/env";
 import resend from "./resend";
 import fs from "fs";
@@ -49,5 +49,6 @@ export const sendEmail = async ({
   } catch (error) {
     logger.error("Error sending email through resend");
     captureException(error);
+    throw error;
   }
 };

@@ -12,13 +12,19 @@ import {
   contactFormSuccessMessage,
 } from "./constants";
 import { rateLimit } from "@/utils/server-helpers";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const contactSchema = z.object({
   name: z
     .string()
-    .trim()
-    .min(2, { message: shortName })
-    .max(100, { message: "Name is too long (max 100 characters)" }),
+    .transform((s) => s.replace(/\p{Cc}+/gu, " ").trim()) //replaces characters like \n, \r etc. with empty strings so that
+    .pipe(
+      z
+        .string()
+        .min(2, { message: shortName })
+        .max(100, { message: "Name is too long (max 100 characters)" }),
+    ),
   email: z
     .string()
     .trim()
@@ -29,6 +35,14 @@ const contactSchema = z.object({
     .trim()
     .min(20, { message: contactFormShortMessageError })
     .max(2000, { message: "Message must be less than 2001 characters" }),
+});
+
+const rateLimiter = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 d"),
+  analytics: true,
+  prefix: "rl-contact-form",
+  timeout: 2000,
 });
 
 /** Sends contact form to contact email */
@@ -42,17 +56,10 @@ export const contactUs = async (
       headers: await headers(), // Connect client and server traces
     },
     async () => {
-      const { error } = await rateLimit();
-
       const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const message = formData.get("message") as string;
-      if (error) {
-        return {
-          error,
-          defaultValues: { email, name, message },
-        };
-      }
+
       const parsed = contactSchema.safeParse({
         name,
         email,
@@ -75,6 +82,13 @@ export const contactUs = async (
             email,
             message,
           },
+        };
+      }
+      const { error } = await rateLimit(rateLimiter);
+      if (error) {
+        return {
+          error,
+          defaultValues: { email, name, message },
         };
       }
       try {

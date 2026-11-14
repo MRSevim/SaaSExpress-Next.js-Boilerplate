@@ -5,6 +5,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
+import { after } from "next/server";
 
 const APP_NAME = env.APP_NAME;
 
@@ -22,12 +23,14 @@ export const auth = betterAuth({
       user: { email: string };
       url: string;
     }) => {
-      void sendEmail({
-        to: user.email,
-        subject: `Reset your password on ${APP_NAME}`,
-        text: `Click the link to reset your password: ${url}`,
-        type: "password-reset-request",
-      });
+      after(() =>
+        sendEmail({
+          to: user.email,
+          subject: `Reset your password on ${APP_NAME}`,
+          text: `Click the link to reset your password: ${url}`,
+          type: "password-reset-request",
+        }).catch(() => {}),
+      );
     },
     customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
       ...coreFields,
@@ -52,12 +55,14 @@ export const auth = betterAuth({
         user: { email: string };
         url: string;
       }) => {
-        void sendEmail({
-          to: user.email,
-          subject: `Verify your account deletion on ${APP_NAME}`,
-          text: `Click the link to delete your account: ${url}`,
-          type: "account-deletion",
-        });
+        after(() =>
+          sendEmail({
+            to: user.email,
+            subject: `Verify your account deletion on ${APP_NAME}`,
+            text: `Click the link to delete your account: ${url}`,
+            type: "account-deletion",
+          }).catch(() => {}),
+        );
       },
     },
   },
@@ -78,12 +83,14 @@ export const auth = betterAuth({
       user: { email: string };
       url: string;
     }) => {
-      void sendEmail({
-        to: user.email,
-        subject: `Verify your email address on ${APP_NAME}`,
-        text: `Click the link to verify your email: ${url}`,
-        type: "verification",
-      });
+      after(() =>
+        sendEmail({
+          to: user.email,
+          subject: `Verify your email address on ${APP_NAME}`,
+          text: `Click the link to verify your email: ${url}`,
+          type: "verification",
+        }).catch(() => {}),
+      );
     },
   },
   plugins: [admin(), nextCookies()],
