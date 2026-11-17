@@ -26,8 +26,10 @@ import {
  */
 const UserListPagination = ({
   total,
+  usersQuery,
   currentPage,
 }: {
+  usersQuery?: string;
   total: number;
   currentPage: number;
 }) => {
@@ -42,7 +44,7 @@ const UserListPagination = ({
   });
 
   const callReplace = (newPage: number) => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams({ usersQuery: usersQuery || "" });
     params.set("usersPage", newPage.toString());
     return replace(`${pathname}?${params.toString()}`);
   };

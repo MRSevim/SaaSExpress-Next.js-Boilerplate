@@ -27,7 +27,6 @@ export const UserList = async ({
 }) => {
   const currentPage = searchParams.usersPage || "1";
   const searchValue = searchParams.usersQuery;
-
   const { users, total } = await auth.api.listUsers({
     query: {
       searchValue,
@@ -61,7 +60,11 @@ export const UserList = async ({
           ))}
         </TableBody>
       </Table>
-      <UserListPagination total={total} currentPage={+currentPage || 1} />
+      <UserListPagination
+        usersQuery={searchValue}
+        total={total}
+        currentPage={+currentPage || 1}
+      />
     </div>
   );
 };
