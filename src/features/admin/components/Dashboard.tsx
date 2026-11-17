@@ -1,19 +1,15 @@
 import { Suspense } from "react";
-import { UserList } from "./UserList";
+import { UserList } from "./usersList/UserList";
+import { SearchParams } from "@/app/dashboard/page";
 
 /**
  * Dashboard component
  */
-const Dashboard = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ usersPage: string }>;
-}) => {
-  const currentPage = (await searchParams).usersPage;
+const Dashboard = async ({ searchParams }: { searchParams: SearchParams }) => {
   return (
     <div>
       <Suspense fallback={"Loading..."}>
-        <UserList currentPage={currentPage} />
+        <UserList searchParams={searchParams} />
       </Suspense>
     </div>
   );

@@ -6,20 +6,23 @@ import { getUser } from "@/features/auth/utils/serverHelpers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+export type SearchParams = { usersPage: string; usersQuery: string };
+
 const PageInner = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ usersPage: string }>;
+  searchParams: Promise<SearchParams>;
 }) => {
   const user = await getUser();
   if (!user) return notFound();
 
   const isAdmin = checkAdmin(user);
   if (!isAdmin) return notFound();
+  const searchParameters = await searchParams;
 
   return (
     <Container>
-      <Dashboard searchParams={searchParams} />
+      <Dashboard searchParams={searchParameters} />
     </Container>
   );
 };
@@ -32,11 +35,7 @@ const ProfileSkeleton = () => {
   );
 };
 
-const page = ({
-  searchParams,
-}: {
-  searchParams: Promise<{ usersPage: string }>;
-}) => {
+const page = ({ searchParams }: { searchParams: Promise<SearchParams> }) => {
   return (
     <Suspense fallback={<ProfileSkeleton />}>
       <PageInner searchParams={searchParams} />

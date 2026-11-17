@@ -10,7 +10,7 @@ import {
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { userListPageSize as pageSize } from "../utils/userListUtils";
+import { userListPageSize as pageSize } from "../../utils/userListUtils";
 import {
   Select,
   SelectContent,
@@ -37,7 +37,7 @@ const UserListPagination = ({
   const maxPage = Math.ceil(total / pageSize);
   const isLastPage = current === maxPage;
   const isFirstPage = current === 1;
-  const allPages = Array.from({ length: maxPage }, (v, i) => {
+  const allPages = Array.from({ length: maxPage }, (_v, i) => {
     return { label: i + 1, value: i + 1 };
   });
 
