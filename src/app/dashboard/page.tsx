@@ -6,7 +6,7 @@ import { getUser } from "@/features/auth/utils/serverHelpers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export type SearchParams = { usersPage: string; usersQuery: string };
+export type SearchParams = { usersPage?: string; usersQuery?: string };
 
 const PageInner = async ({
   searchParams,

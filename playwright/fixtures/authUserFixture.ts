@@ -4,7 +4,7 @@ import { playwrightE2EEmailPath } from "@/utils/constants";
 import {
   extractLink,
   getEmailContentFromFile,
-} from "@/utils/test-utils/playwright-utils";
+} from "@/utils/test-utils/playwrightUtils";
 import { getUserMenuAriaLabel } from "@/components/header/UserMenu.utils";
 import { createE2EMailfilename } from "@/utils/helpers";
 import { env } from "@/utils/env";

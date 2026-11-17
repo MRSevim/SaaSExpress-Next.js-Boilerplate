@@ -11,7 +11,7 @@ import {
   contactFormShortMessageError,
   contactFormSuccessMessage,
 } from "./constants";
-import { rateLimit } from "@/utils/server-helpers";
+import { rateLimit } from "@/utils/serverHelpers";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 

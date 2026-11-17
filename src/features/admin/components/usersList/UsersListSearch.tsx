@@ -7,7 +7,7 @@ import { useState } from "react";
  * Search for users in admin page
  * @returns jsx
  */
-const UsersListSearch = ({ searchValue }: { searchValue: string }) => {
+const UsersListSearch = ({ searchValue }: { searchValue?: string }) => {
   const [query, setQuery] = useState(searchValue || "");
   const pathname = usePathname();
   const { replace } = useRouter();

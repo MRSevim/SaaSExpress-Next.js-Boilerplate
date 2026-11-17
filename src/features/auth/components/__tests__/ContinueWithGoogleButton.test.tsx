@@ -1,10 +1,10 @@
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithProviders } from "@/utils/test-utils/jest-utils";
+import { renderWithProviders } from "@/utils/test-utils/jestUtils";
 import ContinueWithGoogleButton, {
   googleSignInErrorId,
   loadingText,
 } from "../ContinueWithGoogleButton";
-import { getInsensitiveExp } from "@/utils/test-utils/jest-utils";
+import { getInsensitiveExp } from "@/utils/test-utils/jestUtils";
 import { authClient } from "../../lib/authClient";
 import { unknownError } from "@/utils/constants";
 import { googleSignInButtonText } from "../../utils/constants";

@@ -12,7 +12,7 @@ import { routes } from "@/utils/routes";
 import {
   extractLink,
   getEmailContentFromFile,
-} from "@/utils/test-utils/playwright-utils";
+} from "@/utils/test-utils/playwrightUtils";
 import { expect } from "@playwright/test";
 import path from "path";
 import { playwrightE2EEmailPath } from "@/utils/constants";

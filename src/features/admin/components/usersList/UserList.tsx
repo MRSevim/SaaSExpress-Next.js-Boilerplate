@@ -25,7 +25,7 @@ export const UserList = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const currentPage = searchParams.usersPage;
+  const currentPage = searchParams.usersPage || "1";
   const searchValue = searchParams.usersQuery;
 
   const { users, total } = await auth.api.listUsers({

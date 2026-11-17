@@ -1,7 +1,7 @@
 import {
   getInsensitiveExp,
   renderWithProviders,
-} from "@/utils/test-utils/jest-utils";
+} from "@/utils/test-utils/jestUtils";
 import {
   ContactForm,
   contactErrorId,

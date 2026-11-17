@@ -6,6 +6,7 @@ import { captureException } from "@sentry/nextjs";
 import { Ratelimit } from "@upstash/ratelimit";
 import { auth } from "@/features/auth/lib/auth";
 import { after } from "next/server";
+import { returnErrorFromUnknown } from "./helpers";
 
 /**
  * rateLimit function to limit usage of server actions.
@@ -36,6 +37,7 @@ export const rateLimit = async (ratelimiter: Ratelimit) => {
     }
   } catch (error) {
     captureException(error);
+    return returnErrorFromUnknown(error);
   }
   return { error: "" };
 };

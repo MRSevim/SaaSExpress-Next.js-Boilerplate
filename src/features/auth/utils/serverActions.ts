@@ -15,7 +15,7 @@ import {
   shortName,
 } from "./constants";
 import { logger, withServerActionInstrumentation } from "@sentry/nextjs";
-import { rateLimit } from "@/utils/server-helpers";
+import { rateLimit } from "@/utils/serverHelpers";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 

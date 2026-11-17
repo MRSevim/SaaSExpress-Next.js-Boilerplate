@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import {
   getInsensitiveExp,
   renderWithProviders,
-} from "@/utils/test-utils/jest-utils";
+} from "@/utils/test-utils/jestUtils";
 import { switchToDarkText, switchToLightText } from "../../utils/constants";
 import ThemeToggle from "../ThemeToggle";
 

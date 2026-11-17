@@ -7,7 +7,7 @@ import { test, expect } from "@playwright/test";
 import path from "path";
 import { playwrightE2EEmailPath } from "@/utils/constants";
 import { createE2EMailfilename } from "@/utils/helpers";
-import { getEmailContentFromFile } from "@/utils/test-utils/playwright-utils";
+import { getEmailContentFromFile } from "@/utils/test-utils/playwrightUtils";
 import { env } from "@/utils/env";
 
 test.describe("contact tests", () => {

@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import {
   renderWithProviders,
   getInsensitiveExp,
-} from "@/utils/test-utils/jest-utils";
+} from "@/utils/test-utils/jestUtils";
 import PasswordResetComponent, {
   invalidText,
   loadingText,
