@@ -9,9 +9,12 @@ const isDev = process.env.NODE_ENV === "development";
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
+  spotlight: isDev,
+
   // Add optional integrations for additional features
   integrations: [
     Sentry.replayIntegration({ unmask: ["[data-sentry-unmask]"] }),
+    Sentry.spotlightBrowserIntegration(),
   ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
