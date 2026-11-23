@@ -12,7 +12,7 @@ export const changeUserRole = async (
   newRole: "user" | "admin",
 ) => {
   return withServerActionInstrumentation(
-    "signInWithEmailAndPassword",
+    "changeUserRole",
     {
       headers: await headers(), // Connect client and server traces
     },
