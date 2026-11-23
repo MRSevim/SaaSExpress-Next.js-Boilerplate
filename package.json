@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "spotlight": "spotlight run -p 8969 next dev",
+    "spotlight": "spotlight run -p 8969 next dev --webpack",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
