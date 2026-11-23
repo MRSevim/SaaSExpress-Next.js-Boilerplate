@@ -14,7 +14,7 @@ Sentry.init({
   // Add optional integrations for additional features
   integrations: [
     Sentry.replayIntegration({ unmask: ["[data-sentry-unmask]"] }),
-    Sentry.spotlightBrowserIntegration(),
+    ...(isDev ? [Sentry.spotlightBrowserIntegration()] : []),
   ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
