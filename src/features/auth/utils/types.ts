@@ -29,4 +29,5 @@ export type EmailType =
   | "verification"
   | "account-deletion"
   | "password-reset-request"
-  | "contact-form-submission";
+  | "contact-form-submission"
+  | "welcome";

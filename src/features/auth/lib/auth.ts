@@ -76,6 +76,16 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendOnSignIn: true,
     autoSignInAfterVerification: true,
+    afterEmailVerification: async (user) => {
+      after(() =>
+        sendEmail({
+          to: user.email,
+          subject: `Welcome to ${APP_NAME}`,
+          text: `Welcome aboard! Visit the app to start using it: ${env.BASE_URL}`,
+          type: "welcome",
+        }).catch(() => {}),
+      );
+    },
     sendVerificationEmail: async ({
       user,
       url,

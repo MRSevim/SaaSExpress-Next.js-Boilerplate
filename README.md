@@ -4,11 +4,11 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
 
 ## Features
 
-- [ ] Authentication/Authorization
+- [x] Authentication/Authorization
   - [x] Google and credentials authentication
   - [x] Password reset, account deletion and forgot password flows
   - [x] Middleware redirects
-  - [ ] Admin role with special actions
+  - [x] Admin role with special actions
 - [ ] Subscription and Payments
   - [ ] Monthly and yearly plans
   - [ ] Automatic recurring billing
@@ -38,7 +38,7 @@ This is comprehensive **Next.js SaaS boilerplate** that includes auth, billing (
   - [x] Terms and Conditions and Privacy Policy pages
 - [ ] Email System
   - [x] Auth related emails
-  - [ ] Welcome emails
+  - [x] Welcome emails
   - [ ] Invoice and billing emails
 - [ ] Dynamic flows
   - [ ] User friendly error messages
