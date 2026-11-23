@@ -37,8 +37,10 @@ const contactSchema = z.object({
     .max(2000, { message: "Message must be less than 2001 characters" }),
 });
 
+const redis = Redis.fromEnv();
+
 const userRateLimiter = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis,
   limiter: Ratelimit.slidingWindow(5, "1 d"),
   analytics: true,
   prefix: "rl-contact-form-user",
@@ -46,7 +48,7 @@ const userRateLimiter = new Ratelimit({
 });
 
 const IpRateLimiter = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis,
   limiter: Ratelimit.slidingWindow(20, "1 h"),
   analytics: true,
   prefix: "rl-contact-form-ip",

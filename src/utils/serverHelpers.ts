@@ -56,6 +56,10 @@ export const rateLimit = async ({
     const results = await Promise.all(checks);
     for (const r of results) after(r.pending);
 
+    if (results.some((r) => r.reason === "timeout") && !failOpen) {
+      return { error: rateLimitExceededError };
+    }
+
     if (results.some((r) => !r.success)) {
       return { error: rateLimitExceededError };
     }
