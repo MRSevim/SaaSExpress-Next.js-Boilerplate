@@ -114,11 +114,13 @@ export const auth = betterAuth({
     },
   },
   rateLimit: {
+    // rate limiting is disabled in dev by default, uncomment following to enable:
+    // enabled: true,
     storage: "database" as const,
     customRules: {
       "/sign-in/social": {
-        window: 10,
-        max: 3,
+        window: 10, // time window in seconds
+        max: 3, // max requests in the window
       },
     },
   },

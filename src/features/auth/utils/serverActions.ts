@@ -30,10 +30,18 @@ const signInSchema = z.object({
 
 const redis = Redis.fromEnv();
 
-const signInRateLimiter = new Ratelimit({
+const signInIpRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(100, "10 m"),
+  prefix: "rl-sign-in-ip",
+  analytics: true,
+  timeout: 2000,
+});
+
+const signInEmailRateLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(10, "10 m"),
-  prefix: "rl-sign-in",
+  prefix: "rl-sign-in-email",
   analytics: true,
   timeout: 2000,
 });
@@ -66,7 +74,13 @@ export const signInWithEmailAndPassword = async (formData: FormData) => {
             "Parsing error",
         };
       }
-      const { error } = await rateLimit(signInRateLimiter);
+      const { error } = await rateLimit({
+        ipLimiter: signInIpRateLimiter,
+        targetObj: {
+          limiter: signInEmailRateLimiter,
+          value: parsed.data.email,
+        },
+      });
       if (error) {
         return {
           error,
@@ -111,10 +125,18 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-const signUpRateLimiter = new Ratelimit({
+const signUpIpRateLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, "1 d"),
-  prefix: "rl-sign-up",
+  limiter: Ratelimit.slidingWindow(50, "1 d"),
+  prefix: "rl-sign-up-ip",
+  analytics: true,
+  timeout: 2000,
+});
+
+const signUpEmailRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  prefix: "rl-sign-up-email",
   analytics: true,
   timeout: 2000,
 });
@@ -156,7 +178,13 @@ export const signUp = async (formData: FormData) => {
         };
       }
 
-      const { error } = await rateLimit(signUpRateLimiter);
+      const { error } = await rateLimit({
+        ipLimiter: signUpIpRateLimiter,
+        targetObj: {
+          limiter: signUpEmailRateLimiter,
+          value: parsed.data.email,
+        },
+      });
       if (error) {
         return {
           error,
@@ -214,10 +242,18 @@ const requestPasswordResetSchema = z.object({
     .pipe(z.email({ message: invalidEmail })),
 });
 
-const requestPasswordResetRateLimiter = new Ratelimit({
+const requestPasswordResetIpRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(30, "1 h"),
+  prefix: "rl-request-password-reset-ip",
+  analytics: true,
+  timeout: 2000,
+});
+
+const requestPasswordResetEmailRateLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(5, "1 h"),
-  prefix: "rl-request-reset-password",
+  prefix: "rl-request-password-reset-email",
   analytics: true,
   timeout: 2000,
 });
@@ -263,7 +299,13 @@ export const requestPasswordReset = async (email?: string) => {
           return { email: "", ...returnErrorFromUnknown(error) };
         }
       }
-      const { error } = await rateLimit(requestPasswordResetRateLimiter);
+      const { error } = await rateLimit({
+        ipLimiter: requestPasswordResetIpRateLimiter,
+        targetObj: {
+          limiter: requestPasswordResetEmailRateLimiter,
+          value: finalEmail,
+        },
+      });
       if (error) {
         return {
           error,
@@ -300,10 +342,18 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-const resetPasswordRateLimiter = new Ratelimit({
+const resetPasswordIpRateLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, "1 d"),
-  prefix: "rl-reset-password",
+  limiter: Ratelimit.slidingWindow(50, "1 h"),
+  prefix: "rl-reset-password-ip",
+  analytics: true,
+  timeout: 2000,
+});
+
+const resetPasswordUserRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1 d"),
+  prefix: "rl-reset-password-user",
   analytics: true,
   timeout: 2000,
 });
@@ -338,7 +388,10 @@ export const resetPassword = async (formData: FormData, token: string) => {
           successMessage: "",
         };
       }
-      const { error } = await rateLimit(resetPasswordRateLimiter);
+      const { error } = await rateLimit({
+        ipLimiter: resetPasswordIpRateLimiter,
+        userLimiter: resetPasswordUserRateLimiter,
+      });
       if (error) {
         return {
           error,
@@ -360,10 +413,10 @@ export const resetPassword = async (formData: FormData, token: string) => {
   );
 };
 
-const deleteUserRateLimiter = new Ratelimit({
+const deleteUserUserRateLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(5, "1 d"),
-  prefix: "rl-delete-user",
+  prefix: "rl-delete-user-user",
   analytics: true,
   timeout: 2000,
 });
@@ -379,7 +432,9 @@ export const deleteUser = async () => {
     },
     async () => {
       try {
-        const { error } = await rateLimit(deleteUserRateLimiter);
+        const { error } = await rateLimit({
+          userLimiter: deleteUserUserRateLimiter,
+        });
         if (error) {
           return {
             error,
