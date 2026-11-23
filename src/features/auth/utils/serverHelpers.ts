@@ -4,11 +4,13 @@ import { headers } from "next/headers";
 import { cache } from "react";
 import { logger } from "@sentry/nextjs";
 import { returnErrorFromUnknown } from "@/utils/helpers";
+import { connection } from "next/server";
 
 /**
  * Gets currently logged in user
  */
 export const getUser = cache(async () => {
+  await connection();
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -25,6 +27,8 @@ export const getUser = cache(async () => {
  */
 export const checkCredentialsProvider = async () => {
   try {
+    await connection();
+
     logger.trace("checkCredentialsProvider called");
     const accounts = await auth.api.listUserAccounts({
       headers: await headers(),
