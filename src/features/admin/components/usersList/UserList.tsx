@@ -11,7 +11,6 @@ import { auth } from "@/features/auth/lib/auth";
 import { headers } from "next/headers";
 import UserListPagination from "./UserListPagination";
 import { userListPageSize } from "../../utils/userListUtils";
-
 import { SearchParams } from "@/app/dashboard/page";
 import UsersListSearch from "./UsersListSearch";
 import UserRolePicker from "./UserRolePicker";
