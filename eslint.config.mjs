@@ -24,7 +24,7 @@ const eslintConfig = defineConfig([
       "jsdoc/check-param-names": "error",
       // JSDoc Structure Enforcement (enforces comment presence)
       "jsdoc/require-jsdoc": [
-        "warn",
+        "error",
         {
           publicOnly: true, // Only requires docs on EXPORTED functions/classes
           require: {

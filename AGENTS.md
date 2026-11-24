@@ -1,4 +1,4 @@
-This is Next.js boilerplate that includes placeholder todo app, auth, billing/subscription, error/activity tracking, email+in-app notifications and analytics. It uses npm. Run these commands to check your code where relevant:
+This is Next.js boilerplate that includes placeholder todo app, auth, billing/subscription, error tracking, email+in-app notifications and more. Check the README.md to get more info about it. It uses npm. Run these commands to check your code where relevant:
 
 1. `npm run lint` — ESLint
 2. `npm run format` — Prettier
@@ -8,8 +8,6 @@ This is Next.js boilerplate that includes placeholder todo app, auth, billing/su
 6. `npm run e2e` — Playwright
 
 to check all at once, run `npm run check-all`
-
-Always check the Markdown files inside `docs/` to identify task-specific instructions. Read and follow the relevant files when the task requires it. For example if user gave you test writing task, use the files inside `docs/testing`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

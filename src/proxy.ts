@@ -8,7 +8,7 @@ export default async function proxy(request: NextRequest) {
    *  AUTH REDIRECT LOGIC
    * ==============================
    */
-  const requiresAuth = [routes.profile].some((route) =>
+  const requiresAuth = [routes.profile, routes.dashboard].some((route) =>
     request.nextUrl.pathname.startsWith(route),
   );
   const session = getSessionCookie(request);

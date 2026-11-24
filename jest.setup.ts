@@ -3,6 +3,7 @@ import "@testing-library/jest-dom";
 jest.mock("@/features/auth/lib/authClient");
 jest.mock("@/features/auth/lib/auth");
 jest.mock("@/features/auth/utils/contexts/UserPromiseContext");
+jest.mock("@/lib/resend/helpers");
 
 global.console = {
   ...console,
@@ -11,5 +12,5 @@ global.console = {
   // debug: jest.fn(),
   // info: jest.fn(),
   // warn: jest.fn(),
-  error: jest.fn(),
+  // error: jest.fn(),
 };

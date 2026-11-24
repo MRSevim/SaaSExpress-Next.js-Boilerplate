@@ -17,8 +17,8 @@ export const rateLimit = async ({
   targetObj,
   failOpen = true,
 }: {
-  userLimiter?: Ratelimit; // applied when logged in
-  ipLimiter?: Ratelimit; // applied when anonymous
+  userLimiter?: Ratelimit; // mainly applied when logged in
+  ipLimiter?: Ratelimit;
   targetObj?: { limiter: Ratelimit; value: string }; // applied on a specific target string (eg. email)
   failOpen?: boolean;
 }) => {
@@ -57,7 +57,7 @@ export const rateLimit = async ({
     for (const r of results) after(r.pending);
 
     if (results.some((r) => r.reason === "timeout") && !failOpen) {
-      return { error: rateLimitExceededError };
+      return { error: "Something went wrong! Please try again later..." };
     }
 
     if (results.some((r) => !r.success)) {

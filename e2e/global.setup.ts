@@ -23,10 +23,7 @@ async function globalSetup() {
 
   const databaseUrl = container.getConnectionUri();
 
-  // Playwright tests access DATABASE_URL thanks to this code,
-  process.env.DATABASE_URL = databaseUrl;
-
-  // while Next.js receives it explicitly through `env`.
+  // Next.js receives env variables explicitly through `env`.
   const env = {
     ...process.env,
     DATABASE_URL: databaseUrl,

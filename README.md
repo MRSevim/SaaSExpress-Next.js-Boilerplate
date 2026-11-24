@@ -67,10 +67,10 @@ Libraries and technologies mentioned below are utilized to implement the feature
 - Resend
 - Better-auth
 - Shadcn
-- Tailwind
+- Tailwindcss
 - Playwright
 - Jest
-- Sentry SaaS
+- Sentry (+ Spotlightjs for development)
 - Stripe (not implemented yet)
 - Github actions
 - Vercel

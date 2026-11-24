@@ -75,7 +75,9 @@
   "allowScripts": {
     "prisma@7.9.1": true,
     "@prisma/engines@7.9.1": true,
-    "unrs-resolver@1.12.2": true
+    "unrs-resolver@1.12.2": true,
+    "protobufjs@7.6.6": true,
+    "ssh2@1.17.0": true
   },
   "overrides": {
     "@types/react": "19.3.0",

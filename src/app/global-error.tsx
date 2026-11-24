@@ -1,4 +1,5 @@
 "use client"; // Error boundaries must be Client Components
+
 import { Inter } from "next/font/google";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
