@@ -75,6 +75,9 @@ describe("Password Reset Component", () => {
       passwordResetErrorId,
     );
 
+    expect(passwordInput).toBeRequired();
+    expect(confirmPasswordInput).toBeRequired();
+
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);
 
@@ -108,9 +111,6 @@ describe("Password Reset Component", () => {
 
     const { user, button, passwordInput, confirmPasswordInput } =
       renderComponent();
-
-    expect(passwordInput).toBeRequired();
-    expect(confirmPasswordInput).toBeRequired();
 
     await user.type(passwordInput, password);
     await user.type(confirmPasswordInput, password);

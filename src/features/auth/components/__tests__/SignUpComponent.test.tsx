@@ -54,6 +54,7 @@ describe("Sign Up Component", () => {
 
     const username = "  myname";
     const email = "   BIGemail@gmail.com";
+
     mockedSignUp.mockImplementationOnce(
       () =>
         new Promise((resolve) => {

@@ -9,7 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { userListPageSize as pageSize } from "../../utils/userListUtils";
 import {
@@ -43,6 +43,14 @@ const UserListPagination = ({
   const allPages = Array.from({ length: maxPage }, (_v, i) => {
     return { label: i + 1, value: i + 1 };
   });
+
+  useEffect(() => {
+    if (currentPage !== current) {
+      //eslint-disable-next-line
+      setCurrent(currentPage);
+    }
+    //eslint-disable-next-line
+  }, [currentPage]);
 
   const callReplace = (newPage: number) => {
     const params = new URLSearchParams({ usersQuery: usersQuery || "" });
@@ -117,13 +125,15 @@ const UserListPagination = ({
 
         <PaginationItem>
           <Select
+            value={current}
             items={allPages}
             onValueChange={(newVal: number | null) => {
-              if (newVal !== null) handlePageClick(newVal);
+              if (newVal !== null && newVal !== current)
+                handlePageClick(newVal);
             }}
           >
             <SelectTrigger>
-              <SelectValue>{current}</SelectValue>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

@@ -1,7 +1,8 @@
 "use client";
+
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Search for users in admin page
@@ -11,6 +12,14 @@ const UsersListSearch = ({ searchValue }: { searchValue?: string }) => {
   const [query, setQuery] = useState(searchValue || "");
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  useEffect(() => {
+    if (searchValue !== query) {
+      //eslint-disable-next-line
+      setQuery(searchValue || "");
+    }
+    //eslint-disable-next-line
+  }, [searchValue]);
 
   const callReplace = (newQuery: string) => {
     setQuery(newQuery);

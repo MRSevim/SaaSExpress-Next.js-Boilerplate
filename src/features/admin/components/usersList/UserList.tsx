@@ -14,6 +14,7 @@ import { userListPageSize } from "../../utils/userListUtils";
 import { SearchParams } from "@/app/dashboard/page";
 import UsersListSearch from "./UsersListSearch";
 import UserRolePicker from "./UserRolePicker";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * List of users for admin page
@@ -53,7 +54,7 @@ export const UserList = async ({
               <TableCell className="font-medium">{user.name}</TableCell>
               <TableCell className="font-medium">{user.email}</TableCell>
               <TableCell className="font-medium">
-                <UserRolePicker id={user.id} role={user.role} />
+                <UserRolePicker id={user.id} role={user.role || "user"} />
               </TableCell>
             </TableRow>
           ))}
@@ -64,6 +65,59 @@ export const UserList = async ({
         total={total}
         currentPage={+currentPage || 1}
       />
+    </div>
+  );
+};
+
+/**
+ * Loading skeleton for the user list in admin page
+ * @returns jsx
+ */
+export const UserListSkeleton = () => {
+  return (
+    <div>
+      {/* Search input */}
+      <Skeleton className="mb-3 h-9 max-w-sm" />
+
+      <Table className="mb-3">
+        <TableCaption>
+          <Skeleton className="mx-auto h-4 w-16" />
+        </TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-25">Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead className="w-25">Role</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: userListPageSize }, (_v, i) => (
+            <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-48" />
+              </TableCell>
+              <TableCell>
+                {/* Role picker */}
+                <Skeleton className="h-9 w-24" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-center gap-2">
+        <Skeleton className="size-9" />
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="size-9" />
+        <Skeleton className="size-9" />
+        <Skeleton className="size-9" />
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="size-9" />
+      </div>
     </div>
   );
 };

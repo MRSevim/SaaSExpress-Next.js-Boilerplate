@@ -1,14 +1,14 @@
 import { Suspense } from "react";
-import { UserList } from "./usersList/UserList";
+import { UserList, UserListSkeleton } from "./usersList/UserList";
 import { SearchParams } from "@/app/dashboard/page";
 
 /**
- * Dashboard component
+ * Dashboard component for admin page
  */
 const Dashboard = async ({ searchParams }: { searchParams: SearchParams }) => {
   return (
     <div>
-      <Suspense fallback={"Loading..."}>
+      <Suspense fallback={<UserListSkeleton />}>
         <UserList searchParams={searchParams} />
       </Suspense>
     </div>

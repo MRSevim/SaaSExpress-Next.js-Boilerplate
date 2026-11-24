@@ -117,7 +117,9 @@ describe("Profile Component", () => {
     await waitFor(() => {
       expect(screen.queryByText(errorMessage)).toBeInTheDocument();
 
-      expect(screen.queryByText(/successful/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(accountDeletionEmailSuccessMessage),
+      ).not.toBeInTheDocument();
     });
   });
 

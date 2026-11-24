@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Select,
   SelectContent,
@@ -7,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { changeUserRole } from "../../utils/serverActions";
 import { toast } from "@/components/ui/toast";
 
@@ -20,29 +21,46 @@ const allUserTypes = [
  * See and change user role in users lists
  * @returns jsx
  */
-const UserRolePicker = ({ id, role }: { id: string; role?: string }) => {
-  const [currentRole, setCurrentRole] = useState(role || "user");
+const UserRolePicker = ({ id, role }: { id: string; role: string }) => {
+  const [currentRole, setCurrentRole] = useState(role);
   const [isLoading, setIsLoading] = useState(false);
+
   const handleValueChange = async (newValue: "admin" | "user") => {
     setIsLoading(true);
+    const oldRole = currentRole;
     setCurrentRole(newValue);
     const { error } = await changeUserRole(id, newValue);
     if (error) {
+      setCurrentRole(oldRole);
       toast.add({ type: "error", description: error });
     }
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (role !== currentRole) {
+      //eslint-disable-next-line
+      setCurrentRole(role);
+    }
+    //eslint-disable-next-line
+  }, [role]);
+
   return (
     <Select
+      value={currentRole}
       disabled={isLoading}
       items={allUserTypes}
-      onValueChange={(newVal: "admin" | "user" | null) => {
-        if (newVal !== null) handleValueChange(newVal);
+      onValueChange={(newVal: string | null) => {
+        if (
+          newVal !== null &&
+          newVal !== currentRole &&
+          (newVal === "admin" || newVal === "user")
+        )
+          handleValueChange(newVal);
       }}
     >
       <SelectTrigger>
-        <SelectValue>{currentRole}</SelectValue>
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
