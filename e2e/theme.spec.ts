@@ -33,7 +33,9 @@ test.describe("theme tests", () => {
       page,
       baseURL,
     }) => {
-      await page.emulateMedia({ colorScheme: "dark" });
+      await page.emulateMedia({
+        colorScheme: theme === "dark" ? "light" : "dark",
+      });
 
       const context = page.context();
 

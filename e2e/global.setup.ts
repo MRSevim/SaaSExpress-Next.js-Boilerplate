@@ -6,52 +6,8 @@ import { spawn, type ChildProcess } from "child_process";
 
 const PORT = 3001;
 const SERVER_URL = `http://localhost:${PORT}`;
-const STARTUP_TIMEOUT_MS = 30000;
+const STARTUP_TIMEOUT_MS = 30_000;
 const POLL_INTERVAL_MS = 300;
-
-function runCommand(command: string, args: string[], env: NodeJS.ProcessEnv) {
-  return new Promise<void>((resolve, reject) => {
-    const child = spawn(command, args, {
-      env,
-      stdio: "inherit",
-    });
-
-    child.once("error", reject);
-
-    child.once("exit", (code, signal) => {
-      if (code === 0) {
-        resolve();
-        return;
-      }
-
-      reject(
-        new Error(
-          `${command} ${args.join(" ")} failed with code ${code}, signal ${signal}`,
-        ),
-      );
-    });
-  });
-}
-
-async function waitForServer(url: string, timeoutMs = STARTUP_TIMEOUT_MS) {
-  const deadline = Date.now() + timeoutMs;
-
-  while (Date.now() < deadline) {
-    try {
-      const response = await fetch(url);
-
-      if (response.ok) {
-        return;
-      }
-    } catch {
-      // Server isn't ready yet.
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-  }
-
-  throw new Error(`Server did not become ready within ${timeoutMs}ms`);
-}
 
 /**
  * Sets up the global test environment for end-to-end tests.
@@ -67,10 +23,10 @@ async function globalSetup() {
 
   const databaseUrl = container.getConnectionUri();
 
-  // Playwright tests access DATABASE_URL from this process,
-  // while Next.js receives it explicitly through `env`.
+  // Playwright tests access DATABASE_URL thanks to this code,
   process.env.DATABASE_URL = databaseUrl;
 
+  // while Next.js receives it explicitly through `env`.
   const env = {
     ...process.env,
     DATABASE_URL: databaseUrl,
@@ -122,3 +78,47 @@ async function globalSetup() {
 }
 
 export default globalSetup;
+
+function runCommand(command: string, args: string[], env: NodeJS.ProcessEnv) {
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(command, args, {
+      env,
+      stdio: "inherit",
+    });
+
+    child.once("error", reject);
+
+    child.once("exit", (code, signal) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+
+      reject(
+        new Error(
+          `${command} ${args.join(" ")} failed with code ${code}, signal ${signal}`,
+        ),
+      );
+    });
+  });
+}
+
+async function waitForServer(url: string, timeoutMs = STARTUP_TIMEOUT_MS) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(url);
+
+      if (response.ok) {
+        return;
+      }
+    } catch {
+      // Server isn't ready yet.
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+  }
+
+  throw new Error(`Server did not become ready within ${timeoutMs}ms`);
+}
