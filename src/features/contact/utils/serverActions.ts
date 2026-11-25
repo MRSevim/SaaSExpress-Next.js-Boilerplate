@@ -18,7 +18,7 @@ import { Redis } from "@upstash/redis";
 const contactSchema = z.object({
   name: z
     .string()
-    .transform((s) => s.replace(/\p{Cc}+/gu, " ").trim()) //replaces characters like \n, \r etc. with empty strings so that
+    .transform((s) => s.replace(/\p{Cc}+/gu, " ").trim()) //replaces characters like \n, \r etc. with empty strings
     .pipe(
       z
         .string()

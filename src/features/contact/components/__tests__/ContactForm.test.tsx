@@ -105,7 +105,7 @@ describe("ContactForm Component", () => {
   });
 
   it("shows api error", async () => {
-    const errorMessage = "Email already exists";
+    const errorMessage = "Something went wrong";
     const email = "myemail@gmail.com";
     const name = "myname";
     const message = "This is a valid message with more than 20 characters";

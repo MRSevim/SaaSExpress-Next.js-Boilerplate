@@ -18,7 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * List of users for admin page
- * @returns jsx
  */
 export const UserList = async ({
   searchParams,
@@ -71,7 +70,6 @@ export const UserList = async ({
 
 /**
  * Loading skeleton for the user list in admin page
- * @returns jsx
  */
 export const UserListSkeleton = () => {
   return (

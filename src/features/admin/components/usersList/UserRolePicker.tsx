@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Select,
   SelectContent,
@@ -19,7 +18,6 @@ const allUserTypes = [
 
 /**
  * See and change user role in users lists
- * @returns jsx
  */
 const UserRolePicker = ({ id, role }: { id: string; role: string }) => {
   const [currentRole, setCurrentRole] = useState(role);

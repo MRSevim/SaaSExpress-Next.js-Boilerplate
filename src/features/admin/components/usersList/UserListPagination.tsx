@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Pagination,
   PaginationContent,
@@ -23,7 +22,6 @@ import {
 
 /**
  * Pagination for user list in admin page
- * @returns jsx
  */
 const UserListPagination = ({
   total,

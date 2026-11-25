@@ -15,7 +15,7 @@ describe("ThemeToggle", () => {
     document.cookie = "theme=; path=/; max-age=0"; // clear cookie between tests
   });
 
-  it("renders light state  and switches to dark on click", async () => {
+  it("renders light state and switches to dark on click", async () => {
     const { user } = renderWithProviders(<ThemeToggle initialTheme="light" />);
 
     const button = screen.getByRole("button", { name: switchToDarkName });

@@ -1,12 +1,10 @@
 "use client";
-
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 /**
  * Search for users in admin page
- * @returns jsx
  */
 const UsersListSearch = ({ searchValue }: { searchValue?: string }) => {
   const [query, setQuery] = useState(searchValue || "");

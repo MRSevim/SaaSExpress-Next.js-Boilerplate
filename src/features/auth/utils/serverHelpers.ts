@@ -23,7 +23,7 @@ export const getUser = cache(async () => {
 });
 
 /**
- * Checks if user's account has logged in with credentials provider (meaning it used email+password to login)
+ * Checks if user's account has logged in with credentials provider (meanin email+password was used to login)
  */
 export const checkCredentialsProvider = async () => {
   try {

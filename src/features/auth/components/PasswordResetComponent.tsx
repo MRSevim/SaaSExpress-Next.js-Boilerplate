@@ -49,7 +49,7 @@ const PasswordResetComponent = () => {
       if (!token)
         return {
           error: invalidText,
-        } as ResetPasswordState;
+        };
       return await resetPassword(formData, token);
     },
     null as ResetPasswordState,

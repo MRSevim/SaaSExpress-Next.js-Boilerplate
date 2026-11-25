@@ -1,5 +1,4 @@
 "use client"; // Error boundaries must be Client Components
-
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import {
